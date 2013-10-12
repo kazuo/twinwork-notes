@@ -1,5 +1,5 @@
 #!/bin/sh
-# Use for FreeBSD 9.x only.  Tested with FreeBSD 9.1-RELEASE
+# Use for FreeBSD 9.x only.  Tested with FreeBSD 9.2-RELEASE
 #
 echo "* Requires root.profile, skel.dot.profile, and skel.dot.vimrc"
 echo "  otherwise it will fail!"
@@ -9,7 +9,7 @@ echo "also replaces /usr/share/skel/dot.profile with a modified one "
 echo "that incorporates bash and gnuls.  Be sure to edit those to your "
 echo "desire.  The same goes for ~/.bashrc for root.  It also copies "
 echo "the correct files which cvsup requires into /etc.  Please refer to "
-echo "http://notes.twinwork.net/ for more information."
+echo "http://twinwork.net/ for more information."
 echo ""
 echo -n "Press 'Y' to continue... " && read CONTINUE
 case ${CONTINUE} in
@@ -21,17 +21,7 @@ case ${CONTINUE} in
     else
       KERNEL=${INPUTKERNEL}
     fi
-
-    echo
-    echo "Enter a cvsup server closest to you"
-    echo -n  "(default: cvsup.FreeBSD.org): " && read INPUTCVSUP
-    if [ -z "${INPUTCVSUP}" ]
-    then
-      CVSUP="cvsup.FreeBSD.org"
-    else
-      CVSUP=${INPUTCVSUP}
-    fi
-    
+   
     echo ""
     
     # BEGIN ORIGINAL MAX POWER SCRIPT
@@ -58,8 +48,8 @@ case ${CONTINUE} in
     (cd /usr/ports/shells/scponly && make config-recursive)    
     (cd /usr/ports/misc/gnuls && make config-recursive)
     (cd /usr/ports/security/sudo && make config-recursive)
-    (cd /usr/ports/editors/vim-lite && make config-recursive)
-    (cd /usr/ports/net/cvsup-without-gui && make config-recursive)
+    (cd /usr/ports/editors/vim-lite && make config-recursive)    
+	(cd /usr/ports/devel/subversion && make config-recursive)
     (cd /usr/ports/ftp/wget && make config-recursive)
     (cd /usr/ports/converters/libiconv && make config-recursive)
     (cd /usr/ports/x11/libX11 && make config-recursive)
@@ -77,8 +67,8 @@ case ${CONTINUE} in
     (cd /usr/ports/shells/scponly && make install clean)
     (cd /usr/ports/misc/gnuls && make install clean)
     (cd /usr/ports/security/sudo && make install clean)
-    (cd /usr/ports/editors/vim-lite && make install clean)
-    (cd /usr/ports/net/cvsup-without-gui && make install clean)
+    (cd /usr/ports/editors/vim-lite && make install clean)    
+	(cd /usr/ports/devel/subversion && make install clean)
     (cd /usr/ports/ftp/wget && make install clean)
     rm -rf /usr/ports/distfiles/*
     
@@ -106,14 +96,13 @@ case ${CONTINUE} in
     cp -v etc.adduser.conf /etc/adduser.conf
     
     echo ""
-    echo "Finished doing skel stuff... copying cvsup files into /etc"
-    
-    cp -v /usr/src/share/examples/cvsup/*-supfile /etc/
+    echo "Finished doing skel stuff... copying examples/etc/make.conf into /etc"
+        
     cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
     
     echo
     echo "All done!  Exit and come back in to see your changes.  Be sure to check out"
-    echo "http://notes.twinwork.net/ for more information!"
+    echo "http://twinwork.net/ for more information!"
     echo
     echo "All backup files located in /root/post-install"
     
