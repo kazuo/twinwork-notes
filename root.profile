@@ -10,7 +10,7 @@ PAGER=less
 export PAGER
 BLOCKSIZE=K
 export BLOCKSIZE
-EDITOR=ee
+EDITOR=vim
 export EDITOR
 
 PS1="\u@\h:\w"
