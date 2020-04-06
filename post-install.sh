@@ -1,5 +1,5 @@
 #!/bin/sh
-# Use for FreeBSD 9.x only.  Tested with FreeBSD 9.2-RELEASE
+# Use for FreeBSD 12.x only.  Tested with FreeBSD 12.1-RELEASE
 #
 echo "* Requires root.profile, skel.dot.profile, and skel.dot.vimrc"
 echo "  otherwise it will fail!"
@@ -21,18 +21,18 @@ case ${CONTINUE} in
     else
       KERNEL=${INPUTKERNEL}
     fi
-   
+
     echo ""
-    
+
     # BEGIN ORIGINAL MAX POWER SCRIPT
     mkdir -v /root/kernels
-	mkdir -v /root/kernels/i386
-	mkdir -v /root/kernels/amd64
+    mkdir -v /root/kernels/i386
+    mkdir -v /root/kernels/amd64
     cp -v /usr/src/sys/i386/conf/GENERIC /root/kernels/i386/${KERNEL}
     (cd /usr/src/sys/i386/conf && ln -sv /root/kernels/i386/${KERNEL} ${KERNEL})
-	cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL}
-	(cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL})
-    
+    cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL}
+    (cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL})
+
 
     echo ""
     echo "Updating ports tree..."
@@ -45,43 +45,45 @@ case ${CONTINUE} in
     (cd /usr/ports/devel/nasm && make config-recursive)
     (cd /usr/ports/sysutils/screen && make config-recursive)
     (cd /usr/ports/shells/bash && make config-recrusve)
-    (cd /usr/ports/shells/scponly && make config-recursive)    
+    (cd /usr/ports/shells/scponly && make config-recursive)
     (cd /usr/ports/misc/gnuls && make config-recursive)
     (cd /usr/ports/security/sudo && make config-recursive)
-    (cd /usr/ports/editors/vim-lite && make config-recursive)    
-	(cd /usr/ports/devel/subversion && make config-recursive)
+    (cd /usr/ports/editors/vim-lite && make config-recursive)
+	  (cd /usr/ports/devel/subversion && make config-recursive)
     (cd /usr/ports/ftp/wget && make config-recursive)
-    (cd /usr/ports/converters/libiconv && make config-recursive)
-    (cd /usr/ports/x11/libX11 && make config-recursive)
+    (cd /usr/ports/sysutls/lsof && make config-recursive)
+    (cd /usr/ports/devel/git && make config-recursive)
 
     echo ""
     echo "Installing portupgrade from ports..."
     (cd /usr/ports/ports-mgmt/portupgrade && make install && make clean)
-    
+
     echo
     echo "Now installing from ports..."
-    
+
     (cd /usr/ports/devel/nasm && make install clean)
     (cd /usr/ports/sysutils/screen && make install clean)
     (cd /usr/ports/shells/bash && make install clean)
     (cd /usr/ports/shells/scponly && make install clean)
     (cd /usr/ports/misc/gnuls && make install clean)
     (cd /usr/ports/security/sudo && make install clean)
-    (cd /usr/ports/editors/vim-lite && make install clean)    
-	(cd /usr/ports/devel/subversion && make install clean)
+    (cd /usr/ports/editors/vim-lite && make install clean)
+	  (cd /usr/ports/devel/subversion && make install clean)
     (cd /usr/ports/ftp/wget && make install clean)
+    (cd /usr/ports/sysutils/lsof && make install clean)
+    (cd /usr/ports/devel/git && make install clean)
     rm -rf /usr/ports/distfiles/*
-    
+
     echo ""
     echo "Finished installing from ports... changing shell to bash for root"
-    
+
     /usr/bin/chsh -s /usr/local/bin/bash root
-    mkdir -v /root/post-install 
+    mkdir -v /root/post-install
     cp -v root.profile /root/post-install/root.profile
     cp -v /root/.profile /root/post-install/.profile.bak && rm -v /root/.profile
     cp -v /root/post-install/root.profile /root/.profile
     (cd /root && ln -sv .profile .bashrc)
-    
+
     echo ""
     echo "Finished setting shell settings... now for skel"
     cp -v /usr/share/skel/* /etc/skel/
@@ -94,18 +96,18 @@ case ${CONTINUE} in
     cp -v skel.dot.screenrc /root/.screenrc
     #(cd /etc/skel/ && ln -sv .profile .bashrc)
     cp -v etc.adduser.conf /etc/adduser.conf
-    
+
     echo ""
     echo "Finished doing skel stuff... copying examples/etc/make.conf into /etc"
-        
+
     cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
-    
+
     echo
     echo "All done!  Exit and come back in to see your changes.  Be sure to check out"
     echo "http://twinwork.net/ for more information!"
     echo
     echo "All backup files located in /root/post-install"
-    
+
     # END ORIGINAL MAX POWER SCRIPT
     ;;
   *)
