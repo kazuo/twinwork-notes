@@ -24,13 +24,13 @@ case ${CONTINUE} in
     echo ""
 
     # BEGIN ORIGINAL MAX POWER SCRIPT
-    mkdir -v /root/kernels
-    mkdir -v /root/kernels/i386
-    mkdir -v /root/kernels/amd64
-    cp -v /usr/src/sys/i386/conf/GENERIC /root/kernels/i386/${KERNEL}
-    (cd /usr/src/sys/i386/conf && ln -sv /root/kernels/i386/${KERNEL} ${KERNEL})
-    cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL}
-    (cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL})
+    /bin/mkdir -v /root/kernels
+    /bin/mkdir -v /root/kernels/i386
+    /bin/mkdir -v /root/kernels/amd64
+    /bin/cp -v /usr/src/sys/i386/conf/GENERIC /root/kernels/i386/${KERNEL}
+    (/usr/bin/cd /usr/src/sys/i386/conf && /bin/ln -sv /root/kernels/i386/${KERNEL} ${KERNEL})
+    /bin/cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL}
+    (/usr/bin/cd /usr/src/sys/amd64/conf && /bin/ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL})
 
 
     echo ""
@@ -40,39 +40,39 @@ case ${CONTINUE} in
 
     # echo ""
     # echo "Make config for ports now..."
-    # (cd /usr/ports/ports-mgmt/portupgrade && make config-recursive)
-    # (cd /usr/ports/devel/nasm && make config-recursive)
-    # (cd /usr/ports/sysutils/screen && make config-recursive)
-    # (cd /usr/ports/shells/bash && make config-recrusve)
-    # (cd /usr/ports/shells/zsh && make config-recrusve)
-    # (cd /usr/ports/misc/gnuls && make config-recursive)
-    # (cd /usr/ports/security/sudo && make config-recursive)
-    # (cd /usr/ports/editors/vim-console && make config-recursive)
-    # (cd /usr/ports/devel/subversion && make config-recursive)
-    # (cd /usr/ports/devel/git && make config-recursive)
-    # (cd /usr/ports/ftp/wget && make config-recursive)
+    # (/usr/bin/cd /usr/ports/ports-mgmt/portupgrade && make config-recursive)
+    # (/usr/bin/cd /usr/ports/devel/nasm && make config-recursive)
+    # (/usr/bin/cd /usr/ports/sysutils/screen && make config-recursive)
+    # (/usr/bin/cd /usr/ports/shells/bash && make config-recrusve)
+    # (/usr/bin/cd /usr/ports/shells/zsh && make config-recrusve)
+    # (/usr/bin/cd /usr/ports/misc/gnuls && make config-recursive)
+    # (/usr/bin/cd /usr/ports/security/sudo && make config-recursive)
+    # (/usr/bin/cd /usr/ports/editors/vim-console && make config-recursive)
+    # (/usr/bin/cd /usr/ports/devel/subversion && make config-recursive)
+    # (/usr/bin/cd /usr/ports/devel/git && make config-recursive)
+    # (/usr/bin/cd /usr/ports/ftp/wget && make config-recursive)
 
     # echo ""
     # echo "Now installing from ports..."
 
-    # (cd /usr/ports/ports-mgmt/portupgrade && make install clean)
-    # (cd /usr/ports/devel/nasm && make install clean)
-    # (cd /usr/ports/sysutils/screen && make install clean)
-    # (cd /usr/ports/shells/bash && make install clean)
-    # (cd /usr/ports/shells/zsh && make install clean)
-    # (cd /usr/ports/misc/gnuls && make install clean)
-    # (cd /usr/ports/security/sudo && make install clean)
-    # (cd /usr/ports/editors/vim-console && make install clean)
-    # (cd /usr/ports/devel/subversion && make install clean)
-    # (cd /usr/ports/devel/git && make install clean)
-    # (cd /usr/ports/ftp/wget && make install clean)
+    # (/usr/bin/cd /usr/ports/ports-mgmt/portupgrade && make install clean)
+    # (/usr/bin/cd /usr/ports/devel/nasm && make install clean)
+    # (/usr/bin/cd /usr/ports/sysutils/screen && make install clean)
+    # (/usr/bin/cd /usr/ports/shells/bash && make install clean)
+    # (/usr/bin/cd /usr/ports/shells/zsh && make install clean)
+    # (/usr/bin/cd /usr/ports/misc/gnuls && make install clean)
+    # (/usr/bin/cd /usr/ports/security/sudo && make install clean)
+    # (/usr/bin/cd /usr/ports/editors/vim-console && make install clean)
+    # (/usr/bin/cd /usr/ports/devel/subversion && make install clean)
+    # (/usr/bin/cd /usr/ports/devel/git && make install clean)
+    # (/usr/bin/cd /usr/ports/ftp/wget && make install clean)
 
-    # rm -rf /usr/ports/distfiles/*
+    # /bin/rm -rf /usr/ports/distfiles/*
 
     echo ""
     echo "Now installing from pkg..."
-    (/usr/sbin/pkg install nasm)
     (/usr/sbin/pkg install portupgrade)
+    (/usr/sbin/pkg install nasm)
     (/usr/sbin/pkg install screen)
     (/usr/sbin/pkg install bash)
     (/usr/sbin/pkg install zsh)
@@ -87,30 +87,30 @@ case ${CONTINUE} in
     echo "Finished installing ports and packages... changing shell to bash for root"
 
     /usr/bin/chsh -s /usr/local/bin/bash root
-    mkdir -v /root/post-install
-    cp -v root.profile /root/post-install/root.profile
-    cp -v /root/.profile /root/post-install/.profile.bak && rm -v /root/.profile
-    cp -v /root/post-install/root.profile /root/.profile
-    (cd /root && ln -sv .profile .bashrc)
+    /bin/mkdir -v /root/post-install
+    /bin/cp -v root.profile /root/post-install/root.profile
+    /bin/cp -v /root/.profile /root/post-install/.profile.bak && /bin/rm -v /root/.profile
+    /bin/cp -v /root/post-install/root.profile /root/.profile
+    (/usr/bin/cd /root && /bin/ln -sv .profile .bashrc)
 
     echo ""
     echo "Finished setting shell settings... now for skel"
-    mkdir /etc/skel
-    cp -v /usr/share/skel/* /etc/skel/
-    cp -v /etc/skel/dot.profile /root/post-install/dot.profile.bak
-    rm -v /etc/skel/dot.profile
-    cp -v skel.dot.profile /etc/skel/dot.profile
-    cp -v skel.dot.vimrc /etc/skel/dot.vimrc
-    cp -v skel.dot.screenrc /etc/skel/dot.screenrc
-    cp -v skel.dot.vimrc /root/.vimrc
-    cp -v skel.dot.screenrc /root/.screenrc
-    #(cd /etc/skel/ && ln -sv .profile .bashrc)
-    cp -v etc.adduser.conf /etc/adduser.conf
+    /bin/mkdir /etc/skel
+    /bin/cp -v /usr/share/skel/* /etc/skel/
+    /bin/cp -v /etc/skel/dot.profile /root/post-install/dot.profile.bak
+    /bin/rm -v /etc/skel/dot.profile
+    /bin/cp -v skel.dot.profile /etc/skel/dot.profile
+    /bin/cp -v skel.dot.vimrc /etc/skel/dot.vimrc
+    /bin/cp -v skel.dot.screenrc /etc/skel/dot.screenrc
+    /bin/cp -v skel.dot.vimrc /root/.vimrc
+    /bin/cp -v skel.dot.screenrc /root/.screenrc
+    #(/usr/bin/cd /etc/skel/ && /bin/ln -sv .profile .bashrc)
+    /bin/cp -v etc.adduser.conf /etc/adduser.conf
 
     echo ""
     echo "Finished doing skel stuff... copying examples/etc/make.conf into /etc"
 
-    cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
+    /bin/cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
 
     echo ""
     echo "All done!  Exit and come back in to see your changes."
