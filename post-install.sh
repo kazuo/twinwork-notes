@@ -51,7 +51,7 @@ case ${CONTINUE} in
     (cd /usr/ports/editors/vim-lite && make config-recursive)
 	  (cd /usr/ports/devel/subversion && make config-recursive)
     (cd /usr/ports/ftp/wget && make config-recursive)
-    (cd /usr/ports/sysutls/lsof && make config-recursive)
+
     (cd /usr/ports/devel/git && make config-recursive)
 
     echo ""
@@ -70,7 +70,6 @@ case ${CONTINUE} in
     (cd /usr/ports/editors/vim-lite && make install clean)
 	  (cd /usr/ports/devel/subversion && make install clean)
     (cd /usr/ports/ftp/wget && make install clean)
-    (cd /usr/ports/sysutils/lsof && make install clean)
     (cd /usr/ports/devel/git && make install clean)
     rm -rf /usr/ports/distfiles/*
 
@@ -103,8 +102,7 @@ case ${CONTINUE} in
     cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
 
     echo
-    echo "All done!  Exit and come back in to see your changes.  Be sure to check out"
-    echo "http://twinwork.net/ for more information!"
+    echo "All done!  Exit and come back in to see your changes.
     echo
     echo "All backup files located in /root/post-install"
 
