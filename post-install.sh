@@ -4,7 +4,7 @@
 echo "* Requires root.profile, skel.dot.profile, and skel.dot.vimrc"
 echo "  otherwise it will fail!"
 echo ""
-echo "This will install bash, gnuls, sudo, screen, and nasm.  It"
+echo "This will install bash, gnuls, sudo, screen, and nasm.  It "
 echo "also replaces /usr/share/skel/dot.profile with a modified one "
 echo "that incorporates bash and gnuls.  Be sure to edit those to your "
 echo "desire.  The same goes for ~/.bashrc for root.  It also copies "
@@ -38,41 +38,53 @@ case ${CONTINUE} in
     (/usr/sbin/portsnap fetch)
     (/usr/sbin/portsnap extract)
 
-    echo ""
-    echo "Make config for ports now..."
-    (cd /usr/ports/ports-mgmt/portupgrade && make config-recursive)
-    (cd /usr/ports/devel/nasm && make config-recursive)
-    (cd /usr/ports/sysutils/screen && make config-recursive)
-    (cd /usr/ports/shells/bash && make config-recrusve)
-    (cd /usr/ports/shells/scponly && make config-recursive)
-    (cd /usr/ports/misc/gnuls && make config-recursive)
-    (cd /usr/ports/security/sudo && make config-recursive)
-    (cd /usr/ports/editors/vim-lite && make config-recursive)
-    (cd /usr/ports/devel/subversion && make config-recursive)
-    (cd /usr/ports/ftp/wget && make config-recursive)
-    (cd /usr/ports/devel/git && make config-recursive)
+    # echo ""
+    # echo "Make config for ports now..."
+    # (cd /usr/ports/ports-mgmt/portupgrade && make config-recursive)
+    # (cd /usr/ports/devel/nasm && make config-recursive)
+    # (cd /usr/ports/sysutils/screen && make config-recursive)
+    # (cd /usr/ports/shells/bash && make config-recrusve)
+    # (cd /usr/ports/shells/zsh && make config-recrusve)
+    # (cd /usr/ports/misc/gnuls && make config-recursive)
+    # (cd /usr/ports/security/sudo && make config-recursive)
+    # (cd /usr/ports/editors/vim-console && make config-recursive)
+    # (cd /usr/ports/devel/subversion && make config-recursive)
+    # (cd /usr/ports/devel/git && make config-recursive)
+    # (cd /usr/ports/ftp/wget && make config-recursive)
+
+    # echo ""
+    # echo "Now installing from ports..."
+
+    # (cd /usr/ports/ports-mgmt/portupgrade && make install clean)
+    # (cd /usr/ports/devel/nasm && make install clean)
+    # (cd /usr/ports/sysutils/screen && make install clean)
+    # (cd /usr/ports/shells/bash && make install clean)
+    # (cd /usr/ports/shells/zsh && make install clean)
+    # (cd /usr/ports/misc/gnuls && make install clean)
+    # (cd /usr/ports/security/sudo && make install clean)
+    # (cd /usr/ports/editors/vim-console && make install clean)
+    # (cd /usr/ports/devel/subversion && make install clean)
+    # (cd /usr/ports/devel/git && make install clean)
+    # (cd /usr/ports/ftp/wget && make install clean)
+
+    # rm -rf /usr/ports/distfiles/*
 
     echo ""
-    echo "Installing portupgrade from ports..."
-    (cd /usr/ports/ports-mgmt/portupgrade && make install clean)
+    echo "Now installing from pkg..."
+    (/usr/sbin/pkg install nasm)
+    (/usr/sbin/pkg install portupgrade)
+    (/usr/sbin/pkg install screen)
+    (/usr/sbin/pkg install bash)
+    (/usr/sbin/pkg install zsh)
+    (/usr/sbin/pkg install gnuls)
+    (/usr/sbin/pkg install sudo)
+    (/usr/sbin/pkg install vim-console)
+    (/usr/sbin/pkg install wget)
+    (/usr/sbin/pkg install subversion)
+    (/usr/sbin/pkg install git)
 
     echo ""
-    echo "Now installing from ports..."
-
-    (cd /usr/ports/devel/nasm && make install clean)
-    (cd /usr/ports/sysutils/screen && make install clean)
-    (cd /usr/ports/shells/bash && make install clean)
-    (cd /usr/ports/shells/scponly && make install clean)
-    (cd /usr/ports/misc/gnuls && make install clean)
-    (cd /usr/ports/security/sudo && make install clean)
-    (cd /usr/ports/editors/vim-lite && make install clean)
-    (cd /usr/ports/devel/subversion && make install clean)
-    (cd /usr/ports/ftp/wget && make install clean)
-    (cd /usr/ports/devel/git && make install clean)
-    rm -rf /usr/ports/distfiles/*
-
-    echo ""
-    echo "Finished installing from ports... changing shell to bash for root"
+    echo "Finished installing ports and packages... changing shell to bash for root"
 
     /usr/bin/chsh -s /usr/local/bin/bash root
     mkdir -v /root/post-install
@@ -110,5 +122,4 @@ case ${CONTINUE} in
   *)
     echo "Script aborting..."
     ;;
-
 esac
