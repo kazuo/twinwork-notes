@@ -8,8 +8,7 @@ echo "This will install bash, gnuls, sudo, screen, and nasm.  It"
 echo "also replaces /usr/share/skel/dot.profile with a modified one "
 echo "that incorporates bash and gnuls.  Be sure to edit those to your "
 echo "desire.  The same goes for ~/.bashrc for root.  It also copies "
-echo "the correct files which cvsup requires into /etc.  Please refer to "
-echo "http://twinwork.net/ for more information."
+echo "the correct files which cvsup requires into /etc."
 echo ""
 echo -n "Press 'Y' to continue... " && read CONTINUE
 case ${CONTINUE} in
@@ -49,16 +48,15 @@ case ${CONTINUE} in
     (cd /usr/ports/misc/gnuls && make config-recursive)
     (cd /usr/ports/security/sudo && make config-recursive)
     (cd /usr/ports/editors/vim-lite && make config-recursive)
-	  (cd /usr/ports/devel/subversion && make config-recursive)
+    (cd /usr/ports/devel/subversion && make config-recursive)
     (cd /usr/ports/ftp/wget && make config-recursive)
-
     (cd /usr/ports/devel/git && make config-recursive)
 
     echo ""
     echo "Installing portupgrade from ports..."
-    (cd /usr/ports/ports-mgmt/portupgrade && make install && make clean)
+    (cd /usr/ports/ports-mgmt/portupgrade && make install clean)
 
-    echo
+    echo ""
     echo "Now installing from ports..."
 
     (cd /usr/ports/devel/nasm && make install clean)
@@ -68,7 +66,7 @@ case ${CONTINUE} in
     (cd /usr/ports/misc/gnuls && make install clean)
     (cd /usr/ports/security/sudo && make install clean)
     (cd /usr/ports/editors/vim-lite && make install clean)
-	  (cd /usr/ports/devel/subversion && make install clean)
+    (cd /usr/ports/devel/subversion && make install clean)
     (cd /usr/ports/ftp/wget && make install clean)
     (cd /usr/ports/devel/git && make install clean)
     rm -rf /usr/ports/distfiles/*
@@ -85,6 +83,7 @@ case ${CONTINUE} in
 
     echo ""
     echo "Finished setting shell settings... now for skel"
+    mkdir /etc/skel
     cp -v /usr/share/skel/* /etc/skel/
     cp -v /etc/skel/dot.profile /root/post-install/dot.profile.bak
     rm -v /etc/skel/dot.profile
@@ -101,9 +100,9 @@ case ${CONTINUE} in
 
     cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
 
-    echo
-    echo "All done!  Exit and come back in to see your changes.
-    echo
+    echo ""
+    echo "All done!  Exit and come back in to see your changes."
+    echo ""
     echo "All backup files located in /root/post-install"
 
     # END ORIGINAL MAX POWER SCRIPT
@@ -111,4 +110,5 @@ case ${CONTINUE} in
   *)
     echo "Script aborting..."
     ;;
+
 esac
