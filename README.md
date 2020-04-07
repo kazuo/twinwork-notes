@@ -18,7 +18,7 @@ cd twinwork-notes-master
 sh post-install.sh
 ```
 
-Once the install finished, log back out and back in as `root`. You should see the new shell changes. Before adding a user, update the template for new users:   
+Once the install finished, log back out and back in as `root`. You should see the new shell changes. Before adding a user, update the template for new users:
 
 ```sh
 adduser -C -k /etc/skel
@@ -36,7 +36,7 @@ Answer the prompts accordingly. What this will do is have you configure `adduser
 
 One more thing about `/etc/skel`. NOTES used to symlink `.profile` to `.bashrc.` This used to work in `/etc/skel` for 4.x-RELEASE, but any modern version of FreeBSD `adduser` does not copy over these symlinks. You will need to generate them yourself. I do not know what the work around is... and honestly, I don't care as much since I am the only user who logs into my machines. When you log in as your new user, create a symlink `.profile` to `.bashrc` :)
 
-After adding yourself, edit `/etc/group`.
+If you didn't already add yourself to the `wheel` group through the `adduser` prompts, you can do so manually by editing `/etc/group`.
 
 ```sh
 vim /etc/group
@@ -52,4 +52,11 @@ wheel:*:0:root,rey
 ```
 visudo
 ```
+
+Go through the file until you see the following line to uncomment
+```
+## Same thing without a password
+%wheel ALL=(ALL) NOPASSWD: ALL
+```
+Uncommenting that line allows you to use `sudo` without ever prompting for a password. This is convenient but proceed with caution
 
