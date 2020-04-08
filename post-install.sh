@@ -71,17 +71,17 @@ case ${CONTINUE} in
 
     echo ""
     echo "Now installing from pkg..."
-    (/usr/sbin/pkg install portupgrade)
-    (/usr/sbin/pkg install nasm)
-    (/usr/sbin/pkg install screen)
-    (/usr/sbin/pkg install bash)
-    (/usr/sbin/pkg install zsh)
-    (/usr/sbin/pkg install gnuls)
-    (/usr/sbin/pkg install sudo)
-    (/usr/sbin/pkg install vim-console)
-    (/usr/sbin/pkg install wget)
-    (/usr/sbin/pkg install subversion)
-    (/usr/sbin/pkg install git)
+    (/usr/sbin/pkg install --yes portupgrade)
+    (/usr/sbin/pkg install --yes nasm)
+    (/usr/sbin/pkg install --yes screen)
+    (/usr/sbin/pkg install --yes bash)
+    (/usr/sbin/pkg install --yes zsh)
+    (/usr/sbin/pkg install --yes gnuls)
+    (/usr/sbin/pkg install --yes sudo)
+    (/usr/sbin/pkg install --yes vim-console)
+    (/usr/sbin/pkg install --yes wget)
+    (/usr/sbin/pkg install --yes subversion)
+    (/usr/sbin/pkg install --yes git)
 
     echo ""
     echo "Finished installing ports and packages... changing shell to bash for root"
