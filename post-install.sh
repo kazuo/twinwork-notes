@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # Use for FreeBSD 12.x only.  Tested with FreeBSD 12.1-RELEASE
 #
 
@@ -7,6 +7,7 @@ KERNEL_NAME=
 
 usage() {
     echo "usuage: $0 [--use-pkg]
+        --help          : usage
         --use-ports     : use ports for post-install (default)
         --use-pkg       : use pkg for post-install (ports tree will still be updated)
         --kernel-name   : custom kernel name (this will install/update FreeBSD source tree)
@@ -14,30 +15,25 @@ usage() {
 }
 
 handle_args() {
-    while (($#)); do
-
-        arg=$(echo $1 | sed 's/=.*//g')
-        if [[ $1 != *"="* ]]; then
-            shift
-            value=$1
-        else
-            value=$(echo $1 | sed 's/.*=//g')
-        fi
-
-        shift
+    for arg in "$@"
+    do
         case $arg in
-        --use-ports)
-            INSTALL_FROM=ports
+            --use-ports)
+                INSTALL_FROM=ports
+                shift
             ;;
-        --use-pkg)
-            INSTALL_FROM=pkg
+                --use-pkg)
+                INSTALL_FROM=pkg
+                shift
             ;;
-        --kernel-name)
-            KERNEL_NAME=$value
-        *)
-            usage
-            exit 1
-            ;;
+            --kernel-name)
+                KERNEL_NAME="${arg#*=}"
+                shift
+                ;;
+            *)
+                usage
+                exit 1
+                shift
         esac
     done
 }
@@ -50,12 +46,12 @@ continue_prompt() {
     $MESSAGE"
     read -p "Continue? [Y/n] " yn
     case $yn in
-    [Yy]*) ;;
-
-    *)
-        echo "Canceling operation..."
-        exit 1
-        ;;
+        [Yy]*)
+            ;;
+        *)
+            echo "Canceling operation..."
+            exit 1
+            ;;
     esac
 }
 
@@ -114,7 +110,7 @@ main() {
 
     (/usr/sbin/portsnap fetch && /usr/sbin/portsnap extract)
 
-    if [[ $INSTALL_FROM == "pkg" ]]
+    if [[ $INSTALL_FROM == "pkg" ]]; then
         install_from_pkg
     else
         install_from_ports

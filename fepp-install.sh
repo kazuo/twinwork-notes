@@ -5,8 +5,9 @@ INSTALL_FROM=ports
 
 usage() {
     echo "usuage: $0 [--use-pkg]
-        --use-ports     : use ports for post-install (default)
-        --use-pkg       : use pkg for post-install (ports tree will still be updated)
+        --help          : usage
+        --use-ports     : use ports for install (default)
+        --use-pkg       : use pkg for install
     "
 }
 
@@ -23,16 +24,16 @@ handle_args() {
 
         shift
         case $arg in
-        --use-ports)
-            INSTALL_FROM=ports
-            ;;
-        --use-pkg)
-            INSTALL_FROM=pkg
-            ;;
-        *)
-            usage
-            exit 1
-            ;;
+            --use-ports)
+                INSTALL_FROM=ports
+                ;;
+            --use-pkg)
+                INSTALL_FROM=pkg
+                ;;
+            *)
+                usage
+                exit 1
+                ;;
         esac
     done
 }
@@ -45,12 +46,12 @@ continue_prompt() {
     $MESSAGE"
     read -p "Continue? [Y/n] " yn
     case $yn in
-    [Yy]*) ;;
-
-    *)
-        echo "Canceling operation..."
-        exit 1
-        ;;
+        [Yy]*)
+            ;;
+        *)
+            echo "Canceling operation..."
+            exit 1
+            ;;
     esac
 }
 
