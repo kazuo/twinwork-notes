@@ -139,7 +139,7 @@ main() {
     cp -v skel.dot.screenrc /root/.screenrc
     cp -v etc.adduser.conf /etc/adduser.conf
 
-    if [ -z "${KERNEL_NAME}" ]; then
+    if [ ! -z "${KERNEL_NAME}" ]; then
         copy_custom_kernel
     fi
 
