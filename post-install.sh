@@ -31,7 +31,7 @@ y | Y)
   /bin/cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL}
   (/usr/bin/cd /usr/src/sys/amd64/conf && /bin/ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL})
 
-  echo -n "Use ports to install (Y)? Choosing (N) will use pkg" && read INSTALL
+  echo -n "Use ports to install (Y)? Choosing (N) will use pkg " && read INSTALL
   case ${INSTALL} in
   y | Y)
     echo ""

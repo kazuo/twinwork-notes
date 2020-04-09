@@ -1,17 +1,19 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # From https://kifarunix.com/install-nginx-mysql-php-femp-stack-on-freebsd-12/
 
 echo ""
 echo "Install from ports?"
-echo -n "'Y' will install from ports, otherwise it will install from pkg" && read CONTINUE
+echo -n "'Y' will install from ports, otherwise it will install from pkg " && read CONTINUE
 
 case ${CONTINUE} in
 y | Y)
-    # ports version
+    # ports version update
     portsnap fetch update
-    (cd /usr/ports/www/nginx/ && make install clean)
-    (cd /usr/ports/databases/postgresql12-server/ && make install clean)
-    (cd /usr/ports/lang/php74/ && make install clean)
+
+    # nginx, pgsql, php74
+    (cd /usr/ports/www/nginx/ && make config-recursive)
+    (cd /usr/ports/databases/postgresql12-server/ && make config-recursive)
+    (cd /usr/ports/lang/php74/ && make config-recursive)
 
     # default php74-extensions
     (cd /usr/ports/textproc/php74-ctype/ && make config-recursive)
@@ -48,6 +50,11 @@ y | Y)
 
     # pecl
     (cd /usr/ports/security/pecl-mcrypt/ && make config-recursive)
+
+    # nginx, pgsql, php74
+    (cd /usr/ports/www/nginx/ && make install clean)
+    (cd /usr/ports/databases/postgresql12-server/ && make install clean)
+    (cd /usr/ports/lang/php74/ && make install clean)
 
     # default php74-extensions
     (cd /usr/ports/textproc/php74-ctype/ && make install clean)
