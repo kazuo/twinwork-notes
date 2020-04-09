@@ -50,7 +50,7 @@ y | Y)
     (cd /usr/ports/archivers/php74-zlib/ && make -DBATCH install clean) && \
 
     # pecl
-    (cd /usr/ports/security/pecl-mcrypt/ && make -DBATCH install clean) && \
+    (cd /usr/ports/security/pecl-mcrypt/ && make -DBATCH install clean)
     ;;
 *)
     # pkg version

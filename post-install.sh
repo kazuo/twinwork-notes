@@ -31,12 +31,12 @@ y | Y)
   cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL}
   (cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL})
 
+  echo -n "Use ports to install? Choosing no will use pkg instead [Y/n]: " && read INSTALL
   echo ""
   echo "Updating ports tree..."
   (/usr/sbin/portsnap fetch)
   (/usr/sbin/portsnap extract)
 
-  echo -n "Use ports to install? Choosing no will use pkg instead [Y/n]: " && read INSTALL
   case ${INSTALL} in
   y | Y)
 
@@ -51,7 +51,7 @@ y | Y)
     (cd /usr/ports/misc/gnuls && make -DBATCH install clean) && \
     (cd /usr/ports/security/sudo && make -DBATCH install clean) && \
     (cd /usr/ports/editors/vim-console && make -DBATCH install clean) && \
-    (cd /usr/ports/devel/subversion && make -DBATCH install clean) && \
+    (cd /usr/ports/net/svnup && make -DBATCH install clean) && \
     (cd /usr/ports/devel/git && make -DBATCH install clean) && \
     (cd /usr/ports/ftp/wget && make -DBATCH install clean) && \
 
@@ -70,7 +70,7 @@ y | Y)
     pkg install --yes sudo
     pkg install --yes vim-console
     pkg install --yes wget
-    pkg install --yes subversion
+    pkg install --yes svnup
     pkg install --yes git
     ;;
   esac
