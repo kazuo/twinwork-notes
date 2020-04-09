@@ -27,9 +27,9 @@ y | Y)
   mkdir -v /root/kernels/i386
   mkdir -v /root/kernels/amd64
   cp -v /usr/src/sys/i386/conf/GENERIC /root/kernels/i386/${KERNEL}
-  (cd /usr/src/sys/i386/conf && ln -sv /root/kernels/i386/${KERNEL} ${KERNEL}).i386
+  (cd /usr/src/sys/i386/conf && ln -sv /root/kernels/i386/${KERNEL} ${KERNEL}.i386)
   cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL}
-  (cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL}).amd64
+  (cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL}.amd64)
 
   echo -n "Use ports to install? Choosing no will use pkg instead [Y/n]: " && read INSTALL
   case ${INSTALL} in
