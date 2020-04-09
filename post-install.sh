@@ -40,33 +40,19 @@ y | Y)
     (/usr/sbin/portsnap extract)
 
     echo ""
-    echo "Make config for ports now..."
-    (cd /usr/ports/ports-mgmt/portupgrade && make config-recursive)
-    (cd /usr/ports/devel/nasm && make config-recursive)
-    (cd /usr/ports/sysutils/screen && make config-recursive)
-    (cd /usr/ports/shells/bash && make config-recrusve)
-    (cd /usr/ports/shells/zsh && make config-recrusve)
-    (cd /usr/ports/misc/gnuls && make config-recursive)
-    (cd /usr/ports/security/sudo && make config-recursive)
-    (cd /usr/ports/editors/vim-console && make config-recursive)
-    (cd /usr/ports/devel/subversion && make config-recursive)
-    (cd /usr/ports/devel/git && make config-recursive)
-    (cd /usr/ports/ftp/wget && make config-recursive)
-
-    echo ""
     echo "Now installing from ports..."
 
-    (cd /usr/ports/ports-mgmt/portupgrade && make install clean)
-    (cd /usr/ports/devel/nasm && make install clean)
-    (cd /usr/ports/sysutils/screen && make install clean)
-    (cd /usr/ports/shells/bash && make install clean)
-    (cd /usr/ports/shells/zsh && make install clean)
-    (cd /usr/ports/misc/gnuls && make install clean)
-    (cd /usr/ports/security/sudo && make install clean)
-    (cd /usr/ports/editors/vim-console && make install clean)
-    (cd /usr/ports/devel/subversion && make install clean)
-    (cd /usr/ports/devel/git && make install clean)
-    (cd /usr/ports/ftp/wget && make install clean)
+    (cd /usr/ports/ports-mgmt/portupgrade && make -DBATCH install clean)
+    (cd /usr/ports/devel/nasm && make -DBATCH install clean)
+    (cd /usr/ports/sysutils/screen && make -DBATCH install clean)
+    (cd /usr/ports/shells/bash && make -DBATCH install clean)
+    (cd /usr/ports/shells/zsh && make -DBATCH install clean)
+    (cd /usr/ports/misc/gnuls && make -DBATCH install clean)
+    (cd /usr/ports/security/sudo && make -DBATCH install clean)
+    (cd /usr/ports/editors/vim-console && make -DBATCH install clean)
+    (cd /usr/ports/devel/subversion && make -DBATCH install clean)
+    (cd /usr/ports/devel/git && make -DBATCH install clean)
+    (cd /usr/ports/ftp/wget && make -DBATCH install clean)
 
     rm -rf /usr/ports/distfiles/*
     ;;
