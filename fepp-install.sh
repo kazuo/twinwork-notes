@@ -2,7 +2,6 @@
 # From https://kifarunix.com/install-nginx-mysql-php-femp-stack-on-freebsd-12/
 
 echo ""
-echo "Install from ports?"
 echo -n "Use ports to install? Choosing no will use pkg insead [Y/n]: " && read CONTINUE
 
 case ${CONTINUE} in
@@ -50,15 +49,16 @@ y | Y)
     (cd /usr/ports/archivers/php74-zlib/ && make -DBATCH install clean) && \
 
     # pecl
-    (cd /usr/ports/security/pecl-mcrypt/ && make -DBATCH install clean)
+    (cd /usr/ports/security/pecl-mcrypt/ && make -DBATCH install clean) && \
+
+    echo "Completed installing from ports"
+
     ;;
 *)
     # pkg version
     pkg update
     pkg install --yes nginx
     pkg install --yes php74
-    pkg install --yes postgresql12-client
-    pkg install --yes postgresql12-server
 
     # default php74-extensions
     pkg install --yes php74-ctype
@@ -95,6 +95,9 @@ y | Y)
 
     # pecl
     pkg install --yes php74-pecl-mcrypt
+
+    # py74-pgsql installs pgsql 11, so we install pgsql 12 last
+    pkg install --yes postgresql12-server
     ;;
 esac
 
