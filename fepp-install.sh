@@ -101,6 +101,7 @@ esac
 sysrc nginx_enable=YES
 service nginx start
 service nginx status
+
+sysrc postgresql_enable=YES
 /usr/local/etc/rc.d/postgresql initdb --data-checksums
 /usr/local/etc/rc.d/postgresql start
-sysrc postgresql_enable=YES
