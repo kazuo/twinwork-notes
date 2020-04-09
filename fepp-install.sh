@@ -156,7 +156,7 @@ main() {
     echo ""
     continue_prompt "This will install Nginx, PostgreSQL, and PHP..."
 
-    if [[ $INSTALL_FROM == "pkg" ]]
+    if [ ${INSTALL_FROM} == "pkg" ]
         install_from_pkg
     else
         install_from_ports

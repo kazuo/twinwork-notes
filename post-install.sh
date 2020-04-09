@@ -21,12 +21,12 @@ handle_args() {
             --use-ports)
                 INSTALL_FROM=ports
                 shift
-            ;;
-                --use-pkg)
+                ;;
+            --use-pkg)
                 INSTALL_FROM=pkg
                 shift
-            ;;
-            --kernel-name)
+                ;;
+            --kernel-name=*)
                 KERNEL_NAME="${arg#*=}"
                 shift
                 ;;
@@ -34,6 +34,7 @@ handle_args() {
                 usage
                 exit 1
                 shift
+                ;;
         esac
     done
 }
@@ -110,7 +111,7 @@ main() {
 
     (/usr/sbin/portsnap fetch && /usr/sbin/portsnap extract)
 
-    if [[ $INSTALL_FROM == "pkg" ]]; then
+    if [ ${INSTALL_FROM} == "pkg" ]; then
         install_from_pkg
     else
         install_from_ports
