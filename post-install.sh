@@ -6,7 +6,7 @@ INSTALL_FROM=ports
 KERNEL_NAME=
 
 usage() {
-    echo "usuage: $0 [--use-pkg]
+    echo "usage: $0 [--use-pkg]
         --help          : usage
         --use-ports     : use ports for post-install (default)
         --use-pkg       : use pkg for post-install (ports tree will still be updated)
@@ -42,9 +42,8 @@ handle_args() {
 continue_prompt() {
     local MESSAGE=$1
 
-    echo "________________________________________________________________________________
-
-    $MESSAGE"
+    echo "________________________________________________________________________________"
+    echo ${MESSAGE}
     read -p "Continue? [Y/n] " yn
     case $yn in
         [Yy]*)

@@ -4,7 +4,7 @@
 INSTALL_FROM=ports
 
 usage() {
-    echo "usuage: $0 [--use-pkg]
+    echo "usage: $0 [--use-pkg]
         --help          : usage
         --use-ports     : use ports for install (default)
         --use-pkg       : use pkg for install
@@ -12,27 +12,21 @@ usage() {
 }
 
 handle_args() {
-    while (($#)); do
-
-        arg=$(echo $1 | sed 's/=.*//g')
-        if [[ $1 != *"="* ]]; then
-            shift
-            value=$1
-        else
-            value=$(echo $1 | sed 's/.*=//g')
-        fi
-
-        shift
+    for arg in "$@"
+    do
         case $arg in
             --use-ports)
                 INSTALL_FROM=ports
+                shift
                 ;;
             --use-pkg)
                 INSTALL_FROM=pkg
+                shift
                 ;;
             *)
                 usage
                 exit 1
+                shift
                 ;;
         esac
     done
@@ -41,9 +35,8 @@ handle_args() {
 continue_prompt() {
     local MESSAGE=$1
 
-    echo "________________________________________________________________________________
-
-    $MESSAGE"
+    echo "________________________________________________________________________________"
+    echo ${MESSAGE}
     read -p "Continue? [Y/n] " yn
     case $yn in
         [Yy]*)
@@ -156,7 +149,7 @@ main() {
     echo ""
     continue_prompt "This will install Nginx, PostgreSQL, and PHP..."
 
-    if [ ${INSTALL_FROM} == "pkg" ]
+    if [ ${INSTALL_FROM} == "pkg" ]; then
         install_from_pkg
     else
         install_from_ports
