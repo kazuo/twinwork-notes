@@ -27,50 +27,51 @@ y | Y)
   mkdir -v /root/kernels/i386
   mkdir -v /root/kernels/amd64
   cp -v /usr/src/sys/i386/conf/GENERIC /root/kernels/i386/${KERNEL}
-  (cd /usr/src/sys/i386/conf && ln -sv /root/kernels/i386/${KERNEL} ${KERNEL}.i386)
+  (cd /usr/src/sys/i386/conf && ln -sv /root/kernels/i386/${KERNEL} ${KERNEL})
   cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL}
-  (cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL}.amd64)
+  (cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL} ${KERNEL})
+
+  echo ""
+  echo "Updating ports tree..."
+  (/usr/sbin/portsnap fetch)
+  (/usr/sbin/portsnap extract)
 
   echo -n "Use ports to install? Choosing no will use pkg instead [Y/n]: " && read INSTALL
   case ${INSTALL} in
   y | Y)
-    echo ""
-    echo "Updating ports tree..."
-    (/usr/sbin/portsnap fetch)
-    (/usr/sbin/portsnap extract)
 
     echo ""
     echo "Now installing from ports..."
 
-    (cd /usr/ports/ports-mgmt/portupgrade && make -DBATCH install clean)
-    (cd /usr/ports/devel/nasm && make -DBATCH install clean)
-    (cd /usr/ports/sysutils/screen && make -DBATCH install clean)
-    (cd /usr/ports/shells/bash && make -DBATCH install clean)
-    (cd /usr/ports/shells/zsh && make -DBATCH install clean)
-    (cd /usr/ports/misc/gnuls && make -DBATCH install clean)
-    (cd /usr/ports/security/sudo && make -DBATCH install clean)
-    (cd /usr/ports/editors/vim-console && make -DBATCH install clean)
-    (cd /usr/ports/devel/subversion && make -DBATCH install clean)
-    (cd /usr/ports/devel/git && make -DBATCH install clean)
-    (cd /usr/ports/ftp/wget && make -DBATCH install clean)
+    (cd /usr/ports/ports-mgmt/portupgrade && make -DBATCH install clean) && \
+    (cd /usr/ports/devel/nasm && make -DBATCH install clean) && \
+    (cd /usr/ports/sysutils/screen && make -DBATCH install clean) && \
+    (cd /usr/ports/shells/bash && make -DBATCH install clean) && \
+    (cd /usr/ports/shells/zsh && make -DBATCH install clean) && \
+    (cd /usr/ports/misc/gnuls && make -DBATCH install clean) && \
+    (cd /usr/ports/security/sudo && make -DBATCH install clean) && \
+    (cd /usr/ports/editors/vim-console && make -DBATCH install clean) && \
+    (cd /usr/ports/devel/subversion && make -DBATCH install clean) && \
+    (cd /usr/ports/devel/git && make -DBATCH install clean) && \
+    (cd /usr/ports/ftp/wget && make -DBATCH install clean) && \
 
     rm -rf /usr/ports/distfiles/*
     ;;
   *)
     echo ""
     echo "Now installing from pkg..."
-    (pkg update)
-    (pkg install --yes portupgrade)
-    (pkg install --yes nasm)
-    (pkg install --yes screen)
-    (pkg install --yes bash)
-    (pkg install --yes zsh)
-    (pkg install --yes gnuls)
-    (pkg install --yes sudo)
-    (pkg install --yes vim-console)
-    (pkg install --yes wget)
-    (pkg install --yes subversion)
-    (pkg install --yes git)
+    pkg update
+    pkg install --yes portupgrade
+    pkg install --yes nasm
+    pkg install --yes screen
+    pkg install --yes bash
+    pkg install --yes zsh
+    pkg install --yes gnuls
+    pkg install --yes sudo
+    pkg install --yes vim-console
+    pkg install --yes wget
+    pkg install --yes subversion
+    pkg install --yes git
     ;;
   esac
 
