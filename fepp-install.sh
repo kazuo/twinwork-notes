@@ -1,11 +1,60 @@
 #!/usr/bin/env bash
 # From https://kifarunix.com/install-nginx-mysql-php-femp-stack-on-freebsd-12/
 
-echo ""
-echo -n "Use ports to install? Choosing no will use pkg insead [Y/n]: " && read CONTINUE
+INSTALL_FROM=ports
 
-case ${CONTINUE} in
-y | Y)
+usage() {
+    echo "usuage: $0 [--use-pkg]
+        --use-ports     : use ports for post-install (default)
+        --use-pkg       : use pkg for post-install (ports tree will still be updated)
+    "
+}
+
+handle_args() {
+    while (($#)); do
+
+        arg=$(echo $1 | sed 's/=.*//g')
+        if [[ $1 != *"="* ]]; then
+            shift
+            value=$1
+        else
+            value=$(echo $1 | sed 's/.*=//g')
+        fi
+
+        shift
+        case $arg in
+        --use-ports)
+            INSTALL_FROM=ports
+            ;;
+        --use-pkg)
+            INSTALL_FROM=pkg
+            ;;
+        *)
+            usage
+            exit 1
+            ;;
+        esac
+    done
+}
+
+continue_prompt() {
+    local MESSAGE=$1
+
+    echo "________________________________________________________________________________
+
+    $MESSAGE"
+    read -p "Continue? [Y/n] " yn
+    case $yn in
+    [Yy]*) ;;
+
+    *)
+        echo "Canceling operation..."
+        exit 1
+        ;;
+    esac
+}
+
+install_from_ports() {
     # ports version update
     portsnap fetch update
 
@@ -51,10 +100,10 @@ y | Y)
     # pecl
     (cd /usr/ports/security/pecl-mcrypt/ && make -DBATCH install clean) && \
 
-    echo "Completed installing from ports"
+    rm -rf /usr/ports/distfiles/*
+}
 
-    ;;
-*)
+install_from_pkg() {
     # pkg version
     pkg update
     pkg install --yes nginx
@@ -98,13 +147,28 @@ y | Y)
 
     # py74-pgsql installs pgsql 11, so we install pgsql 12 last
     pkg install --yes postgresql12-server
-    ;;
-esac
+}
 
-sysrc nginx_enable=YES
-service nginx start
-service nginx status
+main() {
+    echo "Twinwork NOTES post-install for FreeBSD 12"
+    echo "See https://github.com/kazuo/twinwork-notes"
+    echo ""
+    continue_prompt "This will install Nginx, PostgreSQL, and PHP..."
 
-sysrc postgresql_enable=YES
-/usr/local/etc/rc.d/postgresql initdb --data-checksums
-/usr/local/etc/rc.d/postgresql start
+    if [[ $INSTALL_FROM == "pkg" ]]
+        install_from_pkg
+    else
+        install_from_ports
+    fi
+
+    sysrc nginx_enable=YES
+    service nginx start
+    service nginx status
+
+    sysrc postgresql_enable=YES
+    /usr/local/etc/rc.d/postgresql initdb --data-checksums
+    /usr/local/etc/rc.d/postgresql start
+}
+
+handle_args $@
+main
