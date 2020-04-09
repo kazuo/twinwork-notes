@@ -3,7 +3,7 @@
 
 echo ""
 echo "Install from ports?"
-echo -n "'Y' will install from ports, otherwise it will install from pkg " && read CONTINUE
+echo -n "Use ports to install? Choosing no will use pkg insead [Y/n]: " && read CONTINUE
 
 case ${CONTINUE} in
 y | Y)
@@ -96,7 +96,6 @@ y | Y)
     # pkg version
     pkg update
     pkg install --yes nginx
-    pkg install --yes postgresql12-server
     pkg install --yes php74
 
     # default php74-extensions
@@ -134,9 +133,17 @@ y | Y)
 
     # pecl
     pkg install --yes php74-pecl-mcrypt
+
+    # installing pgsql last since php74 insists to install
+    # postgresql 11 for its client despite postgresql 12
+    # is installed...
+    pkg install --yes postgresql12-server
     ;;
 esac
 
-sysrc nginx_enable=yes
+sysrc nginx_enable=YES
 service nginx start
 service nginx status
+/usr/local/etc/rc.d/postgresql initdb --data-checksums
+/usr/local/etc/rc.d/postgresql start
+sysrc postgresql_enable=YES
