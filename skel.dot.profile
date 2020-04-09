@@ -1,4 +1,4 @@
-# 2003/07/08 
+# 2003/07/08
 #
 # .profile - Bourne Shell startup script for login shells
 #
@@ -6,7 +6,7 @@
 #
 
 # remove /usr/games and /usr/X11R6/bin if you want
-PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/games:/usr/local/bin:/usr/X11R6/bin:$HOME/bin; export PATH
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/games:/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin:$HOME/bin; export PATH
 
 # Setting TERM is normally done through /etc/ttys. Do only override
 # if you're sure that you'll never log in via telnet or xterm or a
