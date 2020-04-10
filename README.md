@@ -7,7 +7,7 @@ The original NOTES website is no longer available. It was also extremely out of 
 
 This is the abbreviated version of FreeBSD NOTES and assumes the following:
 1. Completed the initial install for FreeBSD
-2. Network is configured
+3. Network is configured
 
 Login locally as `root` and download the following
 
@@ -18,21 +18,24 @@ cd twinwork-notes-master
 sh post-install.sh
 ```
 
-Once the install finished, log back out and back in as `root`. You should see the new shell changes. Before adding a user, update the template for new users:
-
-```sh
-adduser -C -k /etc/skel
+The `post-install.sh` script has a couple of options:
 ```
+    --help                        : usage
+    --use-ports                   : use ports for post-install (default)
+    --use-pkg                     : use pkg for post-install
+                                    (ports tree will still be updated)
+    --kernel-name=<custom_name>   : custom kernel name
+                                    (this will install/update FreeBSD source tree)
+```
+The `--use-ports` flag is always implied unless you use `--use-pkg`. The latter is always faster but the former flag exists since this what this script originally installed through ports. The script will no longer prompt you for a kernel name if you choose to customize your kernel. Be aware if you choose to set `--kernel-name`, the FreeBSD source tree will first be updated using the `release` tag. And if you did not install the source tree during your initial setup, it will download the entire tree.
 
-Follow the prompts for first time use. Use your own judgment. Be sure to set the user's default shell as bash. Remember to write file.
+Once the install finishes, log back out and back in as `root`. You should see the new shell changes.
 
 After the initial settings have been established, add your first user... yourself.
 
 ```sh
 adduser
 ```
-
-Answer the prompts accordingly. What this will do is have you configure `adduser` and set `/usr/share/skel` for the template directory for all new users. Now all you need to do is run `adduser` as normal to add a new user.
 
 One more thing about `/etc/skel`. NOTES used to symlink `.profile` to `.bashrc.` This used to work in `/etc/skel` for 4.x-RELEASE, but any modern version of FreeBSD `adduser` does not copy over these symlinks. You will need to generate them yourself. I do not know what the work around is... and honestly, I don't care as much since I am the only user who logs into my machines. When you log in as your new user, create a symlink `.profile` to `.bashrc` :)
 
@@ -59,4 +62,3 @@ Go through the file until you see the following line to uncomment
 %wheel ALL=(ALL) NOPASSWD: ALL
 ```
 Uncommenting that line allows you to use `sudo` without ever prompting for a password. This is convenient but proceed with caution
-

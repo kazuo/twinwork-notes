@@ -7,10 +7,12 @@ KERNEL_NAME=
 
 usage() {
     echo "usage: $0 [--use-pkg]
-        --help          : usage
-        --use-ports     : use ports for post-install (default)
-        --use-pkg       : use pkg for post-install (ports tree will still be updated)
-        --kernel-name   : custom kernel name (this will install/update FreeBSD source tree)
+    --help                      : usage
+    --use-ports                 : use ports for post-install (default)
+    --use-pkg                   : use pkg for post-install
+                                    (ports tree will still be updated)
+    --kernel-name=<custom_name> : custom kernel name
+                                    (this will install/update FreeBSD source tree)
     "
 }
 
@@ -72,7 +74,6 @@ install_from_ports() {
 }
 
 install_from_pkg() {
-    pkg update
     pkg install --yes portupgrade
     pkg install --yes nasm
     pkg install --yes screen
@@ -103,11 +104,14 @@ copy_custom_kernel() {
 }
 
 main() {
+    echo ""
     echo "Twinwork NOTES post-install for FreeBSD 12"
     echo "See https://github.com/kazuo/twinwork-notes"
     echo ""
-    continue_prompt "Will run post-install script for fresh installation of FreeBSD 12..."
+    echo ""
+    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 12..."
 
+    pkg update
     (/usr/sbin/portsnap fetch && /usr/sbin/portsnap extract)
 
     if [ ${INSTALL_FROM} == "pkg" ]; then
