@@ -61,7 +61,6 @@ install_from_ports() {
     # default php74-extensions
     (cd /usr/ports/textproc/php74-ctype/ && make -DBATCH install clean) && \
     (cd /usr/ports/security/php74-filter/ && make -DBATCH install clean) && \
-    (cd /usr/ports/security/php74-hash/ && make -DBATCH install clean) && \
     (cd /usr/ports/converters/php74-iconv/ && make -DBATCH install clean) && \
     (cd /usr/ports/devel/php74-json/ && make -DBATCH install clean) && \
     (cd /usr/ports/www/php74-opcache/ && make -DBATCH install clean) && \
@@ -106,7 +105,6 @@ install_from_pkg() {
     # default php74-extensions
     pkg install --yes php74-ctype
     pkg install --yes php74-filter
-    pkg install --yes php74-hash
     pkg install --yes php74-iconv
     pkg install --yes php74-json
     pkg install --yes php74-opcache
