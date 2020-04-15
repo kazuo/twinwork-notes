@@ -64,7 +64,6 @@ install_from_ports() {
     (cd /usr/ports/converters/php74-iconv/ && make -DBATCH install clean) && \
     (cd /usr/ports/devel/php74-json/ && make -DBATCH install clean) && \
     (cd /usr/ports/www/php74-opcache/ && make -DBATCH install clean) && \
-    (cd /usr/ports/security/php74-openssl/ && make install clean) && \
     (cd /usr/ports/databases/php74-pdo/ && make -DBATCH install clean) && \
     (cd /usr/ports/archivers/php74-phar/ && make -DBATCH install clean) && \
     (cd /usr/ports/sysutils/php74-posix/ && make -DBATCH install clean) && \
@@ -87,7 +86,9 @@ install_from_ports() {
     (cd /usr/ports/textproc/php74-dom/ && make -DBATCH install clean) && \
     (cd /usr/ports/graphics/php74-exif/ && make -DBATCH install clean) && \
     (cd /usr/ports/graphics/php74-gd/ && make -DBATCH install clean) && \
+    (cd /usr/ports/devel/php74-intl/ && make -DBATCH install clean) && \
     (cd /usr/ports/converters/php74-mbstring/ && make -DBATCH install clean) && \
+    (cd /usr/ports/security/php74-openssl/ && make install clean) && \
     (cd /usr/ports/archivers/php74-zip/ && make -DBATCH install clean) && \
     (cd /usr/ports/archivers/php74-zlib/ && make -DBATCH install clean) && \
 
@@ -109,7 +110,6 @@ install_from_pkg() {
     pkg install --yes php74-iconv
     pkg install --yes php74-json
     pkg install --yes php74-opcache
-    pkg install php74-openssl
     pkg install --yes php74-pdo
     pkg install --yes php74-phar
     pkg install --yes php74-posix
@@ -132,7 +132,9 @@ install_from_pkg() {
     pkg install --yes php74-dom
     pkg install --yes php74-exif
     pkg install --yes php74-gd
+    pkg install --yes php74-intl
     pkg install --yes php74-mbstring
+    pkg install --yes php74-openssl
     pkg install --yes php74-zip
     pkg install --yes php74-zlib
 
