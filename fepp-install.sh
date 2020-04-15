@@ -37,7 +37,7 @@ continue_prompt() {
 
     echo "________________________________________________________________________________"
     echo ${MESSAGE}
-    read -p "Continue? [Y/n] " yn
+    read -p "Continue? [y/N] " yn
     case $yn in
         [Yy]*)
             ;;
@@ -64,6 +64,7 @@ install_from_ports() {
     (cd /usr/ports/converters/php74-iconv/ && make -DBATCH install clean) && \
     (cd /usr/ports/devel/php74-json/ && make -DBATCH install clean) && \
     (cd /usr/ports/www/php74-opcache/ && make -DBATCH install clean) && \
+    (cd /usr/ports/security/php74-openssl/ && make install clean) && \
     (cd /usr/ports/databases/php74-pdo/ && make -DBATCH install clean) && \
     (cd /usr/ports/archivers/php74-phar/ && make -DBATCH install clean) && \
     (cd /usr/ports/sysutils/php74-posix/ && make -DBATCH install clean) && \
@@ -108,6 +109,7 @@ install_from_pkg() {
     pkg install --yes php74-iconv
     pkg install --yes php74-json
     pkg install --yes php74-opcache
+    pkg install php74-openssl
     pkg install --yes php74-pdo
     pkg install --yes php74-phar
     pkg install --yes php74-posix
@@ -153,13 +155,7 @@ main() {
         install_from_ports
     fi
 
-    sysrc nginx_enable=YES
-    service nginx start
-    service nginx status
-
     sysrc postgresql_enable=YES
-    /usr/local/etc/rc.d/postgresql initdb --data-checksums
-    /usr/local/etc/rc.d/postgresql start
 }
 
 handle_args $@

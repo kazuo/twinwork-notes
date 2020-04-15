@@ -46,7 +46,7 @@ continue_prompt() {
 
     echo "________________________________________________________________________________"
     echo ${MESSAGE}
-    read -p "Continue? [Y/n] " yn
+    read -p "Continue? [y/N] " yn
     case $yn in
         [Yy]*)
             ;;
