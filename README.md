@@ -39,18 +39,13 @@ adduser
 
 One more thing about `/etc/skel`. NOTES used to symlink `.profile` to `.bashrc.` This used to work in `/etc/skel` for 4.x-RELEASE, but any modern version of FreeBSD `adduser` does not copy over these symlinks. You will need to generate them yourself. I do not know what the work around is... and honestly, I don't care as much since I am the only user who logs into my machines. When you log in as your new user, create a symlink `.profile` to `.bashrc` :)
 
-If you didn't already add yourself to the `wheel` group through the `adduser` prompts, you can do so manually by editing `/etc/group`.
+If you didn't already add yourself to the `wheel` group through the `adduser` prompts, you can do so manually by editing via `pw`
 
-```sh
-vim /etc/group
+```
+pw groupmod -n wheel -m rey
 ```
 
-Now add yourself to `wheel`.
-```
-wheel:*:0:root,rey
-```
-
-*`rey`* is my added self to `wheel`. This is important. By adding yourself to `wheel`, you do not need to login as `root` anymore. Just `su` to get `root` access and administer from there. Actually, `su` is outdated, use `sudo` instead, but first add yourself to the `sudoers` file
+*`rey`* is my added self to `wheel`. This is important. By adding yourself to `wheel`, you do not need to login as `root` anymore. Just `su` to get `root` access and administer from there. Better yet, instead of using `su` use `sudo` instead, but first add yourself to the `sudoers` file
 
 ```
 visudo
@@ -62,3 +57,182 @@ Go through the file until you see the following line to uncomment
 %wheel ALL=(ALL) NOPASSWD: ALL
 ```
 Uncommenting that line allows you to use `sudo` without ever prompting for a password. This is convenient but proceed with caution
+
+## The FEPP install script
+I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script. This script also has a `--use-ports` and `--use-pkg` flag just like `post-install.sh`. And by default it uses `--use-ports`.
+
+```
+sudo sh ./fepp-install.sh
+```
+
+The script does not automatically start the services for Nginx, PostgreSQL, or PHP-FPM. These services need to be configured first before starting.
+
+
+### PostgreSQL
+By default, PostgreSQL's data folder will be in `/var/db/postgres/data{version}` where `version` is PostgreSQL's major version (i.e. `/var/db/postgres/data12`). Also, by default the `postgres` user's home folder is `/var/db/postgres`. If you want to change where to store PostgreSQL data, you will need to change `postgres`' home folder as well.
+
+In this example, I have folder called `/nyx` and want to place my `postgres` home folder there. We want to create the `postgres` home folder, set the the `postgres` user and group to own the home folder, change the `postgres` user to the new home folder, enable the `postgresql` service,and finally set the `postgresql_data` config in `/etc/rc.conf`
+
+```
+sudo mkdir -p /nyx/postgres
+sudo chown postgres:postgres /nyx/postgres
+sudo pw user mod -n postgres -d /nyx/postgres
+sudo sysrc postgresql_enable=YES
+sudo sysrc postgresql_data=/nyx/postgres/data12
+```
+
+Now you can initialize your DB and start the server.
+
+```
+sudo service postgresql initdb
+sudo service postgresql start
+```
+
+If you ever need to migrate your DB folder anywhere, don't forget to move the `postgres` user's home folder, too.
+
+To log into postgres:
+```
+sudo -u postgres psql
+```
+
+You can create a user and DB from a few CLI commands. This will create a local user called `plex` without a password
+
+```
+sudo -u postgres createuser -e plex
+```
+
+And create a new database called `sandbox` owned by your new user
+
+```
+sudo -u postgres createdb -e -O plex -E UTF8 sandbox
+```
+
+Then you can login as `plex` to your `sandbox` database
+
+```
+psql -U plex sandbox
+```
+
+
+### PHP-FPM
+
+Copy the sample production `php.ini` in place and enable the service
+```
+sudo cp /usr/local/etc/php.ini{-production,}
+```
+
+Modify `/usr/local/etc/php-fpm.d/www.conf`. We want to use a unix socket instead of TCP as well as setting other options. Find (or add) the keys in the file to modify
+
+```
+listen = /var/run/php-fpm.sock
+listen.owner = www
+listen.group = www
+listen.mode = 0660
+```
+
+Enable and start the PHP-FPM service
+
+```
+sudo sysrc php_fpm_enable=YES
+sudo service php-fpm start
+```
+
+### Nginx
+Add Nginx to `/etc/rc.conf` and start the service
+
+```
+sudo sysrc nginx_enable=YES
+sudo service nginx start
+```
+
+Not Nginx specific, but we should create a new folder for `www` for all our websites.
+
+```
+sudo pw user mod -n www -d /nyx/www
+sudo -u www mkdir ~/.ssh
+```
+
+If you want to quickly test PHP, you can use the default
+Under `server` block, add the following `location` block to get PHP up and running:
+
+```
+        # from https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
+        location ~ [^/]\.php(/|$) {
+            fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+            if (!-f $document_root$fastcgi_script_name) {
+                return 404;
+            }
+            root           /usr/local/www/nginx;
+            fastcgi_pass   unix:/var/run/php-fpm.sock;
+            fastcgi_index  index.php;
+            include        fastcgi_params;
+            fastcgi_param  HTTP_PROXY       "";
+            fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+```
+
+Here's another sample configuring if you're using the Yii 2 framework.
+
+From https://www.yiiframework.com/doc/guide/2.0/en/start-installation
+```
+server {
+    charset utf-8;
+    client_max_body_size 128M;
+
+    listen 80; ## listen for ipv4
+    #listen [::]:80 default_server ipv6only=on; ## listen for ipv6
+
+    server_name sandbox.nyx;
+    root        /nyx/www/sandbox/web;
+    index       index.php;
+
+    access_log  /nyx/www/sandbox/log/access.log;
+    error_log   /nyx/www/sandbox/log/error.log;
+
+    location / {
+        # Redirect everything that isn't a real file to index.php
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    # uncomment to avoid processing of calls to non-existing static files by Yii
+    #location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
+    #    try_files $uri =404;
+    #}
+    #error_page 404 /404.html;
+
+    # deny accessing php files for the /assets directory
+    location ~ ^/assets/.*\.php$ {
+        deny all;
+    }
+
+    location ~ [^/]\.php(/|$) {
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        if (!-f $document_root$fastcgi_script_name) {
+            return 404;
+        }
+        fastcgi_pass   unix:/var/run/php-fpm.sock;
+        fastcgi_index  index.php; # not sure if this is still needed?
+        include        fastcgi_params;
+        fastcgi_param  HTTP_PROXY       "";
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        try_files $uri =404;
+    }
+
+    location ~* /\. {
+        deny all;
+    }
+}
+```
+
+If you're doing anything under your `www` folder, make sure you run any commands as the `www` user.
+
+```
+sudo -u www mkdir /nyx/www/sandbox
+```
+
+Any time you change your Nginx configuration, be sure to test it before restarting
+
+```
+sudo service nginx configtest
+sudo service nginx restart
+```

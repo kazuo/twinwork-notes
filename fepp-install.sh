@@ -156,8 +156,6 @@ main() {
     else
         install_from_ports
     fi
-
-    sysrc postgresql_enable=YES
 }
 
 handle_args $@
