@@ -145,7 +145,7 @@ sudo sysrc nginx_enable=YES
 sudo service nginx start
 ```
 
-Not Nginx specific, but we should create a new folder for `www` for all our websites.
+Not Nginx specific, but we should create a new folder for `www` for all our websites. Set `www`'s home folder and create an `.ssh` folder. I generally use `git` as `www` and add any SSH keys to access my repos.
 
 ```
 sudo pw user mod -n www -d /nyx/www
@@ -211,7 +211,7 @@ server {
             return 404;
         }
         fastcgi_pass   unix:/var/run/php-fpm.sock;
-        fastcgi_index  index.php; # not sure if this is still needed?
+        fastcgi_index  index.php;
         include        fastcgi_params;
         fastcgi_param  HTTP_PROXY       "";
         fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
