@@ -111,8 +111,14 @@ sudo iocage set allow_raw_sockets=1 sandbox
 
 Check out the `iocage` `man` page for more: https://www.freebsd.org/cgi/man.cgi?query=iocage&sektion=8
 
-Not related to `iocage`, but I'm using this jail to setup `sandbox`, so let's do that (and install `vim` just because)
+You can get into the jail's console by doing the following
 
 ```
 sudo iocage console sandbox
+```
+
+If you want to execute you can use `exec` (e.g. installing `vim`)
+
+```
+sudo iocage exec sandbox "(cd /usr/ports/editors/vim-console && make -DBATCH install clean)"
 ```
