@@ -1,4 +1,4 @@
-## Nginx
+# Nginx
 --
 Recent version of the NGINX introduces dynamic modules support.  In
 FreeBSD ports tree this feature was enabled by default with the DSO
@@ -20,7 +20,7 @@ Default path for the NGINX dynamic modules is
 
 /usr/local/libexec/nginx.
 
-## PostgreSQL
+# PostgreSQL
 --
 For procedural languages and postgresql functions, please note that
 you might have to update them when updating the server.
