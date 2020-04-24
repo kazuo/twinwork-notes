@@ -76,7 +76,7 @@ In this example, I have folder called `/nyx` and want to place my `postgres` hom
 ```
 sudo mkdir -p /nyx/postgres
 sudo chown postgres:postgres /nyx/postgres
-sudo pw user mod -n postgres -d /nyx/postgres
+sudo pw usermod -n postgres -d /nyx/postgres
 sudo sysrc postgresql_enable=YES
 sudo sysrc postgresql_data=/nyx/postgres/data12
 ```
@@ -148,7 +148,7 @@ sudo service nginx start
 Not Nginx specific, but we should create a new folder for `www` for all our websites. Set `www`'s home folder and create an `.ssh` folder. I generally use `git` as `www` and add any SSH keys to access my repos.
 
 ```
-sudo pw user mod -n www -d /nyx/www
+sudo pw usermod -n www -d /nyx/www
 sudo -u www mkdir ~/.ssh
 ```
 
