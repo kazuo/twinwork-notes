@@ -94,3 +94,24 @@ You can change this by editing pg_hba.conf or using the option -A, or
 Success. You can now start the database server using:
 
     /usr/local/bin/pg_ctl -D /var/db/postgres/data12 -l logfile start
+
+
+# ssmtp
+Creating group 'ssmtp' with gid '916'.
+sSMTP has been installed successfully.
+
+To replace sendmail with ssmtp type "make replace" or change
+your /etc/mail/mailer.conf to:
+
+sendmail        /usr/local/sbin/ssmtp
+send-mail       /usr/local/sbin/ssmtp
+mailq           /usr/local/sbin/ssmtp
+newaliases      /usr/local/sbin/ssmtp
+hoststat        /usr/bin/true
+purgestat       /usr/bin/true
+
+
+However, before you can use the program, you should copy the files
+"revaliases.sample" and "ssmtp.conf.sample" in /usr/local/etc/ssmtp
+to "revaliases" and "ssmtp.conf" respectively and edit them to suit
+your needs.
