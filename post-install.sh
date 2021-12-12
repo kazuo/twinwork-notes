@@ -77,17 +77,17 @@ install_from_ports() {
 install_from_pkg() {
     pkg update && \
 
-    pkg install --yes portupgrade && \
-    pkg install --yes nasm && \
-    pkg install --yes screen && \
-    pkg install --yes bash && \
-    pkg install --yes zsh && \
-    pkg install --yes gnuls && \
-    pkg install --yes sudo && \
-    pkg install --yes vim && \
-    pkg install --yes wget && \
-    pkg install --yes svnup && \
-    pkg install --yes git && \
+    pkg install --yes ports-mgmt/portupgrade && \
+    pkg install --yes devel/nasm && \
+    pkg install --yes sysutils/screen && \
+    pkg install --yes shells/bash && \
+    pkg install --yes shells/zsh && \
+    pkg install --yes misc/gnuls && \
+    pkg install --yes security/sudo && \
+    pkg install --yes editors/vim && \
+    pkg install --yes net/svnup && \
+    pkg install --yes devel/git && \
+    pkg install --yes ftp/wget && \
 
     pkg clean
 }
