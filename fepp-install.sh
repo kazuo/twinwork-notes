@@ -50,7 +50,7 @@ continue_prompt() {
 
 install_from_ports() {
     # ports version update
-    portsnap fetch update
+    portsnap fetch update && \
 
     # nginx, pgsql, php80
     (cd /usr/ports/www/nginx/ && make -DBATCH install clean) && \
@@ -60,6 +60,7 @@ install_from_ports() {
 
     # default php80-extensions (i.e. /usr/ports/lang/php80-extensions/)
     (cd /usr/ports/textproc/php80-ctype/ && make -DBATCH install clean) && \
+    (cd /usr/ports/textproc/php80-dom/ && make -DBATCH install clean) && \
     (cd /usr/ports/security/php80-filter/ && make -DBATCH install clean) && \
     (cd /usr/ports/converters/php80-iconv/ && make -DBATCH install clean) && \
     (cd /usr/ports/www/php80-opcache/ && make -DBATCH install clean) && \
@@ -81,8 +82,7 @@ install_from_ports() {
 
     # other php80 extensions
     (cd /usr/ports/archivers/php80-bz2/ && make -DBATCH install clean) && \
-    (cd /usr/ports/ftp/php80-curl/ && make -DBATCH install clean) && \
-    (cd /usr/ports/textproc/php80-dom/ && make -DBATCH install clean) && \
+    (cd /usr/ports/ftp/php80-curl/ && make -DBATCH install clean) && \    
     (cd /usr/ports/graphics/php80-exif/ && make -DBATCH install clean) && \
     (cd /usr/ports/graphics/php80-gd/ && make -DBATCH install clean) && \
     (cd /usr/ports/devel/php80-intl/ && make -DBATCH install clean) && \
@@ -103,6 +103,7 @@ install_from_pkg() {
 
     # default php80-extensions (i.e pkg install lang/php80-extensions)
     pkg install --yes textproc/php80-ctype && \
+    pkg install --yes textproc/php80-dom && \    
     pkg install --yes security/php80-filter && \
     pkg install --yes converters/php80-iconv && \
     pkg install --yes www/php80-opcache && \
@@ -124,8 +125,7 @@ install_from_pkg() {
 
     # other php80 extensions
     pkg install --yes archivers/php80-bz2 && \
-    pkg install --yes ftp/php80-curl && \
-    pkg install --yes textproc/php80-dom && \
+    pkg install --yes ftp/php80-curl && \    
     pkg install --yes graphics/php80-exif && \
     pkg install --yes graphics/php80-gd && \
     pkg install --yes devel/php80-intl && \
@@ -134,7 +134,7 @@ install_from_pkg() {
     pkg install --yes archivers/php80-zip && \
     pkg install --yes archivers/php80-zlib && \
 
-    # pg80-pgsql installs pgsql 11, so we install pgsql 12 last
+    # pg80-pgsql installs pgsql 12, so we install pgsql 14 last
     pkg install --yes postgresql14-server && \
 
     pkg clean
