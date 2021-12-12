@@ -69,7 +69,7 @@ The script does not automatically start the services for Nginx, PostgreSQL, or P
 
 
 ### PostgreSQL
-By default, PostgreSQL's data folder will be in `/var/db/postgres/data{version}` where `version` is PostgreSQL's major version (i.e. `/var/db/postgres/data12`). Also, by default the `postgres` user's home folder is `/var/db/postgres`. If you want to change where to store PostgreSQL data, you will need to change `postgres`' home folder as well.
+By default, PostgreSQL's data folder will be in `/var/db/postgres/data{version}` where `version` is PostgreSQL's major version (i.e. `/var/db/postgres/data14`). Also, by default the `postgres` user's home folder is `/var/db/postgres`. If you want to change where to store PostgreSQL data, you will need to change `postgres`' home folder as well.
 
 In this example, I have folder called `/nyx` and want to place my `postgres` home folder there. We want to create the `postgres` home folder, set the the `postgres` user and group to own the home folder, change the `postgres` user to the new home folder, enable the `postgresql` service,and finally set the `postgresql_data` config in `/etc/rc.conf`
 
@@ -78,7 +78,7 @@ sudo mkdir -p /nyx/postgres
 sudo chown postgres:postgres /nyx/postgres
 sudo pw usermod -n postgres -d /nyx/postgres
 sudo sysrc postgresql_enable=YES
-sudo sysrc postgresql_data=/nyx/postgres/data12
+sudo sysrc postgresql_data=/nyx/postgres/data14
 ```
 
 Now you can initialize your DB and start the server.
@@ -236,3 +236,26 @@ Any time you change your Nginx configuration, be sure to test it before restarti
 sudo service nginx configtest
 sudo service nginx restart
 ```
+
+## The media install script
+Useful for using FreeBSD as a "media" server... really, for Plex Media Server (and SABnzbd+). Simply run the
+`media-install.sh` script. This script has a `--use-ports` and `--use-pkg` flag. The default uses `--use-ports`.
+
+```
+sudo sh ./media-install.sh
+```
+
+After the install script finishes, enable both services at startup
+```
+sudo sysrc plexmediaserver_enable=YES
+sudo sysrc sabnzbd_enable=YES
+```
+
+You can also start the services now
+```
+sudo service plexmediaserver start
+sudo service sabnzbd start
+```
+
+Plex Media Server can be accessed at http://localhost:32400/web
+SABnzbd+ can be accessed at http://localhost:8080/sabnzbd/

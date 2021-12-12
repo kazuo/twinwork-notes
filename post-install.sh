@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Use for FreeBSD 12.x only.  Tested with FreeBSD 12.1-RELEASE
+# Use for FreeBSD 13.x only.  Tested with FreeBSD 13.0-RELEASE
 #
 
 INSTALL_FROM=ports
@@ -65,7 +65,7 @@ install_from_ports() {
     (cd /usr/ports/shells/zsh && make -DBATCH install clean) && \
     (cd /usr/ports/misc/gnuls && make -DBATCH install clean) && \
     (cd /usr/ports/security/sudo && make -DBATCH install clean) && \
-    (cd /usr/ports/editors/vim-console && make -DBATCH install clean) && \
+    (cd /usr/ports/editors/vim && make -DBATCH install clean) && \
     (cd /usr/ports/net/svnup && make -DBATCH install clean) && \
     (cd /usr/ports/devel/git && make -DBATCH install clean) && \
     (cd /usr/ports/ftp/wget && make -DBATCH install clean) && \
@@ -74,17 +74,21 @@ install_from_ports() {
 }
 
 install_from_pkg() {
-    pkg install --yes portupgrade
-    pkg install --yes nasm
-    pkg install --yes screen
-    pkg install --yes bash
-    pkg install --yes zsh
-    pkg install --yes gnuls
-    pkg install --yes sudo
-    pkg install --yes vim-console
-    pkg install --yes wget
-    pkg install --yes svnup
-    pkg install --yes git
+    pkg update && \
+
+    pkg install --yes portupgrade && \
+    pkg install --yes nasm && \
+    pkg install --yes screen && \
+    pkg install --yes bash && \
+    pkg install --yes zsh && \
+    pkg install --yes gnuls && \
+    pkg install --yes sudo && \
+    pkg install --yes vim && \
+    pkg install --yes wget && \
+    pkg install --yes svnup && \
+    pkg install --yes git && \
+
+    pkg clean
 }
 
 copy_custom_kernel() {
@@ -105,11 +109,11 @@ copy_custom_kernel() {
 
 main() {
     echo ""
-    echo "Twinwork NOTES post-install for FreeBSD 12"
+    echo "Twinwork NOTES post-install for FreeBSD 13"
     echo "See https://github.com/kazuo/twinwork-notes"
     echo ""
     echo ""
-    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 12..."
+    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
 
     pkg update
     (/usr/sbin/portsnap fetch && /usr/sbin/portsnap extract)
