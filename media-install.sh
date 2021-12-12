@@ -51,7 +51,7 @@ install_from_ports() {
     # ports version update
     portsnap fetch update
 
-    # nginx, pgsql, php80
+    # plex, sabnzbd
     (cd /usr/ports/multimedia/plexmediaserver/ && make -DBATCH install clean) && \
     (cd /usr/ports/news/sabnzbdplus/ && make -DBATCH install clean) && \    
 
