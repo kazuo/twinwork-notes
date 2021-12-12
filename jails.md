@@ -120,5 +120,5 @@ sudo iocage console sandbox
 If you want to execute you can use `exec` (e.g. installing `vim`)
 
 ```
-sudo iocage exec sandbox "(cd /usr/ports/editors/vim-console && make -DBATCH install clean)"
+sudo iocage exec sandbox "(cd /usr/ports/editors/vim && make -DBATCH install clean)"
 ```
