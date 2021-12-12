@@ -3,6 +3,7 @@
 #
 
 INSTALL_FROM=ports
+DIR=$(dirname "$0")
 KERNEL_NAME=
 
 usage() {
@@ -129,7 +130,7 @@ main() {
 
     /usr/bin/chsh -s /usr/local/bin/bash root
     mkdir -v /root/post-install
-    cp -v root.profile /root/post-install/root.profile
+    cp -v ${DIR}/root.profile /root/post-install/root.profile
     cp -v /root/.profile /root/post-install/.profile.bak && rm -v /root/.profile
     cp -v /root/post-install/root.profile /root/.profile
     (cd /root && ln -sv .profile .bashrc)
@@ -140,12 +141,12 @@ main() {
     cp -v /usr/share/skel/* /etc/skel/
     cp -v /etc/skel/dot.profile /root/post-install/dot.profile.bak
     rm -v /etc/skel/dot.profile
-    cp -v skel.dot.profile /etc/skel/dot.profile
-    cp -v skel.dot.vimrc /etc/skel/dot.vimrc
-    cp -v skel.dot.screenrc /etc/skel/dot.screenrc
-    cp -v skel.dot.vimrc /root/.vimrc
-    cp -v skel.dot.screenrc /root/.screenrc
-    cp -v etc.adduser.conf /etc/adduser.conf
+    cp -v ${DIR}/skel.dot.profile /etc/skel/dot.profile
+    cp -v ${DIR}/skel.dot.vimrc /etc/skel/dot.vimrc
+    cp -v ${DIR}/skel.dot.screenrc /etc/skel/dot.screenrc
+    cp -v ${DIR}/skel.dot.vimrc /root/.vimrc
+    cp -v ${DIR}/skel.dot.screenrc /root/.screenrc
+    cp -v ${DIR}/etc.adduser.conf /etc/adduser.conf
 
     if [ ! -z "${KERNEL_NAME}" ]; then
         copy_custom_kernel
