@@ -87,7 +87,7 @@ install_from_ports() {
     make -C /usr/ports/graphics/php80-gd/ -DBATCH install clean && \
     make -C /usr/ports/devel/php80-intl/ -DBATCH install clean && \
     make -C /usr/ports/converters/php80-mbstring/ -DBATCH install clean && \
-    make -C /usr/ports/security/php80-openssl/ && make install clean) && \
+    make -C /usr/ports/security/php80-openssl/ -DBATCH install clean && \
     make -C /usr/ports/archivers/php80-zip/ -DBATCH install clean && \
     make -C /usr/ports/archivers/php80-zlib/ -DBATCH install clean && \
 
