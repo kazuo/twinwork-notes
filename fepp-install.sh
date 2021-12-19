@@ -50,7 +50,7 @@ continue_prompt() {
 
 install_from_ports() {
     # ports version update
-    portsnap fetch update && \
+    portsnap fetch auto && \
 
     # nginx, pgsql, php80
     make -C /usr/ports/www/nginx/ -DBATCH install clean && \

@@ -118,9 +118,9 @@ main() {
     echo ""
     continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
 
-    env ASSUME_ALWAYS_YES=YES pkg bootstrap
-    pkg update
-    (/usr/sbin/portsnap fetch && /usr/sbin/portsnap extract)
+    env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
+    /usr/sbin/pkg update
+    /usr/sbin/portsnap fetch auto
 
     if [ ${INSTALL_FROM} == "pkg" ]; then
         install_from_pkg
