@@ -59,17 +59,18 @@ continue_prompt() {
 }
 
 install_from_ports() {
-    (cd /usr/ports/ports-mgmt/portupgrade && make -DBATCH install clean) && \
-    (cd /usr/ports/devel/nasm && make -DBATCH install clean) && \
-    (cd /usr/ports/sysutils/screen && make -DBATCH install clean) && \
-    (cd /usr/ports/shells/bash && make -DBATCH install clean) && \
-    (cd /usr/ports/shells/zsh && make -DBATCH install clean) && \
-    (cd /usr/ports/misc/gnuls && make -DBATCH install clean) && \
-    (cd /usr/ports/security/sudo && make -DBATCH install clean) && \
-    (cd /usr/ports/editors/vim && make -DBATCH install clean) && \
-    (cd /usr/ports/net/svnup && make -DBATCH install clean) && \
-    (cd /usr/ports/devel/git && make -DBATCH install clean) && \
-    (cd /usr/ports/ftp/wget && make -DBATCH install clean) && \
+    make -C /usr/ports/ports-mgmt/portupgrade -DBATCH && \
+    make -C /usr/ports/security/ca_root_nss/ -DBATCH && \
+    make -C /usr/ports/devel/nasm -DBATCH && \
+    make -C /usr/ports/sysutils/screen -DBATCH && \
+    make -C /usr/ports/shells/bash -DBATCH && \
+    make -C /usr/ports/shells/zsh -DBATCH && \
+    make -C /usr/ports/misc/gnuls -DBATCH && \
+    make -C /usr/ports/security/sudo -DBATCH && \
+    make -C /usr/ports/editors/vim -DBATCH && \
+    make -C /usr/ports/net/svnup -DBATCH && \
+    make -C /usr/ports/devel/git -DBATCH && \
+    make -C /usr/ports/ftp/wget -DBATCH && \
 
     rm -rf /usr/ports/distfiles/*
 }
@@ -78,6 +79,7 @@ install_from_pkg() {
     pkg update && \
 
     pkg install --yes ports-mgmt/portupgrade && \
+    pkg install --yes security/ca_root_nss && \
     pkg install --yes devel/nasm && \
     pkg install --yes sysutils/screen && \
     pkg install --yes shells/bash && \
@@ -116,6 +118,7 @@ main() {
     echo ""
     continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
 
+    env ASSUME_ALWAYS_YES=YES pkg bootstrap
     pkg update
     (/usr/sbin/portsnap fetch && /usr/sbin/portsnap extract)
 
@@ -156,6 +159,10 @@ main() {
     echo "All done!  Exit and come back in to see your changes."
     echo ""
     echo "All backup files located in /root/post-install"
+    echo ""
+    echo "Then run..."
+    echo "freebsd-update fetch && freebsd-update install && reboot"        
+    echo "Once the system is back up, run `freebsd-update install` again"
 }
 
 handle_args $@
