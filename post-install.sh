@@ -59,18 +59,18 @@ continue_prompt() {
 }
 
 install_from_ports() {
-    make -C /usr/ports/ports-mgmt/portupgrade -DBATCH && \
-    make -C /usr/ports/security/ca_root_nss/ -DBATCH && \
-    make -C /usr/ports/devel/nasm -DBATCH && \
-    make -C /usr/ports/sysutils/screen -DBATCH && \
-    make -C /usr/ports/shells/bash -DBATCH && \
-    make -C /usr/ports/shells/zsh -DBATCH && \
-    make -C /usr/ports/misc/gnuls -DBATCH && \
-    make -C /usr/ports/security/sudo -DBATCH && \
-    make -C /usr/ports/editors/vim -DBATCH && \
-    make -C /usr/ports/net/svnup -DBATCH && \
-    make -C /usr/ports/devel/git -DBATCH && \
-    make -C /usr/ports/ftp/wget -DBATCH && \
+    make -C /usr/ports/ports-mgmt/portupgrade/ -DBATCH install clean && \
+    make -C /usr/ports/security/ca_root_nss/ -DBATCH install clean && \
+    make -C /usr/ports/devel/nasm/ -DBATCH install clean && \
+    make -C /usr/ports/sysutils/screen/ -DBATCH install clean && \
+    make -C /usr/ports/shells/bash/ -DBATCH install clean && \
+    make -C /usr/ports/shells/zsh/ -DBATCH install clean && \
+    make -C /usr/ports/misc/gnuls/ -DBATCH install clean && \
+    make -C /usr/ports/security/sudo/ -DBATCH install clean && \
+    make -C /usr/ports/editors/vim/ -DBATCH install clean && \
+    make -C /usr/ports/net/svnup/ -DBATCH install clean && \
+    make -C /usr/ports/devel/git/ -DBATCH install clean && \
+    make -C /usr/ports/ftp/wget/ -DBATCH install clean && \
 
     rm -rf /usr/ports/distfiles/*
 }

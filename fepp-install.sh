@@ -53,43 +53,43 @@ install_from_ports() {
     portsnap fetch update && \
 
     # nginx, pgsql, php80
-    (cd /usr/ports/www/nginx/ && make -DBATCH install clean) && \
-    (cd /usr/ports/databases/postgresql14-client/ && make -DBATCH install clean) && \
-    (cd /usr/ports/databases/postgresql14-server/ && make -DBATCH install clean) && \
-    (cd /usr/ports/lang/php80/ && make -DBATCH install clean) && \
+    make -C /usr/ports/www/nginx/ -DBATCH install clean && \
+    make -C /usr/ports/databases/postgresql14-client/ -DBATCH install clean && \
+    make -C /usr/ports/databases/postgresql14-server/ -DBATCH install clean && \
+    make -C /usr/ports/lang/php80/ -DBATCH install clean && \
 
     # default php80-extensions (i.e. /usr/ports/lang/php80-extensions/)
-    (cd /usr/ports/textproc/php80-ctype/ && make -DBATCH install clean) && \
-    (cd /usr/ports/textproc/php80-dom/ && make -DBATCH install clean) && \
-    (cd /usr/ports/security/php80-filter/ && make -DBATCH install clean) && \
-    (cd /usr/ports/converters/php80-iconv/ && make -DBATCH install clean) && \
-    (cd /usr/ports/www/php80-opcache/ && make -DBATCH install clean) && \
-    (cd /usr/ports/databases/php80-pdo/ && make -DBATCH install clean) && \
-    (cd /usr/ports/archivers/php80-phar/ && make -DBATCH install clean) && \
-    (cd /usr/ports/sysutils/php80-posix/ && make -DBATCH install clean) && \
-    (cd /usr/ports/www/php80-session/ && make -DBATCH install clean) && \
-    (cd /usr/ports/textproc/php80-simplexml/ && make -DBATCH install clean) && \
-    (cd /usr/ports/databases/php80-sqlite3/ && make -DBATCH install clean) && \
-    (cd /usr/ports/databases/php80-pdo_sqlite/ && make -DBATCH install clean) && \
-    (cd /usr/ports/devel/php80-tokenizer/ && make -DBATCH install clean) && \
-    (cd /usr/ports/textproc/php80-xml/ && make -DBATCH install clean) && \
-    (cd /usr/ports/textproc/php80-xmlreader/ && make -DBATCH install clean) && \
-    (cd /usr/ports/textproc/php80-xmlwriter/ && make -DBATCH install clean) && \
+    make -C /usr/ports/textproc/php80-ctype/ -DBATCH install clean && \
+    make -C /usr/ports/textproc/php80-dom/ -DBATCH install clean && \
+    make -C /usr/ports/security/php80-filter/ -DBATCH install clean && \
+    make -C /usr/ports/converters/php80-iconv/ -DBATCH install clean && \
+    make -C /usr/ports/www/php80-opcache/ -DBATCH install clean && \
+    make -C /usr/ports/databases/php80-pdo/ -DBATCH install clean && \
+    make -C /usr/ports/archivers/php80-phar/ -DBATCH install clean && \
+    make -C /usr/ports/sysutils/php80-posix/ -DBATCH install clean && \
+    make -C /usr/ports/www/php80-session/ -DBATCH install clean && \
+    make -C /usr/ports/textproc/php80-simplexml/ -DBATCH install clean && \
+    make -C /usr/ports/databases/php80-sqlite3/ -DBATCH install clean && \
+    make -C /usr/ports/databases/php80-pdo_sqlite/ -DBATCH install clean && \
+    make -C /usr/ports/devel/php80-tokenizer/ -DBATCH install clean && \
+    make -C /usr/ports/textproc/php80-xml/ -DBATCH install clean && \
+    make -C /usr/ports/textproc/php80-xmlreader/ -DBATCH install clean && \
+    make -C /usr/ports/textproc/php80-xmlwriter/ -DBATCH install clean && \
 
     # php80 pgsql extensions
-    (cd /usr/ports/databases/php80-pgsql/ && make -DBATCH install clean) && \
-    (cd /usr/ports/databases/php80-pdo_pgsql/ && make -DBATCH install clean) && \
+    make -C /usr/ports/databases/php80-pgsql/ -DBATCH install clean && \
+    make -C /usr/ports/databases/php80-pdo_pgsql/ -DBATCH install clean && \
 
     # other php80 extensions
-    (cd /usr/ports/archivers/php80-bz2/ && make -DBATCH install clean) && \
-    (cd /usr/ports/ftp/php80-curl/ && make -DBATCH install clean) && \    
-    (cd /usr/ports/graphics/php80-exif/ && make -DBATCH install clean) && \
-    (cd /usr/ports/graphics/php80-gd/ && make -DBATCH install clean) && \
-    (cd /usr/ports/devel/php80-intl/ && make -DBATCH install clean) && \
-    (cd /usr/ports/converters/php80-mbstring/ && make -DBATCH install clean) && \
-    (cd /usr/ports/security/php80-openssl/ && make install clean) && \
-    (cd /usr/ports/archivers/php80-zip/ && make -DBATCH install clean) && \
-    (cd /usr/ports/archivers/php80-zlib/ && make -DBATCH install clean) && \
+    make -C /usr/ports/archivers/php80-bz2/ -DBATCH install clean && \
+    make -C /usr/ports/ftp/php80-curl/ -DBATCH install clean && \    
+    make -C /usr/ports/graphics/php80-exif/ -DBATCH install clean && \
+    make -C /usr/ports/graphics/php80-gd/ -DBATCH install clean && \
+    make -C /usr/ports/devel/php80-intl/ -DBATCH install clean && \
+    make -C /usr/ports/converters/php80-mbstring/ -DBATCH install clean && \
+    make -C /usr/ports/security/php80-openssl/ && make install clean) && \
+    make -C /usr/ports/archivers/php80-zip/ -DBATCH install clean && \
+    make -C /usr/ports/archivers/php80-zlib/ -DBATCH install clean && \
 
     rm -rf /usr/ports/distfiles/*
 }
