@@ -98,44 +98,44 @@ install_from_pkg() {
     # pkg version
     pkg update && \
 
-    pkg install --yes www/nginx && \
-    pkg install --yes lang/php80 && \
+    pkg install -y www/nginx && \
+    pkg install -y lang/php80 && \
 
     # default php80-extensions (i.e pkg install lang/php80-extensions)
-    pkg install --yes textproc/php80-ctype && \
-    pkg install --yes textproc/php80-dom && \    
-    pkg install --yes security/php80-filter && \
-    pkg install --yes converters/php80-iconv && \
-    pkg install --yes www/php80-opcache && \
-    pkg install --yes databases/php80-pdo && \
-    pkg install --yes archivers/php80-phar && \
-    pkg install --yes sysutils/php80-posix && \
-    pkg install --yes www/php80-session && \
-    pkg install --yes textproc/php80-simplexml && \
-    pkg install --yes databases/php80-sqlite3 && \
-    pkg install --yes databases/php80-pdo_sqlite && \
-    pkg install --yes devel/php80-tokenizer && \
-    pkg install --yes textproc/php80-xml && \
-    pkg install --yes textproc/php80-xmlreader && \
-    pkg install --yes textproc/php80-xmlwriter && \
+    pkg install -y textproc/php80-ctype && \
+    pkg install -y textproc/php80-dom && \    
+    pkg install -y security/php80-filter && \
+    pkg install -y converters/php80-iconv && \
+    pkg install -y www/php80-opcache && \
+    pkg install -y databases/php80-pdo && \
+    pkg install -y archivers/php80-phar && \
+    pkg install -y sysutils/php80-posix && \
+    pkg install -y www/php80-session && \
+    pkg install -y textproc/php80-simplexml && \
+    pkg install -y databases/php80-sqlite3 && \
+    pkg install -y databases/php80-pdo_sqlite && \
+    pkg install -y devel/php80-tokenizer && \
+    pkg install -y textproc/php80-xml && \
+    pkg install -y textproc/php80-xmlreader && \
+    pkg install -y textproc/php80-xmlwriter && \
 
     # php80 pgsql extensions
-    pkg install --yes databases/php80-pgsql && \
-    pkg install --yes databases/php80-pdo_pgsql && \
+    pkg install -y databases/php80-pgsql && \
+    pkg install -y databases/php80-pdo_pgsql && \
 
     # other php80 extensions
-    pkg install --yes archivers/php80-bz2 && \
-    pkg install --yes ftp/php80-curl && \    
-    pkg install --yes graphics/php80-exif && \
-    pkg install --yes graphics/php80-gd && \
-    pkg install --yes devel/php80-intl && \
-    pkg install --yes converters/php80-mbstring && \
-    pkg install --yes security/php80-openssl && \
-    pkg install --yes archivers/php80-zip && \
-    pkg install --yes archivers/php80-zlib && \
+    pkg install -y archivers/php80-bz2 && \
+    pkg install -y ftp/php80-curl && \    
+    pkg install -y graphics/php80-exif && \
+    pkg install -y graphics/php80-gd && \
+    pkg install -y devel/php80-intl && \
+    pkg install -y converters/php80-mbstring && \
+    pkg install -y security/php80-openssl && \
+    pkg install -y archivers/php80-zip && \
+    pkg install -y archivers/php80-zlib && \
 
     # pg80-pgsql installs pgsql 12, so we install pgsql 14 last
-    pkg install --yes postgresql14-server && \
+    pkg install -y postgresql14-server && \
 
     pkg clean
 }
