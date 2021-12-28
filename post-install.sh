@@ -71,6 +71,7 @@ install_from_ports() {
     make -C /usr/ports/net/svnup/ -DBATCH install clean && \
     make -C /usr/ports/devel/git/ -DBATCH install clean && \
     make -C /usr/ports/ftp/wget/ -DBATCH install clean && \
+    make -C /usr/ports/net/rsync -DBATCH install clean && \
 
     rm -rf /usr/ports/distfiles/*
 }
@@ -78,18 +79,19 @@ install_from_ports() {
 install_from_pkg() {
     pkg update && \
 
-    pkg install --yes ports-mgmt/portupgrade && \
-    pkg install --yes security/ca_root_nss && \
-    pkg install --yes devel/nasm && \
-    pkg install --yes sysutils/screen && \
-    pkg install --yes shells/bash && \
-    pkg install --yes shells/zsh && \
-    pkg install --yes misc/gnuls && \
-    pkg install --yes security/sudo && \
-    pkg install --yes editors/vim && \
-    pkg install --yes net/svnup && \
-    pkg install --yes devel/git && \
-    pkg install --yes ftp/wget && \
+    pkg install -y ports-mgmt/portupgrade && \
+    pkg install -y security/ca_root_nss && \
+    pkg install -y devel/nasm && \
+    pkg install -y sysutils/screen && \
+    pkg install -y shells/bash && \
+    pkg install -y shells/zsh && \
+    pkg install -y misc/gnuls && \
+    pkg install -y security/sudo && \
+    pkg install -y editors/vim && \
+    pkg install -y net/svnup && \
+    pkg install -y devel/git && \
+    pkg install -y ftp/wget && \
+    pkg install -y net/rsync && \
 
     pkg clean
 }
