@@ -91,6 +91,14 @@ install_from_ports() {
     make -C /usr/ports/archivers/php80-zip/ -DBATCH install clean && \
     make -C /usr/ports/archivers/php80-zlib/ -DBATCH install clean && \
 
+    # other php80 extensions recommended for nextcloud
+    make -C /usr/ports/sysutils/php80-fileinfo/ -DBATCH install clean && \
+    make -C /usr/ports/graphics/pecl-imagick/ -DBATCH install clean && \
+    make -C /usr/ports/ftp/php80-ftp/ -DBATCH install clean && \
+    make -C /usr/ports/math/php80-bcmath/ -DBATCH install clean && \
+    make -C /usr/ports/math/php80-gmp/ -DBATCH install clean && \
+    make -C /usr/ports/devel/php80-pcntl/ -DBATCH install clean
+
     rm -rf /usr/ports/distfiles/*
 }
 

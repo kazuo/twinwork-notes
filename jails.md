@@ -122,3 +122,79 @@ If you want to execute you can use `exec` (e.g. installing `vim`)
 ```
 sudo iocage exec sandbox "(cd /usr/ports/editors/vim && make -DBATCH install clean)"
 ```
+
+# Bastille
+Alternative jail manager to iocage. Pulled from https://bastillebsd.org/getting-started/
+
+```
+sudo make -C /usr/ports/sysutils/bastille/ -DBATCH install clean
+
+sudo sysrc bastille_enable=YES
+sudo sysrc -f /usr/local/etc/bastille/bastille.conf bastille_tzdata=America/Los_Angeles
+sudo sysrc -f /usr/local/etc/bastille/bastille.conf bastille_zfs_enable=YES
+sudo sysrc -f /usr/local/etc/bastille/bastille.conf bastille_zfs_zpool=zroot
+
+sudo sysrc cloned_interfaces+=lo1
+sudo sysrc ifconfig_lo1_name="bastille0"
+sudo service netif cloneup
+```
+
+Enable `pf`
+```
+sudo sysrc pf_enable=YES
+sudo sysrc pf_flags=
+sudo sysrc pf_rules=/etc/pf.conf
+sudo sysrc pflog_enable=YES
+sudo sysrc pflog_logfile=/var/log/pflog
+sudo sysrc pflog_flags=
+```
+
+Edit `/etc/pf.conf`
+```
+ext_if="re0"
+
+set block-policy return
+scrub in on $ext_if all fragment reassemble
+set skip on lo
+
+table <jails> persist
+nat on $ext_if from <jails> to any -> ($ext_if:0)
+rdr-anchor "rdr/*"
+
+block in all
+pass out quick keep state
+antispoof for $ext_if inet
+pass in inet proto tcp from any to any port ssh flags S/SA keep state
+```
+
+Replace `re0` with your external interface
+
+Start `pf`
+
+```
+sudo service pf start
+```
+
+## PostgreSQL jail
+Requires this jail config before doing a DB init
+```
+sudo bastille config postgres set sysvsem new
+sudo bastille config postgres set sysvmsg new
+sudo bastille config postgres set sysvshm new
+sudo bastille config postgres set allow.raw_sockets
+sudo bastille restart postgres
+```
+
+PostgreSQL needs a few other packages
+```
+sudo bastille cmd postgres pkg install sudo
+sudo bastille cmd postgres portsnap fetch auto
+```
+
+Install PostgreSQL
+```
+host$ sudo bastille console postgres
+postgres# make -C /usr/ports/editors/vim/ -DBATCH install clean && \
+    make -C /usr/ports/databases/postgresql14-client/ -DBATCH install clean && \
+    make -C /usr/ports/databases/postgresql14-server/ -DBATCH install clean
+```
