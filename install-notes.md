@@ -177,3 +177,40 @@ In order to automatically renew the certificates, add this line to
 More config details in the certbot periodic script:
 
     /usr/local/etc/periodic/weekly/500.certbot-3.8
+
+
+
+Installing samba413-4.13.17...
+How to start: http://wiki.samba.org/index.php/Samba4/HOWTO
+
+* Your configuration is: /usr/local/etc/smb4.conf
+
+* All the relevant databases are under: /var/db/samba4
+
+* All the logs are under: /var/log/samba4
+
+For additional documentation check: http://wiki.samba.org/index.php/Samba4
+
+Bug reports should go to the: https://bugzilla.samba.org/
+
+===> SECURITY REPORT: 
+      This port has installed the following files which may act as network
+      servers and may therefore pose a remote security risk to the system.
+/usr/local/lib/samba4/private/libsamba-sockets-samba4.so
+/usr/local/lib/samba4/private/libsmb-transport-samba4.so
+/usr/local/bin/nmblookup
+/usr/local/lib/samba4/private/libgse-samba4.so
+/usr/local/lib/samba4/private/libkrb5-samba4.so.26
+/usr/local/sbin/winbindd
+/usr/local/lib/samba4/private/libsmbd-base-samba4.so
+/usr/local/lib/samba4/libsmbconf.so.0
+/usr/local/sbin/smbd
+
+      If there are vulnerabilities in these programs there may be a security
+      risk to the system. FreeBSD makes no guarantee about the security of
+      ports included in the Ports Collection. Please type 'make deinstall'
+      to deinstall the port if this is a concern.
+
+      For more information, and contact details about the security
+      status of this software, see the following webpage: 
+https://www.samba.org/    
