@@ -52,8 +52,8 @@ install_from_ports() {
     portsnap fetch update
 
     # plex, sabnzbd
-    (cd /usr/ports/multimedia/plexmediaserver/ && make -DBATCH install clean) && \
-    (cd /usr/ports/news/sabnzbdplus/ && make -DBATCH install clean) && \    
+    make -C /usr/ports/multimedia/plexmediaserver/ -DBATCH install clean && \
+    make -C /usr/ports/news/sabnzbdplus/ -DBATCH install clean && \    
 
     rm -rf /usr/ports/distfiles/*
 }
@@ -61,8 +61,8 @@ install_from_ports() {
 install_from_pkg() {
     # pkg version
     pkg update && \
-    pkg install --yes multimedia/plexmediaserver && \
-    pkg install --yes news/sabnzbdplus && \
+    pkg install -y multimedia/plexmediaserver && \
+    pkg install -y news/sabnzbdplus && \
 
     pkg clean
 }

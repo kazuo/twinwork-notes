@@ -97,11 +97,9 @@ Success. You can now start the database server using:
 
 
 # ssmtp
-Creating group 'ssmtp' with gid '916'.
 sSMTP has been installed successfully.
 
-To replace sendmail with ssmtp type "make replace" or change
-your /etc/mail/mailer.conf to:
+Firstly, edit /etc/mail/mailer.conf to replace sendmail with ssmtp:
 
 sendmail        /usr/local/sbin/ssmtp
 send-mail       /usr/local/sbin/ssmtp
@@ -110,8 +108,109 @@ newaliases      /usr/local/sbin/ssmtp
 hoststat        /usr/bin/true
 purgestat       /usr/bin/true
 
+Hint: in case sSMPT is being installed directly from ports,
+editing /etc/mail/mailer.conf can be done by running "make replace".
 
-However, before you can use the program, you should copy the files
-"revaliases.sample" and "ssmtp.conf.sample" in /usr/local/etc/ssmtp
-to "revaliases" and "ssmtp.conf" respectively and edit them to suit
-your needs.
+Secondly, edit the following files to configure sSMTP:
+
+- /usr/local/etc/ssmtp/revaliases
+- /usr/local/etc/ssmtp/ssmtp.conf
+
+At this point sSMTP should be ready to go.
+
+# smartmontools
+Installing smartmontools-7.2_3...
+smartmontools has been installed
+
+To check the status of drives, use the following:
+
+        /usr/local/sbin/smartctl -a /dev/ad0    for first ATA/SATA drive
+        /usr/local/sbin/smartctl -a /dev/da0    for first SCSI drive
+        /usr/local/sbin/smartctl -a /dev/ada0   for first SATA drive
+
+To include drive health information in your daily status reports,
+add a line like the following to /etc/periodic.conf:
+        daily_status_smart_devices="/dev/ad0 /dev/da0"
+substituting the appropriate device names for your SMART-capable disks.
+
+To enable drive monitoring, you can use /usr/local/sbin/smartd.
+A sample configuration file has been installed as
+/usr/local/etc/smartd.conf.sample
+Copy this file to /usr/local/etc/smartd.conf and edit appropriately
+
+To have smartd start at boot
+        echo 'smartd_enable="YES"' >> /etc/rc.conf
+
+===>  Cleaning for smartmontools-7.2_3
+
+
+Installing py38-certbot-1.22.0,1...
+This port installs the "standalone" client only, which does not use and
+is not the certbot-auto bootstrap/wrapper script.
+
+The simplest form of usage to obtain certificates is:
+
+ # sudo certbot certonly --standalone -d <domain>, [domain2, ... domainN]>
+
+NOTE:
+
+The client requires the ability to bind on TCP port 80 or 443 (depending
+on the --preferred-challenges option used). If a server is running on that
+port, it will need to be temporarily stopped so that the standalone server
+can listen on that port to complete the challenge authentication process.
+
+For more information on the 'standalone' mode, see:
+
+  https://certbot.eff.org/docs/using.html#standalone
+
+The certbot plugins to support apache and nginx certificate installation
+will be made available in the following ports:
+
+ * Apache plugin: security/py-certbot-apache
+ * Nginx plugin: security/py-certbot-nginx
+
+In order to automatically renew the certificates, add this line to
+/etc/periodic.conf:
+
+    weekly_certbot_enable="YES"
+
+More config details in the certbot periodic script:
+
+    /usr/local/etc/periodic/weekly/500.certbot-3.8
+
+
+
+Installing samba413-4.13.17...
+How to start: http://wiki.samba.org/index.php/Samba4/HOWTO
+
+* Your configuration is: /usr/local/etc/smb4.conf
+
+* All the relevant databases are under: /var/db/samba4
+
+* All the logs are under: /var/log/samba4
+
+For additional documentation check: http://wiki.samba.org/index.php/Samba4
+
+Bug reports should go to the: https://bugzilla.samba.org/
+
+===> SECURITY REPORT: 
+      This port has installed the following files which may act as network
+      servers and may therefore pose a remote security risk to the system.
+/usr/local/lib/samba4/private/libsamba-sockets-samba4.so
+/usr/local/lib/samba4/private/libsmb-transport-samba4.so
+/usr/local/bin/nmblookup
+/usr/local/lib/samba4/private/libgse-samba4.so
+/usr/local/lib/samba4/private/libkrb5-samba4.so.26
+/usr/local/sbin/winbindd
+/usr/local/lib/samba4/private/libsmbd-base-samba4.so
+/usr/local/lib/samba4/libsmbconf.so.0
+/usr/local/sbin/smbd
+
+      If there are vulnerabilities in these programs there may be a security
+      risk to the system. FreeBSD makes no guarantee about the security of
+      ports included in the Ports Collection. Please type 'make deinstall'
+      to deinstall the port if this is a concern.
+
+      For more information, and contact details about the security
+      status of this software, see the following webpage: 
+https://www.samba.org/    

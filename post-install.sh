@@ -59,17 +59,19 @@ continue_prompt() {
 }
 
 install_from_ports() {
-    (cd /usr/ports/ports-mgmt/portupgrade && make -DBATCH install clean) && \
-    (cd /usr/ports/devel/nasm && make -DBATCH install clean) && \
-    (cd /usr/ports/sysutils/screen && make -DBATCH install clean) && \
-    (cd /usr/ports/shells/bash && make -DBATCH install clean) && \
-    (cd /usr/ports/shells/zsh && make -DBATCH install clean) && \
-    (cd /usr/ports/misc/gnuls && make -DBATCH install clean) && \
-    (cd /usr/ports/security/sudo && make -DBATCH install clean) && \
-    (cd /usr/ports/editors/vim && make -DBATCH install clean) && \
-    (cd /usr/ports/net/svnup && make -DBATCH install clean) && \
-    (cd /usr/ports/devel/git && make -DBATCH install clean) && \
-    (cd /usr/ports/ftp/wget && make -DBATCH install clean) && \
+    make -C /usr/ports/ports-mgmt/portupgrade/ -DBATCH install clean && \
+    make -C /usr/ports/security/ca_root_nss/ -DBATCH install clean && \
+    make -C /usr/ports/devel/nasm/ -DBATCH install clean && \
+    make -C /usr/ports/sysutils/screen/ -DBATCH install clean && \
+    make -C /usr/ports/shells/bash/ -DBATCH install clean && \
+    make -C /usr/ports/shells/zsh/ -DBATCH install clean && \
+    make -C /usr/ports/misc/gnuls/ -DBATCH install clean && \
+    make -C /usr/ports/security/sudo/ -DBATCH install clean && \
+    make -C /usr/ports/editors/vim/ -DBATCH install clean && \
+    make -C /usr/ports/net/svnup/ -DBATCH install clean && \
+    make -C /usr/ports/devel/git/ -DBATCH install clean && \
+    make -C /usr/ports/ftp/wget/ -DBATCH install clean && \
+    make -C /usr/ports/net/rsync -DBATCH install clean && \
 
     rm -rf /usr/ports/distfiles/*
 }
@@ -77,17 +79,19 @@ install_from_ports() {
 install_from_pkg() {
     pkg update && \
 
-    pkg install --yes ports-mgmt/portupgrade && \
-    pkg install --yes devel/nasm && \
-    pkg install --yes sysutils/screen && \
-    pkg install --yes shells/bash && \
-    pkg install --yes shells/zsh && \
-    pkg install --yes misc/gnuls && \
-    pkg install --yes security/sudo && \
-    pkg install --yes editors/vim && \
-    pkg install --yes net/svnup && \
-    pkg install --yes devel/git && \
-    pkg install --yes ftp/wget && \
+    pkg install -y ports-mgmt/portupgrade && \
+    pkg install -y security/ca_root_nss && \
+    pkg install -y devel/nasm && \
+    pkg install -y sysutils/screen && \
+    pkg install -y shells/bash && \
+    pkg install -y shells/zsh && \
+    pkg install -y misc/gnuls && \
+    pkg install -y security/sudo && \
+    pkg install -y editors/vim && \
+    pkg install -y net/svnup && \
+    pkg install -y devel/git && \
+    pkg install -y ftp/wget && \
+    pkg install -y net/rsync && \
 
     pkg clean
 }
@@ -116,8 +120,9 @@ main() {
     echo ""
     continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
 
-    pkg update
-    (/usr/sbin/portsnap fetch && /usr/sbin/portsnap extract)
+    env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
+    /usr/sbin/pkg update
+    /usr/sbin/portsnap fetch auto
 
     if [ ${INSTALL_FROM} == "pkg" ]; then
         install_from_pkg
@@ -156,6 +161,10 @@ main() {
     echo "All done!  Exit and come back in to see your changes."
     echo ""
     echo "All backup files located in /root/post-install"
+    echo ""
+    echo "Then run..."
+    echo "freebsd-update fetch && freebsd-update install && reboot"        
+    echo "Once the system is back up, run `freebsd-update install` again"
 }
 
 handle_args $@
