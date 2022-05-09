@@ -72,6 +72,7 @@ install_from_ports() {
     make -C /usr/ports/devel/git/ -DBATCH install clean && \
     make -C /usr/ports/ftp/wget/ -DBATCH install clean && \
     make -C /usr/ports/net/rsync -DBATCH install clean && \
+    make -C /usr/ports/ports-mgmt/poudriere -DBATCH install clean && \
 
     rm -rf /usr/ports/distfiles/*
 }
@@ -92,6 +93,7 @@ install_from_pkg() {
     pkg install -y devel/git && \
     pkg install -y ftp/wget && \
     pkg install -y net/rsync && \
+    pkg install -y ports-mgmt/poudriere && \
 
     pkg clean
 }

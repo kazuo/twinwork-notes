@@ -214,3 +214,99 @@ Bug reports should go to the: https://bugzilla.samba.org/
       For more information, and contact details about the security
       status of this software, see the following webpage: 
 https://www.samba.org/    
+
+
+
+[plex] Installing plexmediaserver-plexpass-1.25.9.5721...
+===> Creating groups.
+Creating group 'plex' with gid '972'.
+===> Creating users
+Creating user 'plex' with uid '972'.
+multimedia/plexmediaserver_plexpass includes an RC script:
+/usr/local/etc/rc.d/plexmediaserver_plexpass
+
+TO START PLEXMEDIASERVER ON BOOT:
+sysrc plexmediaserver_plexpass_enable=YES
+
+START MANUALLY:
+service plexmediaserver_plexpass start
+
+Once started, visit the following to configure:
+http://localhost:32400/web
+
+@@@ INTEL GPU OFFLOAD NOTES @@@
+
+If you have a supported Intel GPU, you can leverage hardware
+accelerated encoding/decoding in Plex Media Server on FreeBSD 12.0+.
+
+The requirements are as follows:
+
+* Install multimedia/drm-kmod: e.g., pkg install drm-fbsd12.0-kmod
+
+* Enable loading of kernel module on boot: sysrc kld_list+="i915kms"
+** If Plex will run in a jail, you must load the module outside the jail!
+
+* Load the kernel module now (although reboot is advised): kldload i915kms
+
+* Add plex user to the video group: pw groupmod -n video -m plex
+
+* For jails, make a devfs ruleset to expose /dev/dri/* devices.
+
+e.g., /dev/devfs.rules on the host:
+
+[plex_drm=10]
+add include $devfsrules_hide_all
+add include $devfsrules_unhide_basic
+add include $devfsrules_unhide_login
+add include $devfsrules_jail
+add path 'dri*' unhide
+add path 'dri/*' unhide
+add path 'drm*' unhide
+add path 'drm/*' unhide
+
+* Enable the devfs ruleset for your jail. e.g., devfs_ruleset=10 in your
+/etc/jail.conf or for iocage, iocage set devfs_ruleset="10"
+
+Please refer to documentation for all other FreeBSD jail management
+utilities.
+
+* Make sure hardware transcoding is enabled in the server settings
+
+@@@ INTEL GPU OFFLOAD NOTES @@@
+===>   NOTICE:
+
+The plexmediaserver-plexpass port currently does not have a maintainer. As a result, it is
+more likely to have unresolved issues, not be up-to-date, or even be removed in
+the future. To volunteer to maintain this port, please create an issue at:
+
+https://bugs.freebsd.org/bugzilla
+
+More information about port maintainership is available at:
+
+https://docs.freebsd.org/en/articles/contributing/#ports-contributing
+
+===> SECURITY REPORT:
+      This port has installed the following files which may act as network
+      servers and may therefore pose a remote security risk to the system.
+/usr/local/share/plexmediaserver-plexpass/lib/libhdhomerun.so
+/usr/local/share/plexmediaserver-plexpass/Plex Relay
+/usr/local/share/plexmediaserver-plexpass/lib/libpion.so
+/usr/local/share/plexmediaserver-plexpass/Plex Tuner Service
+/usr/local/share/plexmediaserver-plexpass/lib/libavformat.so.58
+/usr/local/share/plexmediaserver-plexpass/Plex Media Server
+/usr/local/share/plexmediaserver-plexpass/lib/libcrypto.so.1.1
+/usr/local/share/plexmediaserver-plexpass/lib/libcurl.so
+/usr/local/share/plexmediaserver-plexpass/lib/libpython27.so (USES POSSIBLY INSECURE FUNCTIONS: tempnam tmpnam)
+/usr/local/share/plexmediaserver-plexpass/Plex DLNA Server
+
+      If there are vulnerabilities in these programs there may be a security
+      risk to the system. FreeBSD makes no guarantee about the security of
+      ports included in the Ports Collection. Please type 'make deinstall'
+      to deinstall the port if this is a concern.
+
+      For more information, and contact details about the security
+      status of this software, see the following webpage:
+https://plex.tv
+===>  Cleaning for pkg-1.17.5_1
+===>  Cleaning for plexmediaserver-plexpass-1.25.9.5721
+[plex]: 0
