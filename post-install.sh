@@ -96,7 +96,7 @@ continue_prompt() {
 install_from_poudriere() {
     touch ${POUDRIERE_PKG_FILE}
     for PORT in ${PKGS}; do
-        echo ${PORT} >> ${POUDRIERE_PKG_FILE};
+        echo ${PORT} >> ${POUDRIERE_PKG_FILE}
     done
     poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE} && \
     install_from_pkg
