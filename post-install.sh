@@ -104,7 +104,7 @@ install_from_poudriere() {
 
 install_from_ports() {
     for PORT in ${PKGS}; do
-        make -C /usr/ports/${PORT}/ -DBATCH install clean && \
+        make -C /usr/ports/${PORT}/ -DBATCH install clean && \;
     done
 
     rm -rf /usr/ports/distfiles/*
@@ -114,7 +114,7 @@ install_from_pkg() {
     pkg update && \
 
     for PKG in ${PKGS}; do
-        pkg install -y ${PKG} && \
+        pkg install -y ${PKG} && \;
     done
 
     pkg clean
