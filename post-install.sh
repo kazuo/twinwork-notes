@@ -24,8 +24,8 @@ PKGS="${PKGS} ftp/wget"
 PKGS="${PKGS} net/rsync"
 
 usage() {
-    echo "usage: $0 [--use-pkg] [--use-ports] [--use-poudriere] [--kernel-name=KERNEL_NAME]
-    [--poudriere-jail-name=CUSTOM_JAIL_NAME] [--poudriere-jail-version=CUSTOM_JAIL_VERSION]
+    echo "usage: $0 [--use-pkg] [--use-ports] [--use-poudriere] [--kernel-name=NAME]
+    [--poudriere-jail-name=NAME] [--poudriere-jail-version=VERSION]
     --help                      : usage
     --use-ports                 : use ports for post-install
     --use-poudriere             : use poudriere for post-install
@@ -33,8 +33,10 @@ usage() {
                                     (ports tree will still be updated)
     --kernel-name               : custom kernel name
                                     (this will install/update FreeBSD source tree)
-    --poudriere-jail-name       : sets the poudriere jail name. default ${POUDRIERE_JAIL_NAME}
-    --poudriere-jail-version    : sets the poudriere jail version. default: ${POUDRIERE_JAIL_VERSION}
+    --poudriere-jail-name       : sets the poudriere jail name
+                                    default: ${POUDRIERE_JAIL_NAME}
+    --poudriere-jail-version    : sets the poudriere jail version. default
+                                    default: ${POUDRIERE_JAIL_VERSION}
     "
 }
 
@@ -92,11 +94,11 @@ continue_prompt() {
 }
 
 install_from_poudriere() {
-    touch ${POUDRIERE_PKG_FILE}
+    touch ${POUDRIERE_PKG_FILE} && \
     for PORT in ${PKGS}; do
-        echo '${PORT}' > ${POUDRIERE_PKG_FILE}
+        echo '${PORT}' > ${POUDRIERE_PKG_FILE} && \;
     done
-    poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE}
+    poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE} && \
     install_from_pkg
 }
 
@@ -118,7 +120,7 @@ install_from_pkg() {
     pkg clean
 }
 
-setup_poudriere() {    
+setup_poudriere() {
     # defaults ports dir: /usr/local/poudriere/ports/default
     # to check for pkg update:
     # PORTSDIR=/usr/local/poudriere/ports/default pkg version -P -l "<"
@@ -126,11 +128,11 @@ setup_poudriere() {
     pkg install -y ports-mgmt/poudriere && \
 
     # need to set ZPOOL in /usr/local/etc/poudriere.conf
-    sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \    
+    sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \
     poudriere jail -c -j ${POUDRIERE_JAIL_NAME} -v ${POUDRIERE_JAIL_VERSION} && \
-    poudriere ports -c
+    poudriere ports -c && \
 
-    mkdir -p /usr/local/etc/pkg/repos
+    mkdir -p /usr/local/etc/pkg/repos && \
 
 #     cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
 # FreeBSD: {
@@ -143,7 +145,8 @@ Poudriere: {
     enabled: yes,
     priority: 100,
 }
-EOF     
+EOF
+
 }
 
 copy_custom_kernel() {
