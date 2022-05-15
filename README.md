@@ -12,10 +12,9 @@ This is the abbreviated version of FreeBSD NOTES and assumes the following:
 Login locally as `root` and download the following
 
 ```sh
-fetch --no-verify-peer https://github.com/kazuo/twinwork-notes/archive/master.zip
+fetch https://github.com/kazuo/twinwork-notes/archive/master.zip
 unzip master.zip
-cd twinwork-notes-master
-sh post-install.sh
+sh ./twinwork-notes-master/post-install.sh
 ```
 
 The `post-install.sh` script has a couple of options:

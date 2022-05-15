@@ -94,9 +94,9 @@ continue_prompt() {
 }
 
 install_from_poudriere() {
-    touch ${POUDRIERE_PKG_FILE} && \
+    touch ${POUDRIERE_PKG_FILE}
     for PORT in ${PKGS}; do
-        echo '${PORT}' > ${POUDRIERE_PKG_FILE} && \;
+        echo ${PORT} >> ${POUDRIERE_PKG_FILE};
     done
     poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE} && \
     install_from_pkg
@@ -104,7 +104,7 @@ install_from_poudriere() {
 
 install_from_ports() {
     for PORT in ${PKGS}; do
-        make -C /usr/ports/${PORT}/ -DBATCH install clean && \;
+        make -C /usr/ports/${PORT}/ -DBATCH install clean && \
     done
 
     rm -rf /usr/ports/distfiles/*
@@ -114,7 +114,7 @@ install_from_pkg() {
     pkg update && \
 
     for PKG in ${PKGS}; do
-        pkg install -y ${PKG} && \;
+        pkg install -y ${PKG} && \
     done
 
     pkg clean
@@ -133,6 +133,8 @@ setup_poudriere() {
     poudriere ports -c && \
 
     mkdir -p /usr/local/etc/pkg/repos && \
+    # default DISTFILES_CACHE set in poudriere.conf
+    mkdir -p /usr/ports/distfiles && \
 
 #     cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
 # FreeBSD: {
@@ -219,7 +221,7 @@ main() {
     echo ""
     echo "Then run..."
     echo "freebsd-update fetch && freebsd-update install && reboot"        
-    echo "Once the system is back up, run `freebsd-update install` again"
+    echo "Once the system is back up, run freebsd-update install again"
 }
 
 handle_args $@
