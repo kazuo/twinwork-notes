@@ -2,18 +2,39 @@
 # Use for FreeBSD 13.x only.  Tested with FreeBSD 13.0-RELEASE
 #
 
-INSTALL_FROM=ports
+INSTALL_FROM=pkg
 DIR=$(dirname "$0")
 KERNEL_NAME=
+POUDRIERE_JAIL_NAME=130amd64
+POUDRIERE_JAIL_VERSION=13.0-RELEASE
+POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
+
+PKGS=""
+PKGS="${PKGS} security/ca_root_nss"
+PKGS="${PKGS} devel/nasm"
+PKGS="${PKGS} sysutils/screen"
+PKGS="${PKGS} shells/bash"
+PKGS="${PKGS} shells/zsh"
+PKGS="${PKGS} misc/gnuls"
+PKGS="${PKGS} security/sudo"
+PKGS="${PKGS} editors/vim"
+PKGS="${PKGS} net/svnup"
+PKGS="${PKGS} devel/git"
+PKGS="${PKGS} ftp/wget"
+PKGS="${PKGS} net/rsync"
 
 usage() {
-    echo "usage: $0 [--use-pkg]
+    echo "usage: $0 [--use-pkg] [--use-ports] [--use-poudriere] [--kernel-name=KERNEL_NAME]
+    [--poudriere-jail-name=CUSTOM_JAIL_NAME] [--poudriere-jail-version=CUSTOM_JAIL_VERSION]
     --help                      : usage
-    --use-ports                 : use ports for post-install (default)
-    --use-pkg                   : use pkg for post-install
+    --use-ports                 : use ports for post-install
+    --use-poudriere             : use poudriere for post-install
+    --use-pkg                   : use pkg for post-install (default)
                                     (ports tree will still be updated)
-    --kernel-name=<custom_name> : custom kernel name
+    --kernel-name               : custom kernel name
                                     (this will install/update FreeBSD source tree)
+    --poudriere-jail-name       : sets the poudriere jail name. default ${POUDRIERE_JAIL_NAME}
+    --poudriere-jail-version    : sets the poudriere jail version. default: ${POUDRIERE_JAIL_VERSION}
     "
 }
 
@@ -29,8 +50,20 @@ handle_args() {
                 INSTALL_FROM=pkg
                 shift
                 ;;
+            --use-poudriere)
+                INSTALL_FROM=poudriere
+                shift
+                ;;
             --kernel-name=*)
                 KERNEL_NAME="${arg#*=}"
+                shift
+                ;;
+            --poudriere-jail-name=*)
+                POUDRIERE_JAIL_NAME="${arg#*=}"
+                shift
+                ;;
+            --poudriere-jail-version=*)
+                POUDRIERE_JAIL_VERSION="${arg#*=}"
                 shift
                 ;;
             *)
@@ -58,21 +91,19 @@ continue_prompt() {
     esac
 }
 
+install_from_poudriere() {
+    touch ${POUDRIERE_PKG_FILE}
+    for PORT in ${PKGS}; do
+        echo '${PORT}' > ${POUDRIERE_PKG_FILE}
+    done
+    poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE}
+    install_from_pkg
+}
+
 install_from_ports() {
-    make -C /usr/ports/ports-mgmt/portupgrade/ -DBATCH install clean && \
-    make -C /usr/ports/security/ca_root_nss/ -DBATCH install clean && \
-    make -C /usr/ports/devel/nasm/ -DBATCH install clean && \
-    make -C /usr/ports/sysutils/screen/ -DBATCH install clean && \
-    make -C /usr/ports/shells/bash/ -DBATCH install clean && \
-    make -C /usr/ports/shells/zsh/ -DBATCH install clean && \
-    make -C /usr/ports/misc/gnuls/ -DBATCH install clean && \
-    make -C /usr/ports/security/sudo/ -DBATCH install clean && \
-    make -C /usr/ports/editors/vim/ -DBATCH install clean && \
-    make -C /usr/ports/net/svnup/ -DBATCH install clean && \
-    make -C /usr/ports/devel/git/ -DBATCH install clean && \
-    make -C /usr/ports/ftp/wget/ -DBATCH install clean && \
-    make -C /usr/ports/net/rsync -DBATCH install clean && \
-    make -C /usr/ports/ports-mgmt/poudriere -DBATCH install clean && \
+    for PORT in ${PKGS}; do
+        make -C /usr/ports/${PORT}/ -DBATCH install clean && \;
+    done
 
     rm -rf /usr/ports/distfiles/*
 }
@@ -80,22 +111,39 @@ install_from_ports() {
 install_from_pkg() {
     pkg update && \
 
-    pkg install -y ports-mgmt/portupgrade && \
-    pkg install -y security/ca_root_nss && \
-    pkg install -y devel/nasm && \
-    pkg install -y sysutils/screen && \
-    pkg install -y shells/bash && \
-    pkg install -y shells/zsh && \
-    pkg install -y misc/gnuls && \
-    pkg install -y security/sudo && \
-    pkg install -y editors/vim && \
-    pkg install -y net/svnup && \
-    pkg install -y devel/git && \
-    pkg install -y ftp/wget && \
-    pkg install -y net/rsync && \
-    pkg install -y ports-mgmt/poudriere && \
+    for PKG in ${PKGS}; do
+        pkg install -y ${PKG} && \;
+    done
 
     pkg clean
+}
+
+setup_poudriere() {    
+    # defaults ports dir: /usr/local/poudriere/ports/default
+    # to check for pkg update:
+    # PORTSDIR=/usr/local/poudriere/ports/default pkg version -P -l "<"
+
+    pkg install -y ports-mgmt/poudriere && \
+
+    # need to set ZPOOL in /usr/local/etc/poudriere.conf
+    sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \    
+    poudriere jail -c -j ${POUDRIERE_JAIL_NAME} -v ${POUDRIERE_JAIL_VERSION} && \
+    poudriere ports -c
+
+    mkdir -p /usr/local/etc/pkg/repos
+
+#     cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
+# FreeBSD: {
+#     enabled:	NO
+# }
+# EOF
+    cat > /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
+Poudriere: {
+    url: "file:///usr/local/poudriere/ports/default",
+    enabled: yes,
+    priority: 100,
+}
+EOF     
 }
 
 copy_custom_kernel() {
@@ -123,13 +171,15 @@ main() {
     continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
 
     env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
-    /usr/sbin/pkg update
-    /usr/sbin/portsnap fetch auto
+    /usr/sbin/pkg update    
 
-    if [ ${INSTALL_FROM} == "pkg" ]; then
-        install_from_pkg
-    else
+    if [ ${INSTALL_FROM} == "ports" ]; then
         install_from_ports
+    elif [ ${INSTALL_FROM} == "poudriere" ]; then 
+        setup_poudriere
+        install_from_poudriere
+    else
+        install_from_pkg        
     fi
 
     echo ""
