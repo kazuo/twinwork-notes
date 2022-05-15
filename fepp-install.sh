@@ -3,6 +3,33 @@
 
 INSTALL_FROM=ports
 
+PKGS=""
+# nginx, pgsql, php80
+PKGS="${PKGS} www/nginx"
+PKGS="${PKGS} databases/postgresql14-client"
+PKGS="${PKGS} databases/postgresql14-server"
+PKGS="${PKGS} lang/php80"
+
+# default php80-extensions (i.e. /usr/ports/lang/php80-extensions/)
+PKGS="${PKGS} textproc/php80-ctype"
+PKGS="${PKGS} textproc/php80-dom"
+PKGS="${PKGS} security/php80-filter"
+PKGS="${PKGS} converters/php80-iconv"
+PKGS="${PKGS} www/php80-opcache"
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+PKGS="${PKGS} "
+
 usage() {
     echo "usage: $0 [--use-pkg]
         --help          : usage
@@ -142,8 +169,8 @@ install_from_pkg() {
     pkg install -y archivers/php80-zip && \
     pkg install -y archivers/php80-zlib && \
 
-    # pg80-pgsql installs pgsql 12, so we install pgsql 14 last
-    pkg install -y postgresql14-server && \
+    # php80-pgsql installs pgsql 12, so we install pgsql 14 last
+    pkg install -y databases/postgresql14-server && \
 
     pkg clean
 }
