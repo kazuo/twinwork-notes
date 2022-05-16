@@ -167,26 +167,7 @@ copy_custom_kernel() {
     cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
 }
 
-main() {
-    echo ""
-    echo "Twinwork NOTES post-install for FreeBSD 13"
-    echo "See https://github.com/kazuo/twinwork-notes"
-    echo ""
-    echo ""
-    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
-
-    env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
-    /usr/sbin/pkg update    
-
-    if [ ${INSTALL_FROM} == "ports" ]; then
-        install_from_ports
-    elif [ ${INSTALL_FROM} == "poudriere" ]; then 
-        setup_poudriere
-        install_from_poudriere
-    else
-        install_from_pkg        
-    fi
-
+finish_setup() {
     echo ""
     echo "Finished installing ports and/or packages... changing shell to bash for root"
 
@@ -210,10 +191,6 @@ main() {
     cp -v ${DIR}/skel.dot.screenrc /root/.screenrc
     cp -v ${DIR}/etc.adduser.conf /etc/adduser.conf
 
-    if [ ! -z "${KERNEL_NAME}" ]; then
-        copy_custom_kernel
-    fi
-
     echo ""
     echo "All done!  Exit and come back in to see your changes."
     echo ""
@@ -221,7 +198,34 @@ main() {
     echo ""
     echo "Then run..."
     echo "freebsd-update fetch && freebsd-update install && reboot"        
-    echo "Once the system is back up, run freebsd-update install again"
+    echo "Once the system is back up, run freebsd-update install again"    
+}
+
+main() {
+    echo ""
+    echo "Twinwork NOTES post-install for FreeBSD 13"
+    echo "See https://github.com/kazuo/twinwork-notes"
+    echo ""
+    echo ""
+    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
+
+    env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
+    /usr/sbin/pkg update    
+
+    if [ ${INSTALL_FROM} == "ports" ]; then
+        install_from_ports
+    elif [ ${INSTALL_FROM} == "poudriere" ]; then 
+        setup_poudriere && \
+        install_from_poudriere
+    else
+        install_from_pkg        
+    fi    
+
+    if [ ! -z "${KERNEL_NAME}" ]; then
+        copy_custom_kernel
+    fi
+
+    finish_setup    
 }
 
 handle_args $@
