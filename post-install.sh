@@ -219,6 +219,7 @@ finish_setup() {
 }
 
 main() {
+    local CMD_STATUS=
     echo ""
     echo "Twinwork NOTES post-install for FreeBSD 13"
     echo "See https://github.com/kazuo/twinwork-notes"
@@ -231,18 +232,24 @@ main() {
 
     if [ ${INSTALL_FROM} == "ports" ]; then
         install_from_ports
+        CMD_STATUS=$?
     elif [ ${INSTALL_FROM} == "poudriere" ]; then 
         setup_poudriere && \
         install_from_poudriere
+        CMD_STATUS=$?
     else
-        install_from_pkg        
+        install_from_pkg
+        CMD_STATUS=$?
     fi    
 
     if [ ! -z "${KERNEL_NAME}" ]; then
         copy_custom_kernel
+        status=$?
     fi
 
-    prompt_root_copy
+    if [ ! -z ${CMD_STATUS} ]; then
+        prompt_root_copy
+    fi
 }
 
 handle_args $@
