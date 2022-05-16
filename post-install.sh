@@ -5,9 +5,7 @@
 INSTALL_FROM=pkg
 DIR=$(dirname "$0")
 KERNEL_NAME=
-POUDRIERE_JAIL_NAME=130amd64
-POUDRIERE_JAIL_VERSION=13.0-RELEASE
-POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
+. ${DIR}/shared.sh
 
 PKGS=""
 PKGS="${PKGS} security/ca_root_nss"
@@ -118,24 +116,6 @@ install_from_pkg() {
     pkg clean
 }
 
-install_from_ports() {
-    portsnap fetch auto
-    for PORT in ${PKGS}; do
-        make -C /usr/ports/${PORT}/ -DBATCH install clean
-    done
-
-    rm -rf /usr/ports/distfiles/*
-}
-
-install_from_poudriere() {
-    touch ${POUDRIERE_PKG_FILE}
-    for PORT in ${PKGS}; do
-        echo ${PORT} >> ${POUDRIERE_PKG_FILE}
-    done
-    poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE} && \
-    install_from_pkg
-}
-
 setup_poudriere() {
     # defaults ports dir: /usr/local/poudriere/ports/default
     # to check for pkg update:
@@ -165,6 +145,13 @@ Poudriere: {
     priority: 100,
 }
 EOF
+
+    cat > /usr/local/etc/poudriere.d/make.conf <<EOF
+NO_PROFILE          = yes    
+WITHOUT_DEBUG       = yes    
+OPTIONS_UNSET       = ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES \
+                      FONTCONFIG HTMLDOCS PROFILE TESTS X11    
+EOF    
 
 }
 
@@ -235,7 +222,8 @@ main() {
         CMD_STATUS=$?
     elif [ ${INSTALL_FROM} == "poudriere" ]; then 
         setup_poudriere && \
-        install_from_poudriere
+        install_from_poudriere && \
+        install_from_pkg
         CMD_STATUS=$?
     else
         install_from_pkg

@@ -56,9 +56,9 @@ PKGS="${PKGS} devel/php80-pcntl"
 usage() {
     echo "usage: $0 [--use-pkg] [--use-ports] [--use-poudriere]
         --help          : usage
-        --use-ports     : use ports for install (default)
+        --use-ports     : use ports for install 
         --use-poudriere : use poudriere for post-install
-        --use-pkg       : use pkg for install
+        --use-pkg       : use pkg for install (default)
     "
 }
 

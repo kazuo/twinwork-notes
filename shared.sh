@@ -30,7 +30,8 @@ install_from_poudriere() {
     for PORT in ${PKGS}; do
         echo ${PORT} >> ${POUDRIERE_PKG_FILE}
     done
-    poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE}
+    # poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE}
+    poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default ${PKGS}
 }
 
 install_from_ports() {
