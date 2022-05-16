@@ -59,8 +59,8 @@ install_from_ports() {
 }
 
 setup_poudriere_base() {
-    if command -v poudriere &> /dev/null && test -f /usr/local/etc/pkg/repos/Poudriere.conf; then
-        echo "poudriere already setup!"
+    if command -v poudriere &> /dev/null && test -f /usr/local/etc/poudriere.d/make.conf; then
+        echo "Detected poudriere has already been setup"
         exit
     fi 
 
@@ -104,7 +104,11 @@ EOF
     exit $?
 }
 
-setup_poudriere_ports() {    
+setup_poudriere_ports() {
+    if test -f /usr/local/poudriere/ports/default; then
+        echo "Detected default poudriere ports already created"
+        exit
+    fi
     poudriere ports -c && \
 
     # default DISTFILES_CACHE set in poudriere.conf
