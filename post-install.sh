@@ -126,6 +126,7 @@ setup_poudriere() {
     # PORTSDIR=/usr/local/poudriere/ports/default pkg version -P -l "<"
 
     pkg install -y ports-mgmt/poudriere && \
+    pkg install -y devel/git && \
 
     # need to set ZPOOL in /usr/local/etc/poudriere.conf
     sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \
