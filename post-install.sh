@@ -108,13 +108,14 @@ prompt_root_copy() {
     esac
 }
 
-install_from_poudriere() {
-    touch ${POUDRIERE_PKG_FILE}
-    for PORT in ${PKGS}; do
-        echo ${PORT} >> ${POUDRIERE_PKG_FILE}
+install_from_pkg() {
+    pkg update
+
+    for PKG in ${PKGS}; do
+        pkg install -y ${PKG}
     done
-    poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE} && \
-    install_from_pkg
+
+    pkg clean
 }
 
 install_from_ports() {
@@ -126,14 +127,13 @@ install_from_ports() {
     rm -rf /usr/ports/distfiles/*
 }
 
-install_from_pkg() {
-    pkg update
-
-    for PKG in ${PKGS}; do
-        pkg install -y ${PKG}
+install_from_poudriere() {
+    touch ${POUDRIERE_PKG_FILE}
+    for PORT in ${PKGS}; do
+        echo ${PORT} >> ${POUDRIERE_PKG_FILE}
     done
-
-    pkg clean
+    poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE} && \
+    install_from_pkg
 }
 
 setup_poudriere() {
@@ -244,7 +244,7 @@ main() {
 
     if [ ! -z "${KERNEL_NAME}" ]; then
         copy_custom_kernel
-        status=$?
+        CMD_STATUS=$?
     fi
 
     if [ ! -z ${CMD_STATUS} ]; then
