@@ -1,8 +1,9 @@
 #!/usr/bin/env sh
-# Use for FreeBSD 13.x only.  Tested with FreeBSD 13.0-RELEASE
+# Use for FreeBSD 13.x only
+# Tested with FreeBSD 13.0-RELEASE
 #
 
-INSTALL_FROM=pkg
+INSTALL_FROM="pkg"
 DIR=$(dirname "$0")
 KERNEL_NAME=
 
@@ -117,51 +118,6 @@ install_from_pkg() {
     pkg clean
 }
 
-setup_poudriere() {
-    # defaults ports dir: /usr/local/poudriere/ports/default
-    # to check for pkg update:
-    # PORTSDIR=/usr/local/poudriere/ports/default pkg version -P -l "<"
-
-    pkg install -y ports-mgmt/poudriere && \
-    pkg install -y devel/git && \
-
-    # need to set ZPOOL in /usr/local/etc/poudriere.conf
-    sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \
-    poudriere jail -c -j ${POUDRIERE_JAIL_NAME} -v ${POUDRIERE_JAIL_VERSION} && \
-    poudriere ports -c && \
-
-    mkdir -p /usr/local/etc/pkg/repos && \
-    # default DISTFILES_CACHE set in poudriere.conf
-    mkdir -p /usr/ports/distfiles && \
-
-#     cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
-# FreeBSD: {
-#     enabled:	NO
-# }
-# EOF
-    cat > /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
-Poudriere: {
-    url: "file:///usr/local/poudriere/data/packages/${POUDRIERE_JAIL_NAME}-default",
-    enabled: yes,
-    priority: 100,
-}
-EOF && \
-
-    cat > /usr/local/etc/poudriere.d/make.conf <<EOF
-# https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
-#DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
-
-# MariaDB 10.5
-#DEFAULT_VERSIONS+=mysql=10.5m
-
-NO_PROFILE          = yes
-WITHOUT_DEBUG       = yes
-OPTIONS_UNSET       = ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
-EOF
-
-    exit $?
-}
-
 copy_custom_kernel() {
     # assumes release, maybe in the future detect freebsd-version and choose
     svnup release -h svn.freebsd.org
@@ -228,7 +184,8 @@ main() {
         install_from_ports
         CMD_STATUS=$?
     elif [ ${INSTALL_FROM} == "poudriere" ]; then 
-        setup_poudriere && \
+        setup_poudriere_base && \
+        setup_poudriere_ports && \
         install_from_poudriere && \
         install_from_pkg
         CMD_STATUS=$?
