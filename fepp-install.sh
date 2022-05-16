@@ -67,12 +67,16 @@ handle_args() {
     for arg in "$@"
     do
         case $arg in
+            --use-pkg)
+                INSTALL_FROM=pkg
+                shift
+                ;;
             --use-ports)
                 INSTALL_FROM=ports
                 shift
                 ;;
-            --use-pkg)
-                INSTALL_FROM=pkg
+            --use-poudriere)
+                INSTALL_FROM=poudriere
                 shift
                 ;;
             *)
@@ -104,11 +108,14 @@ main() {
     echo ""
     continue_prompt "This will install Nginx, PostgreSQL, and PHP..."
 
-    if [ ${INSTALL_FROM} == "pkg" ]; then
-        install_from_pkg
+    if [ ${INSTALL_FROM} == "ports" ]; then
+        install_from_ports
+        CMD_STATUS=$?
+    elif [ ${INSTALL_FROM} == "poudriere" ]; then 
+        install_from_poudriere && install_from_pkg
         CMD_STATUS=$?
     else
-        install_from_ports
+        install_from_pkg
         CMD_STATUS=$?
     fi
 

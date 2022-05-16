@@ -44,12 +44,12 @@ handle_args() {
     for arg in "$@"
     do
         case $arg in
-            --use-ports)
-                INSTALL_FROM=ports
-                shift
-                ;;
             --use-pkg)
                 INSTALL_FROM=pkg
+                shift
+                ;;
+            --use-ports)
+                INSTALL_FROM=ports
                 shift
                 ;;
             --use-poudriere)
@@ -240,7 +240,7 @@ main() {
     else
         install_from_pkg
         CMD_STATUS=$?
-    fi    
+    fi
 
     if [ ! -z "${KERNEL_NAME}" ]; then
         copy_custom_kernel
