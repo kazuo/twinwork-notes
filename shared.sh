@@ -59,6 +59,8 @@ install_from_ports() {
 }
 
 setup_poudriere_base() {
+    local CMD_STATUS=
+
     if command -v poudriere &> /dev/null && test -f /usr/local/etc/poudriere.d/make.conf; then
         echo "Detected poudriere has already been setup"
         exit
@@ -74,7 +76,13 @@ setup_poudriere_base() {
     # need to set ZPOOL in /usr/local/etc/poudriere.conf
     sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \
     poudriere jail -c -j ${POUDRIERE_JAIL_NAME} -v ${POUDRIERE_JAIL_VERSION} && \
-    mkdir -p /usr/local/etc/pkg/repos && \
+    mkdir -p /usr/local/etc/pkg/repos
+
+    CMD_STATUS=$?
+
+    if [ -z ${CMD_STATUS} ]; then
+        exit $CMD_STATUS
+    fi
 
 #     cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
 # FreeBSD: {
@@ -87,7 +95,7 @@ Poudriere: {
     enabled: yes,
     priority: 100,
 }
-EOF && \
+EOF
 
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
 # https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
@@ -101,7 +109,6 @@ WITHOUT_DEBUG       = yes
 OPTIONS_UNSET       = ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 EOF
 
-    exit $?
 }
 
 setup_poudriere_ports() {
