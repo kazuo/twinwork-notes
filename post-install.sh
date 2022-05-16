@@ -226,7 +226,7 @@ main() {
         copy_custom_kernel
     fi
 
-    finish_setup
+    # finish_setup
 }
 
 handle_args $@
