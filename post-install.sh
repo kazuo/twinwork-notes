@@ -93,6 +93,21 @@ continue_prompt() {
     esac
 }
 
+continue_root_copy() {
+    local MESSAGE=$1
+
+    echo "________________________________________________________________________________"
+    echo ${MESSAGE}
+    read -p "Change root shell to bash and copy profile template files? [y/N] " yn
+    case $yn in
+        [Yy]*)
+            finish_setup
+            ;;
+        *)
+            ;;
+    esac
+}
+
 install_from_poudriere() {
     touch ${POUDRIERE_PKG_FILE}
     for PORT in ${PKGS}; do
@@ -104,17 +119,17 @@ install_from_poudriere() {
 
 install_from_ports() {
     for PORT in ${PKGS}; do
-        make -C /usr/ports/${PORT}/ -DBATCH install clean && \;
+        make -C /usr/ports/${PORT}/ -DBATCH install clean
     done
 
     rm -rf /usr/ports/distfiles/*
 }
 
 install_from_pkg() {
-    pkg update && \
+    pkg update
 
     for PKG in ${PKGS}; do
-        pkg install -y ${PKG} && \;
+        pkg install -y ${PKG}
     done
 
     pkg clean
@@ -226,7 +241,7 @@ main() {
         copy_custom_kernel
     fi
 
-    # finish_setup
+    continue_root_copy
 }
 
 handle_args $@
