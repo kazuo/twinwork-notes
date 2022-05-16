@@ -5,6 +5,7 @@
 INSTALL_FROM=pkg
 DIR=$(dirname "$0")
 KERNEL_NAME=
+
 . ${DIR}/shared.sh
 
 PKGS=""
@@ -147,11 +148,11 @@ Poudriere: {
 EOF
 
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
-NO_PROFILE          = yes    
-WITHOUT_DEBUG       = yes    
+NO_PROFILE          = yes
+WITHOUT_DEBUG       = yes
 OPTIONS_UNSET       = ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES \
-                      FONTCONFIG HTMLDOCS PROFILE TESTS X11    
-EOF    
+                      FONTCONFIG HTMLDOCS PROFILE TESTS X11
+EOF
 
 }
 
