@@ -118,6 +118,7 @@ install_from_poudriere() {
 }
 
 install_from_ports() {
+    portsnap fetch auto
     for PORT in ${PKGS}; do
         make -C /usr/ports/${PORT}/ -DBATCH install clean
     done
