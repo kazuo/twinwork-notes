@@ -93,7 +93,7 @@ continue_prompt() {
     esac
 }
 
-continue_root_copy() {
+prompt_root_copy() {
     local MESSAGE=$1
 
     echo "________________________________________________________________________________"
@@ -241,7 +241,7 @@ main() {
         copy_custom_kernel
     fi
 
-    continue_root_copy
+    prompt_root_copy
 }
 
 handle_args $@
