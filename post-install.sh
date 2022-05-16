@@ -145,15 +145,21 @@ Poudriere: {
     enabled: yes,
     priority: 100,
 }
-EOF
+EOF && \
 
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
+# https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
+#DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
+
+# MariaDB 10.5
+#DEFAULT_VERSIONS+=mysql=10.5m
+
 NO_PROFILE          = yes
 WITHOUT_DEBUG       = yes
-OPTIONS_UNSET       = ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES \
-                      FONTCONFIG HTMLDOCS PROFILE TESTS X11
+OPTIONS_UNSET       = ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 EOF
 
+    exit $?
 }
 
 copy_custom_kernel() {
