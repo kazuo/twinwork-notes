@@ -42,7 +42,6 @@ PKGS="${PKGS} graphics/php80-exif"
 PKGS="${PKGS} graphics/php80-gd"
 PKGS="${PKGS} devel/php80-intl"
 PKGS="${PKGS} converters/php80-mbstring"
-PKGS="${PKGS} security/php80-openssl"
 PKGS="${PKGS} archivers/php80-zip"
 PKGS="${PKGS} archivers/php80-zlib"
 
