@@ -144,7 +144,7 @@ setup_poudriere() {
 # EOF
     cat > /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
 Poudriere: {
-    url: "file:///usr/local/poudriere/ports/default",
+    url: "file:///usr/local/poudriere/data/packages/${POUDRIERE_JAIL_NAME}-default",
     enabled: yes,
     priority: 100,
 }
@@ -226,7 +226,7 @@ main() {
         copy_custom_kernel
     fi
 
-    finish_setup    
+    finish_setup
 }
 
 handle_args $@
