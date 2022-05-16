@@ -7,51 +7,51 @@ DIR=$(dirname "$0")
 
 
 PKGS=""
-# nginx, pgsql, php80
+# nginx, pgsql, php81
 PKGS="${PKGS} www/nginx"
 PKGS="${PKGS} databases/postgresql14-client"
 PKGS="${PKGS} databases/postgresql14-server"
-PKGS="${PKGS} lang/php80"
+PKGS="${PKGS} lang/php81"
 
-# default php80-extensions (i.e. /usr/ports/lang/php80-extensions/)
-PKGS="${PKGS} textproc/php80-ctype"
-PKGS="${PKGS} textproc/php80-dom"
-PKGS="${PKGS} security/php80-filter"
-PKGS="${PKGS} converters/php80-iconv"
-PKGS="${PKGS} www/php80-opcache"
-PKGS="${PKGS} databases/php80-pdo"
-PKGS="${PKGS} archivers/php80-phar"
-PKGS="${PKGS} sysutils/php80-posix"
-PKGS="${PKGS} www/php80-session"
-PKGS="${PKGS} textproc/php80-simplexml"
-PKGS="${PKGS} databases/php80-sqlite3"
-PKGS="${PKGS} databases/php80-pdo_sqlite"
-PKGS="${PKGS} devel/php80-tokenizer"
-PKGS="${PKGS} textproc/php80-xml"
-PKGS="${PKGS} textproc/php80-xmlreader"
-PKGS="${PKGS} textproc/php80-xmlwriter"
+# default php81-extensions (i.e. /usr/ports/lang/php81-extensions/)
+PKGS="${PKGS} textproc/php81-ctype"
+PKGS="${PKGS} textproc/php81-dom"
+PKGS="${PKGS} security/php81-filter"
+PKGS="${PKGS} converters/php81-iconv"
+PKGS="${PKGS} www/php81-opcache"
+PKGS="${PKGS} databases/php81-pdo"
+PKGS="${PKGS} archivers/php81-phar"
+PKGS="${PKGS} sysutils/php81-posix"
+PKGS="${PKGS} www/php81-session"
+PKGS="${PKGS} textproc/php81-simplexml"
+PKGS="${PKGS} databases/php81-sqlite3"
+PKGS="${PKGS} databases/php81-pdo_sqlite"
+PKGS="${PKGS} devel/php81-tokenizer"
+PKGS="${PKGS} textproc/php81-xml"
+PKGS="${PKGS} textproc/php81-xmlreader"
+PKGS="${PKGS} textproc/php81-xmlwriter"
 
-# php80 pgsql extensions
-PKGS="${PKGS} databases/php80-pgsql"
-PKGS="${PKGS} databases/php80-pdo_pgsql"
+# php81 pgsql extensions
+PKGS="${PKGS} databases/php81-pgsql"
+PKGS="${PKGS} databases/php81-pdo_pgsql"
 
-# other php80 extensions
-PKGS="${PKGS} archivers/php80-bz2"
-PKGS="${PKGS} ftp/php80-curl"
-PKGS="${PKGS} graphics/php80-exif"
-PKGS="${PKGS} graphics/php80-gd"
-PKGS="${PKGS} devel/php80-intl"
-PKGS="${PKGS} converters/php80-mbstring"
-PKGS="${PKGS} archivers/php80-zip"
-PKGS="${PKGS} archivers/php80-zlib"
+# other php81 extensions
+PKGS="${PKGS} archivers/php81-bz2"
+PKGS="${PKGS} ftp/php81-curl"
+PKGS="${PKGS} graphics/php81-exif"
+PKGS="${PKGS} graphics/php81-gd"
+PKGS="${PKGS} devel/php81-intl"
+PKGS="${PKGS} converters/php81-mbstring"
+PKGS="${PKGS} archivers/php81-zip"
+PKGS="${PKGS} archivers/php81-zlib"
 
-# other php80 extensions recommended for nextcloud
-PKGS="${PKGS} sysutils/php80-fileinfo"
+# other php81 extensions recommended for nextcloud
+PKGS="${PKGS} sysutils/php81-fileinfo"
 PKGS="${PKGS} graphics/pecl-imagick"
-PKGS="${PKGS} ftp/php80-ftp"
-PKGS="${PKGS} math/php80-bcmath"
-PKGS="${PKGS} math/php80-gmp"
-PKGS="${PKGS} devel/php80-pcntl"
+PKGS="${PKGS} ftp/php81-ftp"
+PKGS="${PKGS} math/php81-bcmath"
+PKGS="${PKGS} math/php81-gmp"
+PKGS="${PKGS} devel/php81-pcntl"
 
 usage() {
     echo "usage: $0 [--use-pkg] [--use-ports] [--use-poudriere]
@@ -94,7 +94,7 @@ install_from_pkg() {
         pkg install -y ${PKG}
     done
 
-    # php80-pgsql installs pgsql 12, so we install pgsql 14 last
+    # php81-pgsql installs pgsql 12, so we install pgsql 14 last
     # pkg install -y databases/postgresql14-server && \
 
     pkg clean
