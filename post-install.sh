@@ -29,6 +29,7 @@ usage() {
     --help                      : usage
     --use-ports                 : use ports for post-install
     --use-poudriere             : use poudriere for post-install
+                                    (experiemental, may fail during ports install)
     --use-pkg                   : use pkg for post-install (default)
                                     (ports tree will still be updated)
     --kernel-name               : custom kernel name
@@ -109,6 +110,12 @@ prompt_root_copy() {
 }
 
 install_from_pkg() {
+    local PKGS=$1
+    if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
+        echo "PKGS not set"
+        exit 1
+    fi
+
     pkg update
 
     for PKG in ${PKGS}; do
@@ -181,16 +188,16 @@ main() {
     /usr/sbin/pkg update    
 
     if [ ${INSTALL_FROM} == "ports" ]; then
-        install_from_ports
+        install_from_ports ${BASE_PKGS}
         CMD_STATUS=$?
     elif [ ${INSTALL_FROM} == "poudriere" ]; then 
         setup_poudriere_base && \
         setup_poudriere_ports && \
-        install_from_poudriere && \
+        install_from_poudriere ${BASE_PKGS} && \
         install_from_pkg
         CMD_STATUS=$?
     else
-        install_from_pkg
+        install_from_pkg ${BASE_PKGS}
         CMD_STATUS=$?
     fi
 

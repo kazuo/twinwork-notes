@@ -6,53 +6,6 @@ DIR=$(dirname "$0")
 . ${DIR}/shared.sh
 
 
-PKGS=""
-# nginx, pgsql, php81
-PKGS="${PKGS} www/nginx"
-PKGS="${PKGS} databases/postgresql14-client"
-PKGS="${PKGS} databases/postgresql14-server"
-PKGS="${PKGS} lang/php81"
-
-# default php81-extensions (i.e. /usr/ports/lang/php81-extensions/)
-PKGS="${PKGS} textproc/php81-ctype"
-PKGS="${PKGS} textproc/php81-dom"
-PKGS="${PKGS} security/php81-filter"
-PKGS="${PKGS} converters/php81-iconv"
-PKGS="${PKGS} www/php81-opcache"
-PKGS="${PKGS} databases/php81-pdo"
-PKGS="${PKGS} archivers/php81-phar"
-PKGS="${PKGS} sysutils/php81-posix"
-PKGS="${PKGS} www/php81-session"
-PKGS="${PKGS} textproc/php81-simplexml"
-PKGS="${PKGS} databases/php81-sqlite3"
-PKGS="${PKGS} databases/php81-pdo_sqlite"
-PKGS="${PKGS} devel/php81-tokenizer"
-PKGS="${PKGS} textproc/php81-xml"
-PKGS="${PKGS} textproc/php81-xmlreader"
-PKGS="${PKGS} textproc/php81-xmlwriter"
-
-# php81 pgsql extensions
-PKGS="${PKGS} databases/php81-pgsql"
-PKGS="${PKGS} databases/php81-pdo_pgsql"
-
-# other php81 extensions
-PKGS="${PKGS} archivers/php81-bz2"
-PKGS="${PKGS} ftp/php81-curl"
-PKGS="${PKGS} graphics/php81-exif"
-PKGS="${PKGS} graphics/php81-gd"
-PKGS="${PKGS} devel/php81-intl"
-PKGS="${PKGS} converters/php81-mbstring"
-PKGS="${PKGS} archivers/php81-zip"
-PKGS="${PKGS} archivers/php81-zlib"
-
-# other php81 extensions recommended for nextcloud
-PKGS="${PKGS} sysutils/php81-fileinfo"
-PKGS="${PKGS} graphics/pecl-imagick"
-PKGS="${PKGS} ftp/php81-ftp"
-PKGS="${PKGS} math/php81-bcmath"
-PKGS="${PKGS} math/php81-gmp"
-PKGS="${PKGS} devel/php81-pcntl"
-
 usage() {
     echo "usage: $0 [--use-pkg] [--use-ports] [--use-poudriere]
         --help          : usage
