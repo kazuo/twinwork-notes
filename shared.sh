@@ -81,7 +81,7 @@ setup_poudriere_base() {
     CMD_STATUS=$?
 
     if [ -z ${CMD_STATUS} ]; then
-        exit $CMD_STATUS
+        exit 1
     fi
 
 #     cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
@@ -120,5 +120,4 @@ setup_poudriere_ports() {
 
     # default DISTFILES_CACHE set in poudriere.conf
     mkdir -p /usr/ports/distfiles
-    exit $?
 }
