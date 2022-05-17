@@ -95,22 +95,6 @@ prompt_root_copy() {
     esac
 }
 
-install_from_pkg() {
-    local PKGS=$1
-    if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
-        echo "PKGS not set"
-        exit 1
-    fi
-
-    pkg update
-
-    for PKG in ${PKGS}; do
-        pkg install -y ${PKG}
-    done
-
-    pkg clean
-}
-
 copy_custom_kernel() {
     # assumes release, maybe in the future detect freebsd-version and choose
     svnup release -h svn.freebsd.org

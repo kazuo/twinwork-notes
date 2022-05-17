@@ -82,7 +82,7 @@ continue_prompt() {
 }
 
 add_poudriere_pkg_file() {
-    local PKGS=$1
+    local PKGS=$@
     if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
         echo "PKGS not set"
         exit 1
@@ -94,8 +94,24 @@ add_poudriere_pkg_file() {
     done    
 }
 
+install_from_pkg() {
+    local PKGS=$@
+    if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
+        echo "PKGS not set"
+        exit 1
+    fi
+
+    pkg update
+
+    for PKG in ${PKGS}; do
+        pkg install -y ${PKG}
+    done
+
+    pkg clean
+}
+
 install_from_poudriere() {
-    local PKGS=$1
+    local PKGS=$@
     if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
         echo "PKGS not set"
         exit 1
@@ -106,7 +122,7 @@ install_from_poudriere() {
 
 install_from_ports() {
     local CMD_STATUS=
-    local PKGS=$1
+    local PKGS=$@
     if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
         echo "PKGS not set"
         exit 1
