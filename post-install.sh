@@ -174,15 +174,18 @@ main() {
     /usr/sbin/pkg update    
 
     if [ ${INSTALL_FROM} == "ports" ]; then
+        echo "Installing from ports"
         install_from_ports ${BASE_PKGS}
         CMD_STATUS=$?
     elif [ ${INSTALL_FROM} == "poudriere" ]; then 
+        echo "Installing from poudriere"
         setup_poudriere_base && \
         setup_poudriere_ports && \
         install_from_poudriere ${BASE_PKGS} && \
         install_from_pkg
         CMD_STATUS=$?
     else
+        echo "Installing from pkg"
         install_from_pkg ${BASE_PKGS}
         CMD_STATUS=$?
     fi
