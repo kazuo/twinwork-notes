@@ -9,20 +9,6 @@ KERNEL_NAME=
 
 . ${DIR}/shared.sh
 
-PKGS=""
-PKGS="${PKGS} security/ca_root_nss"
-PKGS="${PKGS} devel/nasm"
-PKGS="${PKGS} sysutils/screen"
-PKGS="${PKGS} shells/bash"
-PKGS="${PKGS} shells/zsh"
-PKGS="${PKGS} misc/gnuls"
-PKGS="${PKGS} security/sudo"
-PKGS="${PKGS} editors/vim"
-PKGS="${PKGS} net/svnup"
-PKGS="${PKGS} devel/git"
-PKGS="${PKGS} ftp/wget"
-PKGS="${PKGS} net/rsync"
-
 usage() {
     echo "usage: $0 [--use-pkg] [--use-ports] [--use-poudriere] [--kernel-name=NAME]
     [--poudriere-jail-name=NAME] [--poudriere-jail-version=VERSION]
