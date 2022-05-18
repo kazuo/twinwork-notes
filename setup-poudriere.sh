@@ -17,7 +17,7 @@ main() {
     echo "poudriere ports -c" && \
     echo "" && \
     echo "Bulk build all packages by running: " && \
-    echo "poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default ${PKGS}"
+    echo "poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE}"
 }
 
 main

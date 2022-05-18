@@ -14,7 +14,7 @@ BASE_PKGS="${BASE_PKGS} misc/gnuls"
 BASE_PKGS="${BASE_PKGS} security/sudo"
 BASE_PKGS="${BASE_PKGS} editors/vim"
 BASE_PKGS="${BASE_PKGS} net/svnup"
-BASE_PKGS="${BASE_PKGS} devel/git"
+BASE_PKGS="${BASE_PKGS} devel/git@lite"
 BASE_PKGS="${BASE_PKGS} ftp/wget"
 BASE_PKGS="${BASE_PKGS} net/rsync"
 
@@ -101,9 +101,13 @@ install_from_pkg() {
         exit 1
     fi
 
-    pkg update
-
+    pkg update    
     for PKG in ${PKGS}; do
+        if test "${PKG#*@}" != "$PKG"; then
+            # oddly flavors can't be installed as its native name: i.e. devel/git@lite, instead
+            # pkg prefers it as git-lite... this ensures flavors can be installed
+            PKG=$( printf $PKG | sed "s/^.*\///" | sed "s/@/-/" )
+        fi
         pkg install -y ${PKG}
     done
 
@@ -157,8 +161,7 @@ setup_poudriere_base() {
     # to check for pkg update:
     # PORTSDIR=/usr/local/poudriere/ports/default pkg version -P -l "<"
 
-    pkg install -y ports-mgmt/poudriere && \
-    pkg install -y devel/git && \
+    pkg install -y ports-mgmt/poudriere && \    
 
     # need to set ZPOOL in /usr/local/etc/poudriere.conf
     sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \
@@ -174,11 +177,13 @@ setup_poudriere_base() {
         exit 1
     fi
 
-#     cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
-# FreeBSD: {
-#     enabled:	NO
-# }
-# EOF
+    cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
+# Ensures that Poudriere will always be used for pkg
+FreeBSD: {
+    enabled: no,
+}
+EOF
+
     cat > /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
 Poudriere: {
     url: "file:///usr/local/poudriere/data/packages/${POUDRIERE_JAIL_NAME}-default",
@@ -204,5 +209,6 @@ setup_poudriere_ports() {
         echo "Detected default poudriere ports already created"
         exit
     fi
+    pkg install -y git-lite && \
     poudriere ports -c && \    
 }
