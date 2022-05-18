@@ -209,6 +209,12 @@ setup_poudriere_ports() {
         echo "Detected default poudriere ports already created"
         exit
     fi
-    pkg install -y git-lite && \
-    poudriere ports -c && \    
+
+    if ! command -v git &> /dev/null; then
+        pkg install -y git-lite
+    fi
+    
+    poudriere ports -c
 }
+
+setup_poudriere_ports
