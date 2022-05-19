@@ -18,6 +18,7 @@ handle_args() {
     do
         case $arg in
             --use-loki)
+                USE_LOKI=1
                 shift
                 ;;
             *)
@@ -39,9 +40,12 @@ use_loki() {
     if [ $LOKI_IP == $CURRENT_IP ]; then
         # get around weird nginx reverse proxy 
         # issues while on the same network
-        echo "Detected Loki on local networking, adding ${LOKI_DOMAIN} to /etc/hosts"
+        echo "Detected Loki on local network, adding ${LOKI_DOMAIN} to /etc/hosts"
         echo "192.168.1.201 loki.twinwork.net" >> /etc/hosts
-    fi    
+    fi
+
+    mkdir -vp /usr/local/etc/ssl/certs
+    cp -v ${DIR}/loki-poudriere.cert /usr/local/etc/ssl/certs/
 
     cat > /usr/local/etc/pkg/repos/Loki.conf <<EOF
 Loki: {

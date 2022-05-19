@@ -76,7 +76,7 @@ finish_setup() {
 
     if [ ${USE_ZSH} ]; then
         /usr/bin/chsh -s /usr/local/bin/zsh root
-        sh ./oh-my-zsh.sh
+        sh ${DIR}/oh-my-zsh.sh
     else
         /usr/bin/chsh -s /usr/local/bin/bash root
         (cd /root && ln -sv .profile .bashrc)

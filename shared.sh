@@ -1,9 +1,5 @@
 #!/usr/bin/env sh
 
-POUDRIERE_JAIL_NAME=131amd64
-POUDRIERE_JAIL_VERSION=13.1-RELEASE
-POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
-
 BASE_PKGS=
 BASE_PKGS="${BASE_PKGS} security/ca_root_nss"
 BASE_PKGS="${BASE_PKGS} devel/nasm"
@@ -127,8 +123,14 @@ install_from_pkg() {
     pkg clean
 }
 
-install_from_poudriere() {
+build_poudriere() {
     local PKGS=$@
+
+    if [ ! -z ${POUDRIERE_JAIL_NAME+x} ] || [ "${POUDRIERE_JAIL_NAME}" == "" ]; then
+        echo "POUDRIERE_JAIL_NAME and/or POUDRIERE_JAIL_VERSION is not set!" 
+        exit 1
+    fi    
+
     if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
         echo "PKGS not set"
         exit 1
@@ -164,6 +166,13 @@ install_from_ports() {
 
 setup_poudriere_base() {
     local CMD_STATUS=
+
+    if [ ! -z ${POUDRIERE_JAIL_NAME+x} ] || [ "${POUDRIERE_JAIL_NAME}" == "" ] || \
+        [ ! -z ${POUDRIERE_JAIL_VERSION+x} ] || [ "${POUDRIERE_JAIL_VERSION}" == "" ]; then
+
+        echo "POUDRIERE_JAIL_NAME and/or POUDRIERE_JAIL_VERSION is not set!" 
+        exit 1
+    fi
 
     if command -v poudriere &> /dev/null && test -f /usr/local/etc/poudriere.d/make.conf; then
         echo "Detected poudriere has already been setup"
