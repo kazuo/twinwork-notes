@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-POUDRIERE_JAIL_NAME=130amd64
-POUDRIERE_JAIL_VERSION=13.0-RELEASE
+POUDRIERE_JAIL_NAME=131amd64
+POUDRIERE_JAIL_VERSION=13.1-RELEASE
 POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
 
 BASE_PKGS=
@@ -17,6 +17,19 @@ BASE_PKGS="${BASE_PKGS} net/svnup"
 BASE_PKGS="${BASE_PKGS} devel/git@lite"
 BASE_PKGS="${BASE_PKGS} ftp/wget"
 BASE_PKGS="${BASE_PKGS} net/rsync"
+
+# optional additional packages
+ADD_PKGS=
+ADD_PKGS="${ADD_PKGS=} net/py-speedtest-cli"
+ADD_PKGS="${ADD_PKGS=} sysutils/smartmontools"
+ADD_PKGS="${ADD_PKGS=} mail/ssmtp"
+ADD_PKGS="${ADD_PKGS=} sysutils/renameutils"
+ADD_PKGS="${ADD_PKGS=} security/py-certbot"
+ADD_PKGS="${ADD_PKGS=} security/gnupg"
+ADD_PKGS="${ADD_PKGS=} net/avahi-app"
+ADD_PKGS="${ADD_PKGS=} news/sabnzbdplus"
+ADD_PKGS="${ADD_PKGS=} multimedia/plexmediaserver"
+ADD_PKGS="${ADD_PKGS=} net/samba413"
 
 FEPP_PKGS=""
 # nginx, pgsql, php81
@@ -64,6 +77,8 @@ FEPP_PKGS="${FEPP_PKGS} ftp/php81-ftp"
 FEPP_PKGS="${FEPP_PKGS} math/php81-bcmath"
 FEPP_PKGS="${FEPP_PKGS} math/php81-gmp"
 FEPP_PKGS="${FEPP_PKGS} devel/php81-pcntl"
+FEPP_PKGS="${FEPP_PKGS} net/php80-ldap"
+FEPP_PKGS="${FEPP_PKGS} textproc/php80-xsl"
 
 continue_prompt() {
     local MESSAGE=$1
@@ -192,6 +207,17 @@ Poudriere: {
 }
 EOF
 
+#     cat > /usr/local/etc/pkg/repos/Loki.conf <<EOF
+# Loki: {
+#     url: "pkg+https://loki.twinwork.net/poudriere/packages/${POUDRIERE_JAIL_NAME}-default",
+#     mirror_type: "srv",
+#     signature_type: "pubkey",
+#     pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
+#     enabled: yes,
+#     priority: 100,
+# }    
+# EOF
+
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
 # https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
 #DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
@@ -216,5 +242,3 @@ setup_poudriere_ports() {
     
     poudriere ports -c
 }
-
-setup_poudriere_ports

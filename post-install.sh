@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Use for FreeBSD 13.x only
-# Tested with FreeBSD 13.0-RELEASE
+# Tested with FreeBSD 13.1-RELEASE
 #
 
 INSTALL_FROM="pkg"
