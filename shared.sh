@@ -188,10 +188,10 @@ setup_poudriere_base() {
     # need to set ZPOOL in /usr/local/etc/poudriere.conf
     sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \
     poudriere jail -c -j ${POUDRIERE_JAIL_NAME} -v ${POUDRIERE_JAIL_VERSION} && \
-    mkdir -p /usr/local/etc/pkg/repos
+    mkdir -vp /usr/local/etc/pkg/repos
 
     # default DISTFILES_CACHE set in poudriere.conf
-    mkdir -p /usr/ports/distfiles
+    mkdir -vp /usr/ports/distfiles
 
     CMD_STATUS=$?
 

@@ -115,7 +115,9 @@ main() {
     continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
 
     env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
-    /usr/sbin/pkg update    
+    /usr/sbin/pkg update
+    install_from_pkg ${BASE_PKGS}
+    CMD_STATUS=$?
 
     if [ ! -z ${CMD_STATUS} ]; then
         prompt_root_copy

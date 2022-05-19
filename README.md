@@ -1,11 +1,8 @@
 # Twinwork NOTES FreeBSD Post Installation script
 
-This script will automate most of the post-installation install and configuration to set
-up your FreeBSD environment found at ~~http://notes.twinwork.net/freebsd/~~.
+This script will automate most of the post-installation install and configuration to set up your FreeBSD environment found at ~~http://notes.twinwork.net/freebsd/~~.
 
-The original NOTES website is no longer available as it was completely out of date. This
-script was designed to setup a few customizations from a fresh FreeBSD install. It assumes
-the following:
+The original NOTES website is no longer available as it was completely out of date. This script was designed to setup a few customizations from a fresh FreeBSD install. It assumes the following:
 1. Completed the initial install for FreeBSD
 2. ZFS is enabled and uses `zroot` where FreeBSD is installed
 3. Network is configured
@@ -23,8 +20,7 @@ The `post-install.sh` script has a couple of options:
     --help          : usage
     --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
 ```
-The `post-install.sh` script will only install from packages. We'll be using `poudriere` to build
-ports
+The `post-install.sh` script will only install from packages. We'll be using `poudriere` to build ports
 
 Once the install finishes, log back out and back in as `root`. You should see the new shell changes.
 
@@ -56,23 +52,19 @@ Go through the file until you see the following line to uncomment
 Uncommenting that line allows you to use `sudo` without ever prompting for a password. This is convenient but proceed with caution
 
 ## Setting up `poudriere`
-We previously used ports to set custom options, but since it's generally bad practice to use both `pkg`
-and `ports`, the better practice is to build your ports in `poudriere` and set your pkg repo to point
-to your custom build. We can automate the initial `poudriere` setup by running the following script
+We previously used ports to set custom options, but since it's generally bad practice to use both `pkg` and `ports`, the better practice is to build your ports in `poudriere` and set your pkg repo to point to your custom build. We can automate the initial `poudriere` setup by running the following script
 
 ```
 sh ./twinwork-notes-master/setup-poudriere.sh
 ```
 
-This will automatically disable FreeBSD's package repo. If you need to install anything else from
-this point on, follow the rest of the instructions by creating the default ports tree and building
-all of the prepopulated packages related to these NOTES
+This will automatically disable FreeBSD's package repo. If you need to install anything else from this point on, follow the rest of the instructions by creating the default ports tree and building all of the prepopulated packages related to these NOTES
 
 ```
 poudriere ports -c && poudriere bulk -j 131amd64 -p default -f /usr/local/etc/poudriere.d/packages-default
 ```
 
-If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019. But once that's complete, you can also force upgrade all your existsing packages
+If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019 (blame `llvm` for taking so long). But once that's complete, you can also force upgrade all your existsing packages
 
 ```
 pkg upgrade -f
