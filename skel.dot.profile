@@ -18,17 +18,18 @@ BLOCKSIZE=K; export BLOCKSIZE
 EDITOR=vim; export EDITOR
 PAGER=more; export PAGER
 
-PS1="\u@\h:\w"
-case `id -u` in
-0) PS1="${PS1}# ";;
-*) PS1="${PS1}$ ";;
-esac
-cd
-export PS1
+if [ -z "${BASH}" ]; then
+    PS1="\u@\h:\w"
+    case `id -u` in
+        0) PS1="${PS1}# ";;
+        *) PS1="${PS1}$ ";;
+    esac
+    cd
+    export PS1
+
+    alias 'ls'='gnuls -F --color=auto --show-control-chars -h'
+fi
 
 # set ENV to a file invoked each time sh is started for interactive use.
 ENV=$HOME/.shrc; export ENV
-
-alias 'ls'='gnuls -F --color=auto --show-control-chars -h'
-alias 'dir'='gnuls -F --color=auto --show-control-chars -h'
 alias 'vi'='vim'

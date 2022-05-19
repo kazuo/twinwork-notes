@@ -5,25 +5,14 @@
 
 INSTALL_FROM="pkg"
 DIR=$(dirname "$0")
-KERNEL_NAME=
+USE_ZSH=
 
 . ${DIR}/shared.sh
 
 usage() {
-    echo "usage: $0 [--use-pkg] [--use-ports] [--use-poudriere] [--kernel-name=NAME]
-    [--poudriere-jail-name=NAME] [--poudriere-jail-version=VERSION]
-    --help                      : usage
-    --use-ports                 : use ports for post-install
-    --use-poudriere             : use poudriere for post-install
-                                    (experiemental, may fail during ports install)
-    --use-pkg                   : use pkg for post-install (default)
-                                    (ports tree will still be updated)
-    --kernel-name               : custom kernel name
-                                    (this will install/update FreeBSD source tree)
-    --poudriere-jail-name       : sets the poudriere jail name
-                                    default: ${POUDRIERE_JAIL_NAME}
-    --poudriere-jail-version    : sets the poudriere jail version. default
-                                    default: ${POUDRIERE_JAIL_VERSION}
+    echo "usage: $0 [--use-zsh]
+    --help          : usage
+    --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
     "
 }
 
@@ -31,28 +20,8 @@ handle_args() {
     for arg in "$@"
     do
         case $arg in
-            --use-pkg)
-                INSTALL_FROM=pkg
-                shift
-                ;;
-            --use-ports)
-                INSTALL_FROM=ports
-                shift
-                ;;
-            --use-poudriere)
-                INSTALL_FROM=poudriere
-                shift
-                ;;
-            --kernel-name=*)
-                KERNEL_NAME="${arg#*=}"
-                shift
-                ;;
-            --poudriere-jail-name=*)
-                POUDRIERE_JAIL_NAME="${arg#*=}"
-                shift
-                ;;
-            --poudriere-jail-version=*)
-                POUDRIERE_JAIL_VERSION="${arg#*=}"
+            --use-zsh)
+                USE_ZSH=1
                 shift
                 ;;
             *)
@@ -64,28 +33,11 @@ handle_args() {
     done
 }
 
-continue_prompt() {
-    local MESSAGE=$1
-
-    echo "________________________________________________________________________________"
-    echo ${MESSAGE}
-    read -p "Continue? [y/N] " yn
-    case $yn in
-        [Yy]*)
-            ;;
-        *)
-            echo "Canceling operation..."
-            exit 1
-            ;;
-    esac
-}
-
 prompt_root_copy() {
     local MESSAGE=$1
 
-    echo "________________________________________________________________________________"
-    echo ${MESSAGE}
-    read -p "Change root shell to bash and copy profile template files? [y/N] " yn
+    echo ""
+    read -p "Change default root shell and copy profile template files? [y/N] " yn
     case $yn in
         [Yy]*)
             finish_setup
@@ -96,6 +48,8 @@ prompt_root_copy() {
 }
 
 copy_custom_kernel() {
+    # deprecated, script no longer uses it as is only here for historical record
+
     # assumes release, maybe in the future detect freebsd-version and choose
     svnup release -h svn.freebsd.org
 
@@ -115,12 +69,18 @@ finish_setup() {
     echo ""
     echo "Finished installing ports and/or packages... changing shell to bash for root"
 
-    /usr/bin/chsh -s /usr/local/bin/bash root
     mkdir -v /root/post-install
     cp -v ${DIR}/root.profile /root/post-install/root.profile
     cp -v /root/.profile /root/post-install/.profile.bak && rm -v /root/.profile
     cp -v /root/post-install/root.profile /root/.profile
-    (cd /root && ln -sv .profile .bashrc)
+
+    if [ ${USE_ZSH} ]; then
+        /usr/bin/chsh -s /usr/local/bin/zsh root
+        sh ./oh-my-zsh.sh
+    else
+        /usr/bin/chsh -s /usr/local/bin/bash root
+        (cd /root && ln -sv .profile .bashrc)
+    fi            
 
     echo ""
     echo "Finished setting shell settings... now for skel"
@@ -156,28 +116,6 @@ main() {
 
     env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
     /usr/sbin/pkg update    
-
-    if [ ${INSTALL_FROM} == "ports" ]; then
-        echo "Installing from ports"
-        install_from_ports ${BASE_PKGS}
-        CMD_STATUS=$?
-    elif [ ${INSTALL_FROM} == "poudriere" ]; then 
-        echo "Installing from poudriere"
-        setup_poudriere_base && \
-        setup_poudriere_ports && \
-        install_from_poudriere ${BASE_PKGS} && \
-        install_from_pkg
-        CMD_STATUS=$?
-    else
-        echo "Installing from pkg"
-        install_from_pkg ${BASE_PKGS}
-        CMD_STATUS=$?
-    fi
-
-    if [ ! -z "${KERNEL_NAME}" ]; then
-        copy_custom_kernel
-        CMD_STATUS=$?
-    fi
 
     if [ ! -z ${CMD_STATUS} ]; then
         prompt_root_copy

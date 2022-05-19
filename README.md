@@ -3,10 +3,11 @@
 This script will automate most of the post-installation install and configuration to set
 up your FreeBSD environment found at ~~http://notes.twinwork.net/freebsd/~~.
 
-The original NOTES website is no longer available. It was also extremely out of date. As a matter of fact, this script is mostly out of date as well, however from time to time I do need a FreeBSD server up and running and I still go back to my original NOTES from the early 2000s to bring it up. Since the original site is gone, the script still remains to quickly get the post-install of FreeBSD up and running. The other pages such as Apache, MySQL, PHP, and qmail are largely outdated and won't be ported over in its current form.
-
-This is the abbreviated version of FreeBSD NOTES and assumes the following:
+The original NOTES website is no longer available as it was completely out of date. This
+script was designed to setup a few customizations from a fresh FreeBSD install. It assumes
+the following:
 1. Completed the initial install for FreeBSD
+2. ZFS is enabled and uses `zroot` where FreeBSD is installed
 3. Network is configured
 
 Login locally as `root` and download the following
@@ -19,14 +20,11 @@ sh ./twinwork-notes-master/post-install.sh
 
 The `post-install.sh` script has a couple of options:
 ```
-    --help                        : usage
-    --use-ports                   : use ports for post-install (default)
-    --use-pkg                     : use pkg for post-install
-                                    (ports tree will still be updated)
-    --kernel-name=<custom_name>   : custom kernel name
-                                    (this will install/update FreeBSD source tree)
+    --help          : usage
+    --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
 ```
-The `--use-ports` flag is always implied unless you use `--use-pkg`. The latter is always faster but the former flag exists since this what this script originally installed through ports. The script will no longer prompt you for a kernel name if you choose to customize your kernel. Be aware if you choose to set `--kernel-name`, the FreeBSD source tree will first be updated using the `release` tag. And if you did not install the source tree during your initial setup, it will download the entire tree.
+The `post-install.sh` script will only install from packages. We'll be using `poudriere` to build
+ports
 
 Once the install finishes, log back out and back in as `root`. You should see the new shell changes.
 
@@ -57,11 +55,38 @@ Go through the file until you see the following line to uncomment
 ```
 Uncommenting that line allows you to use `sudo` without ever prompting for a password. This is convenient but proceed with caution
 
+## Setting up `poudriere`
+We previously used ports to set custom options, but since it's generally bad practice to use both `pkg`
+and `ports`, the better practice is to build your ports in `poudriere` and set your pkg repo to point
+to your custom build. We can automate the initial `poudriere` setup by running the following script
+
+```
+sh ./twinwork-notes-master/setup-poudriere.sh
+```
+
+This will automatically disable FreeBSD's package repo. If you need to install anything else from
+this point on, follow the rest of the instructions by creating the default ports tree and building
+all of the prepopulated packages related to these NOTES
+
+```
+poudriere ports -c && poudriere bulk -j 131amd64 -p default -f /usr/local/etc/poudriere.d/packages-default
+```
+
+If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019. But once that's complete, you can also force upgrade all your existsing packages
+
+```
+pkg upgrade -f
+```
+
+Some configurations of note are:
+/usr/local/etc/pkg/repos
+/usr/local/etc/poudriere.d/make.conf
+
 ## The FEPP install script
 I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script. This script also has a `--use-ports` and `--use-pkg` flag just like `post-install.sh`. And by default it uses `--use-ports`.
 
 ```
-sudo sh ./fepp-install.sh
+sh ./twinwork-notes-master/fepp-install.sh
 ```
 
 The script does not automatically start the services for Nginx, PostgreSQL, or PHP-FPM. These services need to be configured first before starting.

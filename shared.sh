@@ -13,9 +13,7 @@ BASE_PKGS="${BASE_PKGS} shells/zsh"
 BASE_PKGS="${BASE_PKGS} misc/gnuls"
 BASE_PKGS="${BASE_PKGS} security/sudo"
 BASE_PKGS="${BASE_PKGS} editors/vim"
-BASE_PKGS="${BASE_PKGS} net/svnup"
 BASE_PKGS="${BASE_PKGS} devel/git@lite"
-BASE_PKGS="${BASE_PKGS} ftp/wget"
 BASE_PKGS="${BASE_PKGS} net/rsync"
 
 # optional additional packages
@@ -83,7 +81,7 @@ FEPP_PKGS="${FEPP_PKGS} textproc/php80-xsl"
 continue_prompt() {
     local MESSAGE=$1
 
-    echo "________________________________________________________________________________"
+    echo ""
     echo ${MESSAGE}
     read -p "Continue? [y/N] " yn
     case $yn in
@@ -207,27 +205,17 @@ Poudriere: {
 }
 EOF
 
-#     cat > /usr/local/etc/pkg/repos/Loki.conf <<EOF
-# Loki: {
-#     url: "pkg+https://loki.twinwork.net/poudriere/packages/${POUDRIERE_JAIL_NAME}-default",
-#     mirror_type: "srv",
-#     signature_type: "pubkey",
-#     pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
-#     enabled: yes,
-#     priority: 100,
-# }    
-# EOF
-
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
 # https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
-#DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
+DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
 
 # MariaDB 10.5
-#DEFAULT_VERSIONS+=mysql=10.5m
+DEFAULT_VERSIONS+=mysql=10.5m
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 EOF
 
+    echo "Check poudriere make options in /usr/local/etc/poudriere.d/make.conf"
 }
 
 setup_poudriere_ports() {
