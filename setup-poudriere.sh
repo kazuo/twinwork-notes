@@ -2,7 +2,7 @@
 DIR=$(dirname "$0")
 . ${DIR}/shared.sh
 
-USE_LOKI=0
+USE_LOKI=no
 
 # override 
 POUDRIERE_JAIL_NAME=131amd64
@@ -21,7 +21,7 @@ handle_args() {
     do
         case $arg in
             --use-loki)
-                USE_LOKI=1
+                USE_LOKI=yes
                 shift
                 ;;
             *)
@@ -71,7 +71,7 @@ main() {
     add_poudriere_pkg_file ${FEPP_PKGS} && \
     add_poudriere_pkg_file ${ADD_PKGS}
 
-    if test $USE_LOKI; then
+    if test "${USE_LOKI}" == "yes"; then
         use_loki
     fi
 
