@@ -12,5 +12,5 @@ echo "https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
 echo "Proceed with caution and verify that this remote shell script is"
 echo "actually oh-my-zsh (especially if you're installing this as root"
 continue_prompt "Proceed with installing?"
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
 echo "source ~/.profile" >> .zshrc
