@@ -49,7 +49,7 @@ use_loki() {
 
     mkdir -vp /usr/local/etc/ssl/certs
     cp -v ${DIR}/loki-poudriere.cert /usr/local/etc/ssl/certs/
-    sed -i -e '/enabled: / s/yes/no/' /usr/local/etc/pkg/repos/Poudriere.conf
+    sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
 
     cat > /usr/local/etc/pkg/repos/Loki.conf <<EOF
 Loki: {
