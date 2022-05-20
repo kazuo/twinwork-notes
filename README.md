@@ -58,7 +58,24 @@ We previously used ports to set custom options, but since it's generally bad pra
 sh ./twinwork-notes-master/setup-poudriere.sh
 ```
 
-This will automatically disable FreeBSD's package repo. If you need to install anything else from this point on, follow the rest of the instructions by creating the default ports tree and building all of the prepopulated packages related to these NOTES
+The `setup-poudriere.sh` script has a couple of options:
+```
+    --help          : usage
+    --use-loki      : uses Twinwork's Loki pourdriere repo
+```
+
+If you specify the `--use-loki` option, you'll still copy over the main Poudriere.conf file but that repo will be disabled by default and the Loki.conf poudriere file will be enabled. This repo has all of packages built from `twinwork-notes` plus a few additional ones found in `shared.sh`. You can always check https://loki.twinwork.net/poudriere. Packages aren't updated on schedule, but closer to once every two weeks or so. They're definitely going to be more up to date than using FreeBSD's quarterly repo. Here's a copy of Loki's `/usr/local/etc/poudriere.d/make.conf`:
+
+```
+DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
+
+# MariaDB 10.5
+DEFAULT_VERSIONS+=mysql=10.5m
+
+OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
+```
+
+Whether or not you're choosing Poudriere.conf or Loki.conf, running `setup-poudriere.sh` will disable FreeBSD's package repo. If you need to install anything else from this point on, follow the rest of the instructions by creating the default ports tree and building all of the prepopulated packages related to these NOTES
 
 ```
 poudriere ports -c && poudriere bulk -j 131amd64 -p default -f /usr/local/etc/poudriere.d/packages-default

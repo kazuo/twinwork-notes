@@ -10,7 +10,10 @@ POUDRIERE_JAIL_VERSION=13.1-RELEASE
 POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
 
 usage() {
-    echo ""
+    echo "usage: $0 [--use-zsh]
+    --help          : usage
+    --use-loki      : uses Twinwork's LOKI pourdriere repo
+    "
 }
 
 handle_args() {

@@ -71,8 +71,8 @@ FEPP_PKGS="${FEPP_PKGS} ftp/php81-ftp"
 FEPP_PKGS="${FEPP_PKGS} math/php81-bcmath"
 FEPP_PKGS="${FEPP_PKGS} math/php81-gmp"
 FEPP_PKGS="${FEPP_PKGS} devel/php81-pcntl"
-FEPP_PKGS="${FEPP_PKGS} net/php80-ldap"
-FEPP_PKGS="${FEPP_PKGS} textproc/php80-xsl"
+FEPP_PKGS="${FEPP_PKGS} net/php81-ldap"
+FEPP_PKGS="${FEPP_PKGS} textproc/php81-xsl"
 
 continue_prompt() {
     local MESSAGE=$1
