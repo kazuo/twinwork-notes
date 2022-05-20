@@ -126,7 +126,7 @@ install_from_pkg() {
 build_poudriere() {
     local PKGS=$@
 
-    if [ ! -z ${POUDRIERE_JAIL_NAME+x} ] || [ "${POUDRIERE_JAIL_NAME}" == "" ]; then
+    if [ -z ${POUDRIERE_JAIL_NAME+x} ] || [ "${POUDRIERE_JAIL_NAME}" == "" ]; then
         echo "POUDRIERE_JAIL_NAME and/or POUDRIERE_JAIL_VERSION is not set!" 
         exit 1
     fi    
@@ -167,8 +167,8 @@ install_from_ports() {
 setup_poudriere_base() {
     local CMD_STATUS=
 
-    if [ ! -z ${POUDRIERE_JAIL_NAME+x} ] || [ "${POUDRIERE_JAIL_NAME}" == "" ] || \
-        [ ! -z ${POUDRIERE_JAIL_VERSION+x} ] || [ "${POUDRIERE_JAIL_VERSION}" == "" ]; then
+    if [ -z ${POUDRIERE_JAIL_NAME+x} ] || [ "${POUDRIERE_JAIL_NAME}" == "" ] || \
+        [ -z ${POUDRIERE_JAIL_VERSION+x} ] || [ "${POUDRIERE_JAIL_VERSION}" == "" ]; then
 
         echo "POUDRIERE_JAIL_NAME and/or POUDRIERE_JAIL_VERSION is not set!" 
         exit 1

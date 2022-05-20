@@ -18,7 +18,7 @@ BLOCKSIZE=K; export BLOCKSIZE
 EDITOR=vim; export EDITOR
 PAGER=more; export PAGER
 
-if [ -z "${BASH}" ]; then
+if [ ! -z "${BASH}" ]; then
     PS1="\u@\h:\w"
     case `id -u` in
         0) PS1="${PS1}# ";;
