@@ -183,7 +183,9 @@ setup_poudriere_base() {
     # to check for pkg update:
     # PORTSDIR=/usr/local/poudriere/ports/default pkg version -P -l "<"
 
-    pkg install -y ports-mgmt/poudriere && \        
+    pkg install -y ports-mgmt/poudriere && \
+
+    # requires ZPOOL to be set
     sysrc -f /usr/local/etc/poudriere.conf ZPOOL=zroot && \
     poudriere jail -c -j ${POUDRIERE_JAIL_NAME} -v ${POUDRIERE_JAIL_VERSION} && \
     mkdir -vp /usr/local/etc/pkg/repos
