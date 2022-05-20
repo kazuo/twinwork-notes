@@ -32,12 +32,12 @@ handle_args() {
 
 use_loki() {
     LOKI_DOMAIN=loki.twinwork.net
-    LOKI_IP=$(getent hosts ${LOKI_DOMAIN} | awk '{ print $1 }')
+    LOKI_IP=$(host ${LOKI_DOMAIN} | awk '{ print $4 }')
     CURRENT_IP=$(host myip.opendns.com resolver1.opendns.com | tail -1 | awk '{ print $4 }')
     echo $LOKI_IP
     echo $CURRENT_IP
     
-    if [ $LOKI_IP == $CURRENT_IP ]; then
+    if [ "${LOKI_IP}" == "$CURRENT_IP" ]; then
         # get around weird nginx reverse proxy 
         # issues while on the same network
         echo "Detected Loki on local network, adding ${LOKI_DOMAIN} to /etc/hosts"
