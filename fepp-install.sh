@@ -14,7 +14,7 @@ main() {
     echo "already built through poudriere"
     echo ""
     continue_prompt "This will install nginx, PostgreSQL, and PHP..."
-    install_from_pkg
+    install_from_pkg ${FEPP_PKGS}
     CMD_STATUS=$?
 
     # if [ -z ${CMD_STATUS} ]; then
