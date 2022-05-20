@@ -81,10 +81,10 @@ Whether or not you're choosing Poudriere.conf or Loki.conf, running `setup-poudr
 poudriere ports -c && poudriere bulk -j 131amd64 -p default -f /usr/local/etc/poudriere.d/packages-default
 ```
 
-If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019 (blame `llvm` for taking so long). But once that's complete, you can also force upgrade all your existsing packages
+If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019 (blame `llvm` for taking so long). But once that's complete, you can also force upgrade all your existsing packages and remove any packages no longer needed
 
 ```
-pkg upgrade -f
+pkg upgrade -f && pkg autoremove
 ```
 
 Some configurations of note are:

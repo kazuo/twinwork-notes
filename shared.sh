@@ -222,6 +222,10 @@ DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
 DEFAULT_VERSIONS+=mysql=10.5m
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
+
+.if ${.CURDIR:C/.*\/devel\/git//} == ""
+FLAVOR=lite
+.endif
 EOF
 
     echo "Check poudriere make options in /usr/local/etc/poudriere.d/make.conf"
