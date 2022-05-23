@@ -268,11 +268,13 @@ use_loki() {
 
     mkdir -vp /usr/local/etc/pkg/repos
     mkdir -vp /usr/local/etc/ssl/certs
-    cp -v ${DIR}/loki-poudriere.cert /usr/local/etc/ssl/certs/
+    cp -v ${DIR}/loki-poudriere.cert /usr/local/etc/ssl/certs/    
 
     if test -f /usr/local/etc/pkg/repos/Poudriere.conf; then
         sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
     fi
+
+    disable_freebsd_repo
     
     cat > /usr/local/etc/pkg/repos/Loki.conf <<EOF
 Loki: {
@@ -286,4 +288,20 @@ Loki: {
 EOF
 
     echo "Added Loki repo in /usr/local/etc/pkg/repos/Loki.conf"
+}
+
+disable_freebsd_repo() {
+
+    if test -f /usr/local/etc/pkg/repos/FreeBSD.conf; then
+        echo "/usr/local/etc/pkg/repos/FreeBSD.conf already configured"
+        exit
+    fi
+    
+    mkdir -vp /usr/local/etc/pkg/repos
+    cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
+# Ensures that Poudriere will always be used for pkg
+FreeBSD: {
+    enabled: no,
+}
+EOF
 }
