@@ -99,6 +99,11 @@ add_poudriere_pkg_file() {
 
     touch ${POUDRIERE_PKG_FILE}
     for PORT in ${PKGS}; do
+        if test "${PKG#*@}" != "$PKG"; then
+            # no idea why poudriere bulk won't abide by specified flavor, so we just
+            # install the main package and hope the make.conf sets the flavor for it
+            PORT=$( printf "devel/git@lite" | sed "s/^.*\///" | sed "s/@.*$//" )
+        fi
         echo ${PORT} | tee -a ${POUDRIERE_PKG_FILE}
     done    
 }
