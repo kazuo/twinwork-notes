@@ -266,6 +266,7 @@ use_loki() {
         echo "192.168.1.201 loki.twinwork.net" | tee -a /etc/hosts
     fi
 
+    mkdir -vp /usr/local/etc/pkg/repos
     mkdir -vp /usr/local/etc/ssl/certs
     cp -v ${DIR}/loki-poudriere.cert /usr/local/etc/ssl/certs/
     sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
