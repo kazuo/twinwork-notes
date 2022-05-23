@@ -10,6 +10,11 @@ USE_LOKI=
 
 . ${DIR}/shared.sh
 
+# todo override 
+POUDRIERE_JAIL_NAME=131amd64
+POUDRIERE_JAIL_VERSION=13.1-RELEASE
+POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
+
 usage() {
     echo "usage: $0 [--use-zsh]
     --help          : usage

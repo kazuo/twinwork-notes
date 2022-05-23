@@ -269,8 +269,11 @@ use_loki() {
     mkdir -vp /usr/local/etc/pkg/repos
     mkdir -vp /usr/local/etc/ssl/certs
     cp -v ${DIR}/loki-poudriere.cert /usr/local/etc/ssl/certs/
-    sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
 
+    if test -f /usr/local/etc/pkg/repos/Poudriere.conf; then
+        sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
+    fi
+    
     cat > /usr/local/etc/pkg/repos/Loki.conf <<EOF
 Loki: {
     url: "pkg+https://${LOKI_DOMAIN}/poudriere/packages/${POUDRIERE_JAIL_NAME}-default",
