@@ -6,6 +6,7 @@
 INSTALL_FROM="pkg"
 DIR=$(dirname "$0")
 USE_ZSH=
+USE_LOKI=
 
 . ${DIR}/shared.sh
 
@@ -13,6 +14,7 @@ usage() {
     echo "usage: $0 [--use-zsh]
     --help          : usage
     --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
+    --use-loki      : uses Twinwork's LOKI poudriere repo
     "
 }
 
@@ -22,6 +24,10 @@ handle_args() {
         case $arg in
             --use-zsh)
                 USE_ZSH=1
+                shift
+                ;;
+            --use-loki)
+                USE_LOKI=1
                 shift
                 ;;
             *)
@@ -113,6 +119,10 @@ main() {
     echo ""
     echo ""
     continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
+
+    if [ ${USE_LOKI} ]; then
+        use_loki
+    fi
 
     env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
     /usr/sbin/pkg update

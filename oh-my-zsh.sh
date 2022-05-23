@@ -13,4 +13,4 @@ echo "Proceed with caution and verify that this remote shell script is"
 echo "actually oh-my-zsh (especially if you're installing this as root"
 continue_prompt
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended"
-echo "source ~/.profile" >> .zshrc
+echo "source ~/.profile" | tee -a .zshrc

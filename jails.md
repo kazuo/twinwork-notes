@@ -1,133 +1,10 @@
 # Jails
 
-## `pf`
-
-Setup `pf` first
-
-```
-sudo sysrc pf_enable=YES
-sudo sysrc pf_flags=
-sudo sysrc pf_rules=/etc/pf.conf
-sudo sysrc pflog_enable=YES
-sudo sysrc pflog_logfile=/var/log/pflog
-sudo sysrc pflog_flags=
-```
-
-Add a loopback device for the jails
-```
-sudo sysrc cloned_interfaces=lo1
-sudo sysrc ipv4_addrs_lo1="10.0.0.0 netmask 255.255.255.0"
-sudo service netif cloneup
-```
-
-Add a simple free-flowing config for `/etc/pf.conf`
+## Bastille
+Pulled from https://bastillebsd.org/getting-started/
 
 ```
-# Required order: options, normalization, queueing, translation, filtering.
-if_ext = "em0" # your actual network card
-if_loop = "lo0"
-if_jail_loop = "lo1"
-
-set skip on $if_loop
-set skip on $if_jail_loop
-set debug urgent
-
-scrub in on $if_ext all
-
-table <jailnet> { 10.0.0.0/24 }
-
-# NAT rules
-nat pass on $if_ext from <jailnet> to any -> ($if_ext)
-nat on $if_ext from <jailnet> to any -> ($if_ext)
-
-# Free flowing traffic
-pass in quick all
-pass out quick all
-```
-
-Then start `pf`
-```
-sudo service pf start
-```
-
-# iocage
-https://iocage.io/
-https://github.com/iocage/iocage
-
-This assumes the `zpool` you want to activate `iocage` on is called `emerald`. The jail being created is called `sandbox`
-
-If you don't already have `fdescfs` in your `/etc/fstab`, you can add it (`iocage` warns you with a message if you try to activate without it)
-
-``
-fdescfs /dev/fd  fdescfs  rw  0  0
-``
-
-You can also mount it now
-```
-sudo mount -t fdescfs null /dev/fd
-```
-
-```
-(cd /usr/ports/sysutils/iocage && sudo make install clean)
-sudo sysrc iocage_enable=YES
-sudo iocage activate emerald
-sudo iocage fetch -r LATEST
-```
-
-My `emerald` `zpool` is mounted to `/nyx`, so by default my `sandbox` jail will be found in `/nyx/iocage/jails/sandbox`. Create the jail
-
-```
-sudo iocage create -r LATEST -n sandbox boot=on
-sudo iocage set ip4_addr="lo1|10.0.0.31/24" sandbox
-sudo iocage stop sandbox
-```
-
-Ports aren't installed, so we let's mount a read-only version of it
-
-```
-sudo iocage exec sandbox mkdir /usr/ports
-sudo iocage fstab -a sandbox "/usr/ports /usr/ports nullfs ro 0 0"
-sudo iocage start sandbox
-```
-
-We'll also export a simple path to our jail to be used and create directories to download and build ports:
-```
-export D=/nyx/iocage/jails/sandbox
-echo "WRKDIRPREFIX?=  /usr/portsbuild" | sudo tee $D/root/etc/make.conf
-echo "DISTDIR=  /usr/portsdistfiles" | sudo tee -a $D/root/etc/make.conf
-echo "nameserver 8.8.8.8" | sudo tee $D/root/etc/resolv.conf
-echo "nameserver 8.8.4.4" | sudo tee -a $D/root/etc/resolv.conf
-```
-
-If you need to update to the latest patch release
-```
-sudo iocage update sandbox
-```
-
-If you want to enable pinging within the jail, you'll need to enable raw sockets for the jail
-```
-sudo iocage set allow_raw_sockets=1 sandbox
-```
-
-Check out the `iocage` `man` page for more: https://www.freebsd.org/cgi/man.cgi?query=iocage&sektion=8
-
-You can get into the jail's console by doing the following
-
-```
-sudo iocage console sandbox
-```
-
-If you want to execute you can use `exec` (e.g. installing `vim`)
-
-```
-sudo iocage exec sandbox "(cd /usr/ports/editors/vim && make -DBATCH install clean)"
-```
-
-# Bastille
-Alternative jail manager to iocage. Pulled from https://bastillebsd.org/getting-started/
-
-```
-sudo make -C /usr/ports/sysutils/bastille/ -DBATCH install clean
+sudo pkg install sysutils/bastille
 
 sudo sysrc bastille_enable=YES
 sudo sysrc -f /usr/local/etc/bastille/bastille.conf bastille_tzdata=America/Los_Angeles
@@ -175,9 +52,50 @@ Start `pf`
 sudo service pf start
 ```
 
-## PostgreSQL jail
-Requires this jail config before doing a DB init
+## NGINX reverse proxy jail
+Create the NGINX reverse proxy jail... which we'll call www-proxy
 ```
+sudo bastille create www-proxy 13.1-RELEASE 192.168.2.21
+sudo bastille config www-proxy set sysvsem new
+sudo bastille config www-proxy set sysvmsg new
+sudo bastille config www-proxy set sysvshm new
+sudo bastille config www-proxy set allow.raw_sockets
+sudo bastille restart www-proxy
+```
+
+Install NGINX along with a few other packages
+
+## PostgreSQL jail
+Create the jail with the given release and IP
+
+```
+sudo bastille pkg www-proxy install \
+    editors/vim \
+    security/py-certbot \
+    www/nginx
+```
+### Update pf rules
+Ensure `/etc/pf.conf` has a similar rule on the host to make sure ports 80 and 443 are able to get through
+
+```
+pass in quick on $ext_if proto tcp from any to any port {http, https} flags S/SA keep state
+```
+
+Add all http/https redirects from the host to www-proxy
+```
+sudo bastille rdr www-proxy tcp http http
+sudo bastille rdr www-proxy tcp https https
+```
+### nginx config
+...
+### Setup SSL 
+
+Setup SSL via certbot
+
+...
+
+```
+sudo bastille create postgres 13.1-RELEASE 192.168.2.23
 sudo bastille config postgres set sysvsem new
 sudo bastille config postgres set sysvmsg new
 sudo bastille config postgres set sysvshm new
@@ -185,16 +103,12 @@ sudo bastille config postgres set allow.raw_sockets
 sudo bastille restart postgres
 ```
 
-PostgreSQL needs a few other packages
-```
-sudo bastille cmd postgres pkg install sudo
-sudo bastille cmd postgres portsnap fetch auto
-```
+Install PostgreSQL with a few other packages
 
-Install PostgreSQL
 ```
-host$ sudo bastille console postgres
-postgres# make -C /usr/ports/editors/vim/ -DBATCH install clean && \
-    make -C /usr/ports/databases/postgresql14-client/ -DBATCH install clean && \
-    make -C /usr/ports/databases/postgresql14-server/ -DBATCH install clean
+sudo bastille pkg postgres install \
+    security/sudo \
+    editors/vim \
+    databases/postgresql14-client \
+    databases/postgresql14-server
 ```

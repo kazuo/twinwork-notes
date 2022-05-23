@@ -99,7 +99,7 @@ add_poudriere_pkg_file() {
 
     touch ${POUDRIERE_PKG_FILE}
     for PORT in ${PKGS}; do
-        echo ${PORT} >> ${POUDRIERE_PKG_FILE}
+        echo ${PORT} | tee -a ${POUDRIERE_PKG_FILE}
     done    
 }
 
@@ -216,10 +216,12 @@ EOF
 
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
 # https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
-DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
-
+DEFAULT_VERSIONS+=python=3.8 python3=3.8
+DEFAULT_VERSIONS+=pgsql=14
+DEFAULT_VERSIONS+=php=8.1
+DEFAULT_VERSIONS+=samba=4.13
 # MariaDB 10.5
-DEFAULT_VERSIONS+=mysql=10.5m
+#DEFAULT_VERSIONS+=mysql=10.5m
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 
@@ -242,4 +244,42 @@ setup_poudriere_ports() {
     fi
     
     poudriere ports -c
+}
+
+use_loki() {
+    LOKI_DOMAIN=loki.twinwork.net
+    LOKI_IP=$(host ${LOKI_DOMAIN} | awk '{ print $4 }')
+    LOKI_CONF="/usr/local/etc/pkg/repos/Loki.conf"
+    CURRENT_IP=$(host myip.opendns.com resolver1.opendns.com | tail -1 | awk '{ print $4 }')
+    echo $LOKI_IP
+    echo $CURRENT_IP
+
+    if test -f ${LOKI_CONF}; then
+        echo "${LOKI_CONF} already configured"
+        exit
+    fi
+    
+    if [ "${LOKI_IP}" == "$CURRENT_IP" ]; then
+        # get around weird nginx reverse proxy 
+        # issues while on the same network
+        echo "Detected Loki on local network, adding ${LOKI_DOMAIN} to /etc/hosts"
+        echo "192.168.1.201 loki.twinwork.net" | tee -a /etc/hosts
+    fi
+
+    mkdir -vp /usr/local/etc/ssl/certs
+    cp -v ${DIR}/loki-poudriere.cert /usr/local/etc/ssl/certs/
+    sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
+
+    cat > /usr/local/etc/pkg/repos/Loki.conf <<EOF
+Loki: {
+    url: "pkg+https://${LOKI_DOMAIN}/poudriere/packages/${POUDRIERE_JAIL_NAME}-default",
+    mirror_type: "srv",
+    signature_type: "pubkey",
+    pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
+    enabled: yes,
+    priority: 1000,
+}    
+EOF
+
+    echo "Added Loki repo in /usr/local/etc/pkg/repos/Loki.conf"
 }

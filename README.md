@@ -52,7 +52,9 @@ Go through the file until you see the following line to uncomment
 Uncommenting that line allows you to use `sudo` without ever prompting for a password. This is convenient but proceed with caution
 
 ## Setting up `poudriere`
-We previously used ports to set custom options, but since it's generally bad practice to use both `pkg` and `ports`, the better practice is to build your ports in `poudriere` and set your pkg repo to point to your custom build. We can automate the initial `poudriere` setup by running the following script
+We previously used ports to set custom options, but since it's generally bad practice to use both `pkg` and `ports`, the better practice is to build your ports in `poudriere` and set your pkg repo to point to your custom build. Another reason I converted over to building my own packages in poudriere is my increased usage of FreeBSD jails. It was just a lot easier to point the jails to my own package repo than it was to build ports within the jail. 
+
+We can automate the initial `poudriere` setup that `twinwork-notes` uses by running the following script
 
 ```
 sh ./twinwork-notes-master/setup-poudriere.sh
@@ -61,13 +63,13 @@ sh ./twinwork-notes-master/setup-poudriere.sh
 The `setup-poudriere.sh` script has a couple of options:
 ```
     --help          : usage
-    --use-loki      : uses Twinwork's Loki pourdriere repo
+    --use-loki      : uses Twinwork's Loki poudriere repo
 ```
 
-If you specify the `--use-loki` option, you'll still copy over the main Poudriere.conf file but that repo will be disabled by default and the Loki.conf poudriere file will be enabled. This repo has all of packages built from `twinwork-notes` plus a few additional ones found in `shared.sh`. You can always check https://loki.twinwork.net/poudriere. Packages aren't updated on schedule, but closer to once every two weeks or so. They're definitely going to be more up to date than using FreeBSD's quarterly repo. Here's a copy of Loki's `/usr/local/etc/poudriere.d/make.conf`:
+If you specify the `--use-loki` option, you'll still copy over the main Poudriere.conf file but that repo will be disabled by default and the Loki.conf poudriere file will be enabled. This repo has all of packages built from `twinwork-notes` plus a few additional ones found in `shared.sh`. You can always check https://loki.twinwork.net/poudriere. Packages aren't updated on schedule, but closer to once every two weeks or so. They're definitely going to be more up to date than using FreeBSD's quarterly repo. Also, be aware of what Loki is actually building... here's a copy of Loki's `/usr/local/etc/poudriere.d/make.conf`:
 
 ```
-DEFAULT_VERSIONS+=python=3.10 python3=3.10 pgsql=14 php=8.1 samba=4.13
+DEFAULT_VERSIONS+=python=3.8 python3=3.8 pgsql=14 php=8.1 samba=4.13
 
 # MariaDB 10.5
 DEFAULT_VERSIONS+=mysql=10.5m
