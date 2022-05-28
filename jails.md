@@ -65,9 +65,6 @@ sudo bastille restart www-proxy
 
 Install NGINX along with a few other packages
 
-## PostgreSQL jail
-Create the jail with the given release and IP
-
 ```
 sudo bastille pkg www-proxy install \
     editors/vim \
@@ -90,9 +87,28 @@ sudo bastille rdr www-proxy tcp https https
 ...
 ### Setup SSL 
 
-Setup SSL via certbot
+Create a `dhparams.pem` file (this should be created for any other nginx jail that will use `ssl_common.conf`)
+```
+sudo bastille cmd www-proxy openssl dhparam -out /usr/local/etc/nginx/dhparams.pem 4096
+```
 
-...
+Setup SSL via certbot without nginx. Since we haven't started the nginx service yet, we can create our SSL cert via certbot using cerbot's HTTPS server. I find it easier to setup our initial certs using certbot's HTTP server instead of nginx that way I don't need to worry about dealing with nginx's initial conf (though, in theory it should just work out of the box, I just want to rule it out for this setup: https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/)
+
+```
+sudo bastille cmd www-proxy certbot certonly --standalone -d sampledomain.com -d *.sampledomain.com
+```
+
+Take note where your cert/keys are stored (within `/usr/local/etc/letsencrypt/live`)
+
+We do need to also update this cert once in awhile. Here's a sample where the host cron (root) will renew the cert once every 3 months via nginx (since by this point, nginx will be serving all HTTP requests)
+
+```
+5   4   2   */3 *   /usr/local/bin/bastille cmd www-proxy certbot --nginx renew
+```
+
+
+## PostgreSQL jail
+Create the jail with the given release and IP
 
 ```
 sudo bastille create postgres 13.1-RELEASE 192.168.2.23
