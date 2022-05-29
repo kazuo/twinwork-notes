@@ -156,6 +156,7 @@ sudo bastille pkg www-poudriere install \
 
 This assumes that Poudriere was setup with ZFS support and using the default `zroot` `zpool`. Unfortuantely, those no other way, but we need to individually mount every zfs dataset related to Poudriere.
 
+```
 sudo bastille cmd www-poudriere mkdir /poudriere-html
 sudo bastille mount www-poudriere /usr/local/poudriere poudriere
 sudo bastille mount www-poudriere /usr/local/poudriere/data poudriere/data
@@ -166,6 +167,7 @@ sudo bastille mount www-poudriere /usr/local/poudriere/data/logs poudriere/data/
 sudo bastille mount www-poudriere /usr/local/poudriere/data/packages poudriere/data/packages
 sudo bastille mount www-poudriere /usr/local/poudriere/data/wrkdirs poudriere/data/wrkdirs
 sudo bastille mount www-poudriere /usr/local/share/poudriere/html poudriere-html/poudriere
+```
 
 ### Setup SSL 
 
@@ -174,7 +176,7 @@ Create a `dhparams.pem` file (this should be created for any other nginx jail th
 sudo bastille cmd www-poudriere openssl dhparam -out /usr/local/etc/nginx/dhparams.pem 4096
 ```
 
-Create a self-signed cert for this jail. This really only secures the connection between the host and the jail, so it's probably overkill to do, but it's probably a good practice. See (ssl-selfsigned.md)[ssl-selfsigned.md]. It's probably easiest if you ran those commands within the jail itself:
+Create a self-signed cert for this jail. This really only secures the connection between the host and the jail, so it's probably overkill to do, but it's probably a good practice. See (ssl-selfsigned.md)[./ssl-selfsigned.md]. It's probably easiest if you ran those commands within the jail itself:
 
 ```
 sudo bastille console www-poudriere
