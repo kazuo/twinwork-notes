@@ -93,6 +93,37 @@ Some configurations of note are:
 /usr/local/etc/pkg/repos
 /usr/local/etc/poudriere.d/make.conf
 
+### Additional configuration for hosting your own pkg repo
+
+To continue building and serving your own package repo, create an SSL key and cert that clients can use
+
+```
+sudo mkdir -p /usr/local/etc/ssl/{keys,certs}
+sudo chmod 0600 /usr/local/etc/ssl/keys
+sudo openssl genrsa -out /usr/local/etc/ssl/keys/poudriere.key 4096
+sudo openssl rsa -in /usr/local/etc/ssl/keys/poudriere.key -pubout -out /usr/local/etc/ssl/certs/poudriere.cert
+```
+
+Update `/usr/local/etc/poudriere.conf` and modify the following values
+
+```
+PKG_REPO_SIGNING_KEY=/usr/local/etc/ssl/keys/poudriere.key
+URL_BASE=https://sampledomain.com/poudriere
+```
+
+Modify your poudriere conf to add the public key: `/usr/local/etc/pkg/repos/Poudriere.conf`
+
+```
+Poudriere: {
+    url: "file:///usr/local/poudriere/data/packages/131amd64-default",
+    mirror_type: "srv",
+    signature_type: "pubkey",
+    pubkey: "/usr/local/etc/ssl/certs/poudriere.cert",
+    enabled: yes,
+    priority: 100,
+}
+```
+
 ## The FEPP install script
 I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script. This script also has a `--use-ports` and `--use-pkg` flag just like `post-install.sh`. And by default it uses `--use-ports`.
 

@@ -83,8 +83,6 @@ Add all http/https redirects from the host to www-proxy
 sudo bastille rdr www-proxy tcp http http
 sudo bastille rdr www-proxy tcp https https
 ```
-### nginx config
-...
 ### Setup SSL 
 
 Create a `dhparams.pem` file (this should be created for any other nginx jail that will use `ssl_common.conf`)
@@ -100,12 +98,142 @@ sudo bastille cmd www-proxy certbot certonly --standalone -d sampledomain.com -d
 
 Take note where your cert/keys are stored (within `/usr/local/etc/letsencrypt/live`)
 
-We do need to also update this cert once in awhile. Here's a sample where the host cron (root) will renew the cert once every 3 months via nginx (since by this point, nginx will be serving all HTTP requests)
+We do need to also update this cert once in awhile. Here's a sample where the host cron (root) will renew the cert once every 2 months via nginx (since by this point, nginx will be serving all HTTP requests)
 
 ```
-5   4   2   */3 *   /usr/local/bin/bastille cmd www-proxy certbot --nginx renew
+5   4   2   */2 *   /usr/local/bin/bastille cmd www-proxy certbot --nginx renew
 ```
 
+### nginx config
+Copy over `www-proxy`'s nginx configs found in NOTES nginx folder. To make the commands clearer below, $NOTES will be prepended assuming that's where you have twinwork-notes cloned
+
+```
+# assumes this is where twinwork-notes resides
+NOTES=/root/twinwork-notes-master
+
+sudo bastille cp www-proxy $NOTES/nginx/www-proxy.conf /usr/local/etc/nginx/nginx.conf
+sudo bastille cp www-proxy $NOTES/nginx/ssl_common.conf /usr/local/etc/nginx/
+sudo bastille cp www-proxy $NOTES/nginx/proxy.conf /usr/local/etc/nginx/
+```
+
+You should edit those files to make sure they fit the configuration you want:
+/usr/local/etc/nginx/nginx.conf
+/usr/local/etc/nginx/ssl_common.conf
+/usr/local/etc/nginx/proxy.conf
+
+via bastille command example
+```
+sudo bastille cmd www-proxy vim /usr/local/etc/nginx/nginx.conf
+```
+
+Most likely your `/usr/local/etc/nginx/proxy.conf` wont' be ready to be used until you setup other nginx jails.
+
+Once you confirm your configuration, add nginx to `www-proxy`'s `/etc/rc.conf` and start the service
+```
+sudo bastille sysrc www-proxy nginx_enable=YES
+sudo bastille service www-proxy nginx start
+```
+
+## Poudriere jail
+Create the jail with the given release and IP
+
+```
+sudo bastille create www-poudriere 13.1-RELEASE 192.168.2.23
+sudo bastille config www-poudriere set sysvsem new
+sudo bastille config www-poudriere set sysvmsg new
+sudo bastille config www-poudriere set sysvshm new
+sudo bastille config www-poudriere set allow.raw_sockets
+sudo bastille restart www-poudriere
+```
+
+Install NGINX along with a few other packages
+
+```
+sudo bastille pkg www-poudriere install \
+    editors/vim \
+    www/nginx
+```
+
+This assumes that Poudriere was setup with ZFS support and using the default `zroot` `zpool`. Unfortuantely, those no other way, but we need to individually mount every zfs dataset related to Poudriere.
+
+sudo bastille cmd www-poudriere mkdir /poudriere-html
+sudo bastille mount www-poudriere /usr/local/poudriere poudriere
+sudo bastille mount www-poudriere /usr/local/poudriere/data poudriere/data
+sudo bastille mount www-poudriere /usr/local/poudriere/data/.m poudriere/data/.m
+sudo bastille mount www-poudriere /usr/local/poudriere/data/cache poudriere/data/cache
+sudo bastille mount www-poudriere /usr/local/poudriere/data/images poudriere/data/images
+sudo bastille mount www-poudriere /usr/local/poudriere/data/logs poudriere/data/logs
+sudo bastille mount www-poudriere /usr/local/poudriere/data/packages poudriere/data/packages
+sudo bastille mount www-poudriere /usr/local/poudriere/data/wrkdirs poudriere/data/wrkdirs
+sudo bastille mount www-poudriere /usr/local/share/poudriere/html poudriere-html/poudriere
+
+### Setup SSL 
+
+Create a `dhparams.pem` file (this should be created for any other nginx jail that will use `ssl_common.conf`)
+```
+sudo bastille cmd www-poudriere openssl dhparam -out /usr/local/etc/nginx/dhparams.pem 4096
+```
+
+Create a self-signed cert for this jail. This really only secures the connection between the host and the jail, so it's probably overkill to do, but it's probably a good practice. See (ssl-selfsigned.md)[ssl-selfsigned.md]. It's probably easiest if you ran those commands within the jail itself:
+
+```
+sudo bastille console www-poudriere
+```
+
+Just like the certbot's renewal for `www-proxy`, you can do something simliar for `www-poudriere`'s self signed certifcate. On the host, add the following cron which will attempt to renew once every three months
+
+```
+5   4   2   */3 *   /usr/local/bin/bastille cmd www-poudriere openssl x509 -req -days 365 -in /usr/local/etc/ssl/public/selfsigned.csr -signkey /usr/local/etc/ssl/private/selfsigned.key -out /usr/local/etc/ssl/certs/selfsigned.crt
+```
+
+### nginx config
+Copy over `www-poudriere`'s nginx configs found in NOTES nginx folder. To make the commands clearer below, $NOTES will be prepended assuming that's where you have twinwork-notes cloned
+
+```
+# assumes this is where twinwork-notes resides
+NOTES=/root/twinwork-notes-master
+
+sudo bastille cp www-poudriere $NOTES/nginx/www-poudriere.conf /usr/local/etc/nginx/nginx.conf
+sudo bastille cp www-poudriere $NOTES/nginx/ssl_common.conf /usr/local/etc/nginx/
+sudo bastille cp www-poudriere $NOTES/nginx/poudriere.conf /usr/local/etc/nginx/
+```
+
+You might need to tweak your config. Once you confirm your configuration, add nginx to `www-poudriere`'s `/etc/rc.conf` and start the service
+```
+sudo bastille sysrc www-poudriere nginx_enable=YES
+sudo bastille service www-poudriere nginx start
+```
+### Poudriere repo config on jails
+Now that you have your first two jails setup, update where they get their packages
+
+```
+sudo bastille cmd ALL cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
+# Ensures that Poudriere will always be used for pkg
+FreeBSD: {
+    enabled: no,
+}
+EOF
+
+sudo bastille cmd ALL cat > /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
+Poudriere: {
+    url: "http://192.168.2.23/poudriere/packages/131amd64-default",
+    mirror_type: "http",
+    signature_type: "pubkey",
+    pubkey: "/usr/local/etc/ssl/certs/poudriere.cert",
+    enabled: yes,
+    priority: 100,
+}
+EOF
+```
+
+The IP for the Poudriere repo is actually the IP of the host. I couldn't get HTTPS working correctly (despite the self-signed cert), but didn't think it would be that big of a deal since it's all happening on the host system
+
+Now you can update the packages on your jails
+
+```
+sudo bastille pkg ALL upgrade -f
+sudo bastille pkg ALL autoremove
+```
 
 ## PostgreSQL jail
 Create the jail with the given release and IP
