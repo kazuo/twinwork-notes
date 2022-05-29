@@ -10,9 +10,9 @@ The original NOTES website is no longer available as it was completely out of da
 Login locally as `root` and download the following
 
 ```sh
-fetch https://github.com/kazuo/twinwork-notes/archive/master.zip
-unzip master.zip
-sh ./twinwork-notes-master/post-install.sh
+fetch https://github.com/kazuo/twinwork-notes/archive/main.zip
+unzip main.zip
+sh ./twinwork-notes-main/post-install.sh
 ```
 
 The `post-install.sh` script has a couple of options:
