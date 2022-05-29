@@ -1,33 +1,26 @@
 # Twinwork NOTES FreeBSD Post Installation script
 
-This script will automate most of the post-installation install and configuration to set
-up your FreeBSD environment found at ~~http://notes.twinwork.net/freebsd/~~.
+This script will automate most of the post-installation install and configuration to set up your FreeBSD environment found at ~~http://notes.twinwork.net/freebsd/~~.
 
-The original NOTES website is no longer available. It was also extremely out of date. As a matter of fact, this script is mostly out of date as well, however from time to time I do need a FreeBSD server up and running and I still go back to my original NOTES from the early 2000s to bring it up. Since the original site is gone, the script still remains to quickly get the post-install of FreeBSD up and running. The other pages such as Apache, MySQL, PHP, and qmail are largely outdated and won't be ported over in its current form.
-
-This is the abbreviated version of FreeBSD NOTES and assumes the following:
+The original NOTES website is no longer available as it was completely out of date. This script was designed to setup a few customizations from a fresh FreeBSD install. It assumes the following:
 1. Completed the initial install for FreeBSD
+2. ZFS is enabled and uses `zroot` where FreeBSD is installed
 3. Network is configured
 
 Login locally as `root` and download the following
 
 ```sh
-fetch --no-verify-peer https://github.com/kazuo/twinwork-notes/archive/master.zip
+fetch https://github.com/kazuo/twinwork-notes/archive/master.zip
 unzip master.zip
-cd twinwork-notes-master
-sh post-install.sh
+sh ./twinwork-notes-master/post-install.sh
 ```
 
 The `post-install.sh` script has a couple of options:
 ```
-    --help                        : usage
-    --use-ports                   : use ports for post-install (default)
-    --use-pkg                     : use pkg for post-install
-                                    (ports tree will still be updated)
-    --kernel-name=<custom_name>   : custom kernel name
-                                    (this will install/update FreeBSD source tree)
+    --help          : usage
+    --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
 ```
-The `--use-ports` flag is always implied unless you use `--use-pkg`. The latter is always faster but the former flag exists since this what this script originally installed through ports. The script will no longer prompt you for a kernel name if you choose to customize your kernel. Be aware if you choose to set `--kernel-name`, the FreeBSD source tree will first be updated using the `release` tag. And if you did not install the source tree during your initial setup, it will download the entire tree.
+The `post-install.sh` script will only install from packages. We'll be using `poudriere` to build ports
 
 Once the install finishes, log back out and back in as `root`. You should see the new shell changes.
 
@@ -58,11 +51,84 @@ Go through the file until you see the following line to uncomment
 ```
 Uncommenting that line allows you to use `sudo` without ever prompting for a password. This is convenient but proceed with caution
 
+## Setting up `poudriere`
+We previously used ports to set custom options, but since it's generally bad practice to use both `pkg` and `ports`, the better practice is to build your ports in `poudriere` and set your pkg repo to point to your custom build. Another reason I converted over to building my own packages in poudriere is my increased usage of FreeBSD jails. It was just a lot easier to point the jails to my own package repo than it was to build ports within the jail. 
+
+We can automate the initial `poudriere` setup that `twinwork-notes` uses by running the following script
+
+```
+sh ./twinwork-notes-master/setup-poudriere.sh
+```
+
+The `setup-poudriere.sh` script has a couple of options:
+```
+    --help          : usage
+    --use-loki      : uses Twinwork's Loki poudriere repo
+```
+
+If you specify the `--use-loki` option, you'll still copy over the main Poudriere.conf file but that repo will be disabled by default and the Loki.conf poudriere file will be enabled. This repo has all of packages built from `twinwork-notes` plus a few additional ones found in `shared.sh`. You can always check https://loki.twinwork.net/poudriere. Packages aren't updated on schedule, but closer to once every two weeks or so. They're definitely going to be more up to date than using FreeBSD's quarterly repo. Also, be aware of what Loki is actually building... here's a copy of Loki's `/usr/local/etc/poudriere.d/make.conf`:
+
+```
+DEFAULT_VERSIONS+=python=3.8 python3=3.8 pgsql=14 php=8.1 samba=4.13
+
+# MariaDB 10.5
+DEFAULT_VERSIONS+=mysql=10.5m
+
+OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
+```
+
+Whether or not you're choosing Poudriere.conf or Loki.conf, running `setup-poudriere.sh` will disable FreeBSD's package repo. If you need to install anything else from this point on, follow the rest of the instructions by creating the default ports tree and building all of the prepopulated packages related to these NOTES
+
+```
+poudriere ports -c && poudriere bulk -j 131amd64 -p default -f /usr/local/etc/poudriere.d/packages-default
+```
+
+If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019 (blame `llvm` for taking so long). But once that's complete, you can also force upgrade all your existsing packages and remove any packages no longer needed
+
+```
+pkg upgrade -f && pkg autoremove
+```
+
+Some configurations of note are:
+/usr/local/etc/pkg/repos
+/usr/local/etc/poudriere.d/make.conf
+
+### Additional configuration for hosting your own pkg repo
+
+To continue building and serving your own package repo, create an SSL key and cert that clients can use
+
+```
+sudo mkdir -p /usr/local/etc/ssl/{keys,certs}
+sudo chmod 0600 /usr/local/etc/ssl/keys
+sudo openssl genrsa -out /usr/local/etc/ssl/keys/poudriere.key 4096
+sudo openssl rsa -in /usr/local/etc/ssl/keys/poudriere.key -pubout -out /usr/local/etc/ssl/certs/poudriere.cert
+```
+
+Update `/usr/local/etc/poudriere.conf` and modify the following values
+
+```
+PKG_REPO_SIGNING_KEY=/usr/local/etc/ssl/keys/poudriere.key
+URL_BASE=https://sampledomain.com/poudriere
+```
+
+Modify your poudriere conf to add the public key: `/usr/local/etc/pkg/repos/Poudriere.conf`
+
+```
+Poudriere: {
+    url: "file:///usr/local/poudriere/data/packages/131amd64-default",
+    mirror_type: "srv",
+    signature_type: "pubkey",
+    pubkey: "/usr/local/etc/ssl/certs/poudriere.cert",
+    enabled: yes,
+    priority: 100,
+}
+```
+
 ## The FEPP install script
 I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script. This script also has a `--use-ports` and `--use-pkg` flag just like `post-install.sh`. And by default it uses `--use-ports`.
 
 ```
-sudo sh ./fepp-install.sh
+sh ./twinwork-notes-master/fepp-install.sh
 ```
 
 The script does not automatically start the services for Nginx, PostgreSQL, or PHP-FPM. These services need to be configured first before starting.

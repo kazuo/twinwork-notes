@@ -1,19 +1,25 @@
 #!/usr/bin/env sh
-# Use for FreeBSD 13.x only.  Tested with FreeBSD 13.0-RELEASE
+# Use for FreeBSD 13.x only
+# Tested with FreeBSD 13.1-RELEASE
 #
 
-INSTALL_FROM=ports
+INSTALL_FROM="pkg"
 DIR=$(dirname "$0")
-KERNEL_NAME=
+USE_ZSH=
+USE_LOKI=
+
+. ${DIR}/shared.sh
+
+# todo override 
+POUDRIERE_JAIL_NAME=131amd64
+POUDRIERE_JAIL_VERSION=13.1-RELEASE
+POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
 
 usage() {
-    echo "usage: $0 [--use-pkg]
-    --help                      : usage
-    --use-ports                 : use ports for post-install (default)
-    --use-pkg                   : use pkg for post-install
-                                    (ports tree will still be updated)
-    --kernel-name=<custom_name> : custom kernel name
-                                    (this will install/update FreeBSD source tree)
+    echo "usage: $0 [--use-zsh]
+    --help          : usage
+    --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
+    --use-loki      : uses Twinwork's LOKI poudriere repo
     "
 }
 
@@ -21,16 +27,12 @@ handle_args() {
     for arg in "$@"
     do
         case $arg in
-            --use-ports)
-                INSTALL_FROM=ports
+            --use-zsh)
+                USE_ZSH=1
                 shift
                 ;;
-            --use-pkg)
-                INSTALL_FROM=pkg
-                shift
-                ;;
-            --kernel-name=*)
-                KERNEL_NAME="${arg#*=}"
+            --use-loki)
+                USE_LOKI=1
                 shift
                 ;;
             *)
@@ -42,61 +44,23 @@ handle_args() {
     done
 }
 
-continue_prompt() {
+prompt_root_copy() {
     local MESSAGE=$1
 
-    echo "________________________________________________________________________________"
-    echo ${MESSAGE}
-    read -p "Continue? [y/N] " yn
+    echo ""
+    read -p "Change default root shell and copy profile template files? [y/N] " yn
     case $yn in
         [Yy]*)
+            finish_setup
             ;;
         *)
-            echo "Canceling operation..."
-            exit 1
             ;;
     esac
 }
 
-install_from_ports() {
-    make -C /usr/ports/ports-mgmt/portupgrade/ -DBATCH install clean && \
-    make -C /usr/ports/security/ca_root_nss/ -DBATCH install clean && \
-    make -C /usr/ports/devel/nasm/ -DBATCH install clean && \
-    make -C /usr/ports/sysutils/screen/ -DBATCH install clean && \
-    make -C /usr/ports/shells/bash/ -DBATCH install clean && \
-    make -C /usr/ports/shells/zsh/ -DBATCH install clean && \
-    make -C /usr/ports/misc/gnuls/ -DBATCH install clean && \
-    make -C /usr/ports/security/sudo/ -DBATCH install clean && \
-    make -C /usr/ports/editors/vim/ -DBATCH install clean && \
-    make -C /usr/ports/net/svnup/ -DBATCH install clean && \
-    make -C /usr/ports/devel/git/ -DBATCH install clean && \
-    make -C /usr/ports/ftp/wget/ -DBATCH install clean && \
-    make -C /usr/ports/net/rsync -DBATCH install clean && \
-
-    rm -rf /usr/ports/distfiles/*
-}
-
-install_from_pkg() {
-    pkg update && \
-
-    pkg install -y ports-mgmt/portupgrade && \
-    pkg install -y security/ca_root_nss && \
-    pkg install -y devel/nasm && \
-    pkg install -y sysutils/screen && \
-    pkg install -y shells/bash && \
-    pkg install -y shells/zsh && \
-    pkg install -y misc/gnuls && \
-    pkg install -y security/sudo && \
-    pkg install -y editors/vim && \
-    pkg install -y net/svnup && \
-    pkg install -y devel/git && \
-    pkg install -y ftp/wget && \
-    pkg install -y net/rsync && \
-
-    pkg clean
-}
-
 copy_custom_kernel() {
+    # deprecated, script no longer uses it as is only here for historical record
+
     # assumes release, maybe in the future detect freebsd-version and choose
     svnup release -h svn.freebsd.org
 
@@ -112,33 +76,22 @@ copy_custom_kernel() {
     cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
 }
 
-main() {
-    echo ""
-    echo "Twinwork NOTES post-install for FreeBSD 13"
-    echo "See https://github.com/kazuo/twinwork-notes"
-    echo ""
-    echo ""
-    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
-
-    env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
-    /usr/sbin/pkg update
-    /usr/sbin/portsnap fetch auto
-
-    if [ ${INSTALL_FROM} == "pkg" ]; then
-        install_from_pkg
-    else
-        install_from_ports
-    fi
-
+finish_setup() {
     echo ""
     echo "Finished installing ports and/or packages... changing shell to bash for root"
 
-    /usr/bin/chsh -s /usr/local/bin/bash root
     mkdir -v /root/post-install
     cp -v ${DIR}/root.profile /root/post-install/root.profile
     cp -v /root/.profile /root/post-install/.profile.bak && rm -v /root/.profile
     cp -v /root/post-install/root.profile /root/.profile
-    (cd /root && ln -sv .profile .bashrc)
+
+    if [ ${USE_ZSH} ]; then
+        /usr/bin/chsh -s /usr/local/bin/zsh root
+        sh ${DIR}/oh-my-zsh.sh
+    else
+        /usr/bin/chsh -s /usr/local/bin/bash root
+        (cd /root && ln -sv .profile .bashrc)
+    fi            
 
     echo ""
     echo "Finished setting shell settings... now for skel"
@@ -153,10 +106,6 @@ main() {
     cp -v ${DIR}/skel.dot.screenrc /root/.screenrc
     cp -v ${DIR}/etc.adduser.conf /etc/adduser.conf
 
-    if [ ! -z "${KERNEL_NAME}" ]; then
-        copy_custom_kernel
-    fi
-
     echo ""
     echo "All done!  Exit and come back in to see your changes."
     echo ""
@@ -164,7 +113,30 @@ main() {
     echo ""
     echo "Then run..."
     echo "freebsd-update fetch && freebsd-update install && reboot"        
-    echo "Once the system is back up, run `freebsd-update install` again"
+    echo "Once the system is back up, run freebsd-update install again"    
+}
+
+main() {
+    local CMD_STATUS=
+    echo ""
+    echo "Twinwork NOTES post-install for FreeBSD 13"
+    echo "See https://github.com/kazuo/twinwork-notes"
+    echo ""
+    echo ""
+    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
+
+    if [ ${USE_LOKI} ]; then
+        use_loki
+    fi
+
+    env ASSUME_ALWAYS_YES=YES /usr/sbin/pkg bootstrap
+    /usr/sbin/pkg update
+    install_from_pkg ${BASE_PKGS}
+    CMD_STATUS=$?
+
+    if [ ! -z ${CMD_STATUS} ]; then
+        prompt_root_copy
+    fi
 }
 
 handle_args $@

@@ -1,133 +1,10 @@
 # Jails
 
-## `pf`
-
-Setup `pf` first
-
-```
-sudo sysrc pf_enable=YES
-sudo sysrc pf_flags=
-sudo sysrc pf_rules=/etc/pf.conf
-sudo sysrc pflog_enable=YES
-sudo sysrc pflog_logfile=/var/log/pflog
-sudo sysrc pflog_flags=
-```
-
-Add a loopback device for the jails
-```
-sudo sysrc cloned_interfaces=lo1
-sudo sysrc ipv4_addrs_lo1="10.0.0.0 netmask 255.255.255.0"
-sudo service netif cloneup
-```
-
-Add a simple free-flowing config for `/etc/pf.conf`
+## Bastille
+Pulled from https://bastillebsd.org/getting-started/
 
 ```
-# Required order: options, normalization, queueing, translation, filtering.
-if_ext = "em0" # your actual network card
-if_loop = "lo0"
-if_jail_loop = "lo1"
-
-set skip on $if_loop
-set skip on $if_jail_loop
-set debug urgent
-
-scrub in on $if_ext all
-
-table <jailnet> { 10.0.0.0/24 }
-
-# NAT rules
-nat pass on $if_ext from <jailnet> to any -> ($if_ext)
-nat on $if_ext from <jailnet> to any -> ($if_ext)
-
-# Free flowing traffic
-pass in quick all
-pass out quick all
-```
-
-Then start `pf`
-```
-sudo service pf start
-```
-
-# iocage
-https://iocage.io/
-https://github.com/iocage/iocage
-
-This assumes the `zpool` you want to activate `iocage` on is called `emerald`. The jail being created is called `sandbox`
-
-If you don't already have `fdescfs` in your `/etc/fstab`, you can add it (`iocage` warns you with a message if you try to activate without it)
-
-``
-fdescfs /dev/fd  fdescfs  rw  0  0
-``
-
-You can also mount it now
-```
-sudo mount -t fdescfs null /dev/fd
-```
-
-```
-(cd /usr/ports/sysutils/iocage && sudo make install clean)
-sudo sysrc iocage_enable=YES
-sudo iocage activate emerald
-sudo iocage fetch -r LATEST
-```
-
-My `emerald` `zpool` is mounted to `/nyx`, so by default my `sandbox` jail will be found in `/nyx/iocage/jails/sandbox`. Create the jail
-
-```
-sudo iocage create -r LATEST -n sandbox boot=on
-sudo iocage set ip4_addr="lo1|10.0.0.31/24" sandbox
-sudo iocage stop sandbox
-```
-
-Ports aren't installed, so we let's mount a read-only version of it
-
-```
-sudo iocage exec sandbox mkdir /usr/ports
-sudo iocage fstab -a sandbox "/usr/ports /usr/ports nullfs ro 0 0"
-sudo iocage start sandbox
-```
-
-We'll also export a simple path to our jail to be used and create directories to download and build ports:
-```
-export D=/nyx/iocage/jails/sandbox
-echo "WRKDIRPREFIX?=  /usr/portsbuild" | sudo tee $D/root/etc/make.conf
-echo "DISTDIR=  /usr/portsdistfiles" | sudo tee -a $D/root/etc/make.conf
-echo "nameserver 8.8.8.8" | sudo tee $D/root/etc/resolv.conf
-echo "nameserver 8.8.4.4" | sudo tee -a $D/root/etc/resolv.conf
-```
-
-If you need to update to the latest patch release
-```
-sudo iocage update sandbox
-```
-
-If you want to enable pinging within the jail, you'll need to enable raw sockets for the jail
-```
-sudo iocage set allow_raw_sockets=1 sandbox
-```
-
-Check out the `iocage` `man` page for more: https://www.freebsd.org/cgi/man.cgi?query=iocage&sektion=8
-
-You can get into the jail's console by doing the following
-
-```
-sudo iocage console sandbox
-```
-
-If you want to execute you can use `exec` (e.g. installing `vim`)
-
-```
-sudo iocage exec sandbox "(cd /usr/ports/editors/vim && make -DBATCH install clean)"
-```
-
-# Bastille
-Alternative jail manager to iocage. Pulled from https://bastillebsd.org/getting-started/
-
-```
-sudo make -C /usr/ports/sysutils/bastille/ -DBATCH install clean
+sudo pkg install sysutils/bastille
 
 sudo sysrc bastille_enable=YES
 sudo sysrc -f /usr/local/etc/bastille/bastille.conf bastille_tzdata=America/Los_Angeles
@@ -175,9 +52,196 @@ Start `pf`
 sudo service pf start
 ```
 
-## PostgreSQL jail
-Requires this jail config before doing a DB init
+## NGINX reverse proxy jail
+Create the NGINX reverse proxy jail... which we'll call www-proxy
 ```
+sudo bastille create www-proxy 13.1-RELEASE 192.168.2.21
+sudo bastille config www-proxy set sysvsem new
+sudo bastille config www-proxy set sysvmsg new
+sudo bastille config www-proxy set sysvshm new
+sudo bastille config www-proxy set allow.raw_sockets
+sudo bastille restart www-proxy
+```
+
+Install NGINX along with a few other packages
+
+```
+sudo bastille pkg www-proxy install \
+    editors/vim \
+    security/py-certbot \
+    www/nginx
+```
+### Update pf rules
+Ensure `/etc/pf.conf` has a similar rule on the host to make sure ports 80 and 443 are able to get through
+
+```
+pass in quick on $ext_if proto tcp from any to any port {http, https} flags S/SA keep state
+```
+
+Add all http/https redirects from the host to www-proxy
+```
+sudo bastille rdr www-proxy tcp http http
+sudo bastille rdr www-proxy tcp https https
+```
+### Setup SSL 
+
+Create a `dhparams.pem` file (this should be created for any other nginx jail that will use `ssl_common.conf`)
+```
+sudo bastille cmd www-proxy openssl dhparam -out /usr/local/etc/nginx/dhparams.pem 4096
+```
+
+Setup SSL via certbot without nginx. Since we haven't started the nginx service yet, we can create our SSL cert via certbot using cerbot's HTTPS server. I find it easier to setup our initial certs using certbot's HTTP server instead of nginx that way I don't need to worry about dealing with nginx's initial conf (though, in theory it should just work out of the box, I just want to rule it out for this setup: https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/)
+
+```
+sudo bastille cmd www-proxy certbot certonly --standalone -d sampledomain.com -d *.sampledomain.com
+```
+
+Take note where your cert/keys are stored (within `/usr/local/etc/letsencrypt/live`)
+
+We do need to also update this cert once in awhile. Here's a sample where the host cron (root) will renew the cert once every 2 months via nginx (since by this point, nginx will be serving all HTTP requests)
+
+```
+5   4   2   */2 *   /usr/local/bin/bastille cmd www-proxy certbot --nginx renew
+```
+
+### nginx config
+Copy over `www-proxy`'s nginx configs found in NOTES nginx folder. To make the commands clearer below, $NOTES will be prepended assuming that's where you have twinwork-notes cloned
+
+```
+# assumes this is where twinwork-notes resides
+NOTES=/root/twinwork-notes-master
+
+sudo bastille cp www-proxy $NOTES/nginx/www-proxy.conf /usr/local/etc/nginx/nginx.conf
+sudo bastille cp www-proxy $NOTES/nginx/ssl_common.conf /usr/local/etc/nginx/
+sudo bastille cp www-proxy $NOTES/nginx/proxy.conf /usr/local/etc/nginx/
+```
+
+You should edit those files to make sure they fit the configuration you want:
+/usr/local/etc/nginx/nginx.conf
+/usr/local/etc/nginx/ssl_common.conf
+/usr/local/etc/nginx/proxy.conf
+
+via bastille command example
+```
+sudo bastille cmd www-proxy vim /usr/local/etc/nginx/nginx.conf
+```
+
+Most likely your `/usr/local/etc/nginx/proxy.conf` wont' be ready to be used until you setup other nginx jails.
+
+Once you confirm your configuration, add nginx to `www-proxy`'s `/etc/rc.conf` and start the service
+```
+sudo bastille sysrc www-proxy nginx_enable=YES
+sudo bastille service www-proxy nginx start
+```
+
+## Poudriere jail
+Create the jail with the given release and IP
+
+```
+sudo bastille create www-poudriere 13.1-RELEASE 192.168.2.23
+sudo bastille config www-poudriere set sysvsem new
+sudo bastille config www-poudriere set sysvmsg new
+sudo bastille config www-poudriere set sysvshm new
+sudo bastille config www-poudriere set allow.raw_sockets
+sudo bastille restart www-poudriere
+```
+
+Install NGINX along with a few other packages
+
+```
+sudo bastille pkg www-poudriere install \
+    editors/vim \
+    www/nginx
+```
+
+This assumes that Poudriere was setup with ZFS support and using the default `zroot` `zpool`. Unfortuantely, those no other way, but we need to individually mount every zfs dataset related to Poudriere.
+
+```
+sudo bastille cmd www-poudriere mkdir /poudriere-html
+sudo bastille mount www-poudriere /usr/local/poudriere poudriere
+sudo bastille mount www-poudriere /usr/local/poudriere/data poudriere/data
+sudo bastille mount www-poudriere /usr/local/poudriere/data/.m poudriere/data/.m
+sudo bastille mount www-poudriere /usr/local/poudriere/data/cache poudriere/data/cache
+sudo bastille mount www-poudriere /usr/local/poudriere/data/images poudriere/data/images
+sudo bastille mount www-poudriere /usr/local/poudriere/data/logs poudriere/data/logs
+sudo bastille mount www-poudriere /usr/local/poudriere/data/packages poudriere/data/packages
+sudo bastille mount www-poudriere /usr/local/poudriere/data/wrkdirs poudriere/data/wrkdirs
+sudo bastille mount www-poudriere /usr/local/share/poudriere/html poudriere-html/poudriere
+```
+
+### Setup SSL 
+
+Create a `dhparams.pem` file (this should be created for any other nginx jail that will use `ssl_common.conf`)
+```
+sudo bastille cmd www-poudriere openssl dhparam -out /usr/local/etc/nginx/dhparams.pem 4096
+```
+
+Create a self-signed cert for this jail. This really only secures the connection between the host and the jail, so it's probably overkill to do, but it's probably a good practice. See (ssl-selfsigned.md)[./ssl-selfsigned.md]. It's probably easiest if you ran those commands within the jail itself:
+
+```
+sudo bastille console www-poudriere
+```
+
+Just like the certbot's renewal for `www-proxy`, you can do something simliar for `www-poudriere`'s self signed certifcate. On the host, add the following cron which will attempt to renew once every three months
+
+```
+5   4   2   */3 *   /usr/local/bin/bastille cmd www-poudriere openssl x509 -req -days 365 -in /usr/local/etc/ssl/public/selfsigned.csr -signkey /usr/local/etc/ssl/private/selfsigned.key -out /usr/local/etc/ssl/certs/selfsigned.crt
+```
+
+### nginx config
+Copy over `www-poudriere`'s nginx configs found in NOTES nginx folder. To make the commands clearer below, $NOTES will be prepended assuming that's where you have twinwork-notes cloned
+
+```
+# assumes this is where twinwork-notes resides
+NOTES=/root/twinwork-notes-master
+
+sudo bastille cp www-poudriere $NOTES/nginx/www-poudriere.conf /usr/local/etc/nginx/nginx.conf
+sudo bastille cp www-poudriere $NOTES/nginx/ssl_common.conf /usr/local/etc/nginx/
+sudo bastille cp www-poudriere $NOTES/nginx/poudriere.conf /usr/local/etc/nginx/
+```
+
+You might need to tweak your config. Once you confirm your configuration, add nginx to `www-poudriere`'s `/etc/rc.conf` and start the service
+```
+sudo bastille sysrc www-poudriere nginx_enable=YES
+sudo bastille service www-poudriere nginx start
+```
+### Poudriere repo config on jails
+Now that you have your first two jails setup, update where they get their packages
+
+```
+sudo bastille cmd ALL cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
+# Ensures that Poudriere will always be used for pkg
+FreeBSD: {
+    enabled: no,
+}
+EOF
+
+sudo bastille cmd ALL cat > /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
+Poudriere: {
+    url: "http://192.168.2.23/poudriere/packages/131amd64-default",
+    mirror_type: "http",
+    signature_type: "pubkey",
+    pubkey: "/usr/local/etc/ssl/certs/poudriere.cert",
+    enabled: yes,
+    priority: 100,
+}
+EOF
+```
+
+The IP for the Poudriere repo is actually the IP of the host. I couldn't get HTTPS working correctly (despite the self-signed cert), but didn't think it would be that big of a deal since it's all happening on the host system
+
+Now you can update the packages on your jails
+
+```
+sudo bastille pkg ALL upgrade -f
+sudo bastille pkg ALL autoremove
+```
+
+## PostgreSQL jail
+Create the jail with the given release and IP
+
+```
+sudo bastille create postgres 13.1-RELEASE 192.168.2.23
 sudo bastille config postgres set sysvsem new
 sudo bastille config postgres set sysvmsg new
 sudo bastille config postgres set sysvshm new
@@ -185,16 +249,12 @@ sudo bastille config postgres set allow.raw_sockets
 sudo bastille restart postgres
 ```
 
-PostgreSQL needs a few other packages
-```
-sudo bastille cmd postgres pkg install sudo
-sudo bastille cmd postgres portsnap fetch auto
-```
+Install PostgreSQL with a few other packages
 
-Install PostgreSQL
 ```
-host$ sudo bastille console postgres
-postgres# make -C /usr/ports/editors/vim/ -DBATCH install clean && \
-    make -C /usr/ports/databases/postgresql14-client/ -DBATCH install clean && \
-    make -C /usr/ports/databases/postgresql14-server/ -DBATCH install clean
+sudo bastille pkg postgres install \
+    security/sudo \
+    editors/vim \
+    databases/postgresql14-client \
+    databases/postgresql14-server
 ```
