@@ -36,6 +36,8 @@ set textwidth=0
 set showbreak=+
 set viminfo='1000,f1,\"500
 set virtualedit=all
+set mouse=
+set ttymouse=
 
 try
     syntax on         " Enable syntax highlighting
