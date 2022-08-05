@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # From https://kifarunix.com/install-nginx-mysql-php-femp-stack-on-freebsd-12/
 
-INSTALL_FROM=ports
 DIR=$(dirname "$0")
 . ${DIR}/shared.sh
 
@@ -15,11 +14,9 @@ main() {
     echo ""
     continue_prompt "This will install nginx, PostgreSQL, and PHP..."
     install_from_pkg ${FEPP_PKGS}
-    CMD_STATUS=$?
+    local cmd_status=$?
 
-    # if [ -z ${CMD_STATUS} ]; then
-    #     echo "Install failed"
-    # fi
+    exit $cmd_status
 }
 
 main

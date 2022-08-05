@@ -57,7 +57,7 @@ We previously used ports to set custom options, but since it's generally bad pra
 We can automate the initial `poudriere` setup that `twinwork-notes` uses by running the following script
 
 ```
-sh ./twinwork-notes-master/setup-poudriere.sh
+sh ./twinwork-notes-main/setup-poudriere.sh
 ```
 
 The `setup-poudriere.sh` script has a couple of options:
@@ -124,11 +124,28 @@ Poudriere: {
 }
 ```
 
-## The FEPP install script
-I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script. This script also has a `--use-ports` and `--use-pkg` flag just like `post-install.sh`. And by default it uses `--use-ports`.
+### Poudriere for arm64 (aarch64)
+By default, the jails are for amd64, but you can also build it out for a different architecture. You can run the following below to build out an arm64 repository. I find this useful while testing FreeBSD as a VM guest on Apple Silicon
+
+References:
+* https://wiki.freebsd.org/Ports/BuildingPackagesThroughEmulation
+* https://forums.freebsd.org/threads/poudriere-arm-freebsd-13-1-broken.85284/
 
 ```
-sh ./twinwork-notes-master/fepp-install.sh
+sudo pkg install emulators/qemu-user-static
+sudo sysrc qemu_user_static_enable="YES"
+sudo service qemu_user_static start
+sudo poudriere jail -c -j 131arm64 -v 13.1-STABLE -a arm64.aarch64 -x
+sudo poudriere bulk -j 131arm64 -f /usr/local/etc/poudriere.d/packages-default
+```
+
+Note: There's currently a bug in 13.1-RELEASE that prevents poudriere from working. However, 13.1-STABLE is working
+
+## The FEPP install script
+I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script.
+
+```
+sh ./twinwork-notes-main/fepp-install.sh
 ```
 
 The script does not automatically start the services for Nginx, PostgreSQL, or PHP-FPM. These services need to be configured first before starting.
@@ -302,26 +319,3 @@ Any time you change your Nginx configuration, be sure to test it before restarti
 sudo service nginx configtest
 sudo service nginx restart
 ```
-
-## The media install script
-Useful for using FreeBSD as a "media" server... really, for Plex Media Server (and SABnzbd+). Simply run the
-`media-install.sh` script. This script has a `--use-ports` and `--use-pkg` flag. The default uses `--use-ports`.
-
-```
-sudo sh ./media-install.sh
-```
-
-After the install script finishes, enable both services at startup
-```
-sudo sysrc plexmediaserver_enable=YES
-sudo sysrc sabnzbd_enable=YES
-```
-
-You can also start the services now
-```
-sudo service plexmediaserver start
-sudo service sabnzbd start
-```
-
-Plex Media Server can be accessed at http://localhost:32400/web
-SABnzbd+ can be accessed at http://localhost:8080/sabnzbd/
