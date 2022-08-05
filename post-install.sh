@@ -18,7 +18,7 @@ POUDRIERE_JAIL_VERSION=13.1-RELEASE
 POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
 
 usage() {
-    echo "usage: $0 [--use-zsh]
+    echo "usage: $0 [--use-zsh] [--use-loki]
     --help          : usage
     --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
     --use-loki      : uses Twinwork's LOKI poudriere repo
@@ -58,24 +58,6 @@ prompt_root_copy() {
         *)
             ;;
     esac
-}
-
-copy_custom_kernel() {
-    # deprecated, script no longer uses it as is only here for historical record
-
-    # assumes release, maybe in the future detect freebsd-version and choose
-    svnup release -h svn.freebsd.org
-
-    # BEGIN ORIGINAL MAX POWER SCRIPT
-    mkdir -v /root/kernels
-    mkdir -v /root/kernels/i386
-    mkdir -v /root/kernels/amd64
-    cp -v /usr/src/sys/i386/conf/GENERIC /root/kernels/i386/${KERNEL_NAME}
-    (cd /usr/src/sys/i386/conf && ln -sv /root/kernels/i386/${KERNEL_NAME} ${KERNEL_NAME})
-    cp -v /usr/src/sys/amd64/conf/GENERIC /root/kernels/amd64/${KERNEL_NAME}
-    (cd /usr/src/sys/amd64/conf && ln -sv /root/kernels/amd64/${KERNEL_NAME} ${KERNEL_NAME})
-
-    cp -v /usr/src/share/examples/etc/make.conf /etc/make.conf
 }
 
 finish_setup() {

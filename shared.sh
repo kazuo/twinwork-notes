@@ -261,9 +261,9 @@ use_loki() {
     LOKI_IP=$(host ${LOKI_DOMAIN} | awk '{ print $4 }')
     LOKI_CONF="/usr/local/etc/pkg/repos/Loki.conf"
     CURRENT_IP=$(host myip.opendns.com resolver1.opendns.com | tail -1 | awk '{ print $4 }')
-    echo $LOKI_IP
-    echo $CURRENT_IP
-
+    echo "Your public IP: ${CURRENT_IP}"
+    echo "Loki's IP ${LOKI_IP}"
+    
     if test -f ${LOKI_CONF}; then
         echo "${LOKI_CONF} already configured"
         exit
