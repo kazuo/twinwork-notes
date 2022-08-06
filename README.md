@@ -139,7 +139,7 @@ sudo poudriere jail -c -j 131arm64 -v 13.1-STABLE -a arm64.aarch64 -x
 sudo poudriere bulk -j 131arm64 -f /usr/local/etc/poudriere.d/packages-default
 ```
 
-Note: There's currently a bug in 13.1-RELEASE that prevents poudriere from working. However, 13.1-STABLE is working
+Note: There's currently a bug in 13.1-RELEASE that prevents poudriere from working. However, 13.1-STABLE is working but you will get a warning if you try to install any packages from STABLE if you currently have RELEASE installed. 
 
 ## The FEPP install script
 I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script.
