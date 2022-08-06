@@ -3,8 +3,8 @@
 This is done multiple times in twinwork-notes, I figure it's easier to break it out into its own area. This was also pulled from this gist: https://gist.github.com/jessedearing/2351836 (comments are pretty useful)
 
 ```
-CERT_NAME=selfsigned
-KEY_SIZE=2048
+export CERT_NAME=postgres
+export KEY_SIZE=2048
 
 openssl genrsa -des3 -out ${CERT_NAME}.key ${KEY_SIZE}
 openssl req -new -key ${CERT_NAME}.key -out ${CERT_NAME}.csr

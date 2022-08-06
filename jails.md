@@ -209,14 +209,14 @@ sudo bastille service www-poudriere nginx start
 Now that you have your first two jails setup, update where they get their packages
 
 ```
-sudo bastille cmd ALL cat > /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
+sudo bastille cmd ALL tee /usr/local/etc/pkg/repos/FreeBSD.conf <<EOF
 # Ensures that Poudriere will always be used for pkg
 FreeBSD: {
     enabled: no,
 }
 EOF
 
-sudo bastille cmd ALL cat > /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
+sudo bastille cmd ALL tee /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
 Poudriere: {
     url: "http://192.168.2.23/poudriere/packages/131amd64-default",
     mirror_type: "http",
@@ -241,7 +241,7 @@ sudo bastille pkg ALL autoremove
 Create the jail with the given release and IP
 
 ```
-sudo bastille create postgres 13.1-RELEASE 192.168.2.23
+sudo bastille create postgres 13.1-RELEASE 192.168.2.30
 sudo bastille config postgres set sysvsem new
 sudo bastille config postgres set sysvmsg new
 sudo bastille config postgres set sysvshm new
@@ -254,7 +254,42 @@ Install PostgreSQL with a few other packages
 ```
 sudo bastille pkg postgres install \
     security/sudo \
-    editors/vim \
     databases/postgresql14-client \
     databases/postgresql14-server
+```
+
+Create your database and start PostgreSQL
+
+```
+sudo bastille cmd postgres mkdir /pgdb
+sudo bastille cmd postgres chown postgres:postgres /pgdb
+sudo bastille cmd postgres pw usermod -n postgres -d /pgdb
+sudo bastille sysrc postgres postgresql_enable=YES
+sudo bastille sysrc postgres postgresql_data=/pgdb/data14
+sudo bastille service postgres postgresql initdb
+sudo bastille service postgres postgresql start
+```
+
+To login into PostgreSQL:
+
+```
+sudo bastille cmd postgres sudo -u postgres psql
+```
+
+You can create a user and DB from a few CLI commands. This will create a local user called `plex` without a password
+
+```
+sudo bastille cmd postgres sudo -u postgres createuser -e plex
+```
+
+And create a new database called `sandbox` owned by your new user
+
+```
+sudo bastille cmd postgres sudo -u postgres createdb -e -O plex -E UTF8 sandbox
+```
+
+Then you can login as `plex` to your `sandbox` database
+
+```
+sudo bastille cmd postgres psql -U plex sandbox
 ```

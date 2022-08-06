@@ -7,24 +7,7 @@ RELEASE=
 IP=
 
 handle_args() {
-    core_args=()
-    for arg in "$@"
-    do
-        case $arg in
-            --use-ports)
-                INSTALL_FROM=ports
-                shift
-                ;;
-            --use-pkg)
-                INSTALL_FROM=pkg
-                shift
-                ;;        
-            *)
-                core_args+=($arg)
-                shift
-                ;;
-        esac
-    done
+    core_args=$@
     JAIL_NAME=${core_args[0]}
     RELEASE=${core_args[1]}
     IP=${core_args[2]}
@@ -36,7 +19,7 @@ handle_args() {
 }
 
 usage() {
-    echo "usage: $0 [--use-pkg] jail_name release ip
+    echo "usage: $0 jail_name release ip
     "
 }
 

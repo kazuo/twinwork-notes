@@ -99,11 +99,16 @@ add_poudriere_pkg_file() {
 
     touch ${POUDRIERE_PKG_FILE}
     for PORT in ${PKGS}; do
+        if grep -qxf "${PORT}" ${POUDRIERE_PKG_FILE}; then
+            continue
+        fi
+
         if test "${PKG#*@}" != "$PKG"; then
             # no idea why poudriere bulk won't abide by specified flavor, so we just
             # install the main package and hope the make.conf sets the flavor for it
             PORT=$( printf "devel/git@lite" | sed "s/^.*\///" | sed "s/@.*$//" )
-        fi
+        fi        
+        
         echo ${PORT} | tee -a ${POUDRIERE_PKG_FILE}
     done    
 }
@@ -256,9 +261,9 @@ use_loki() {
     LOKI_IP=$(host ${LOKI_DOMAIN} | awk '{ print $4 }')
     LOKI_CONF="/usr/local/etc/pkg/repos/Loki.conf"
     CURRENT_IP=$(host myip.opendns.com resolver1.opendns.com | tail -1 | awk '{ print $4 }')
-    echo $LOKI_IP
-    echo $CURRENT_IP
-
+    echo "Your public IP: ${CURRENT_IP}"
+    echo "Loki's IP ${LOKI_IP}"
+    
     if test -f ${LOKI_CONF}; then
         echo "${LOKI_CONF} already configured"
         exit
