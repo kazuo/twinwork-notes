@@ -22,6 +22,7 @@ usage() {
     --help          : usage
     --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
     --use-loki      : uses Twinwork's LOKI poudriere repo
+    --use-open      : installs and uses OpenBSD ports of libressl, SSHd, and NTPd
     "
 }
 
@@ -125,6 +126,10 @@ main() {
     /usr/sbin/pkg update
     install_from_pkg ${BASE_PKGS}
     CMD_STATUS=$?
+    if [ ! -z ${CMD_STATUS} ] && [ ${USE_OPEN} ]; then
+        use_open
+        CMD_STATUS=$?
+    fi
 
     if [ ! -z ${CMD_STATUS} ]; then
         prompt_root_copy

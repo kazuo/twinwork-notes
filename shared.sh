@@ -21,8 +21,6 @@ ADD_PKGS="${ADD_PKGS=} sysutils/renameutils"
 ADD_PKGS="${ADD_PKGS=} security/py-certbot"
 ADD_PKGS="${ADD_PKGS=} security/gnupg"
 ADD_PKGS="${ADD_PKGS=} net/avahi-app"
-ADD_PKGS="${ADD_PKGS=} news/sabnzbdplus"
-ADD_PKGS="${ADD_PKGS=} multimedia/plexmediaserver"
 ADD_PKGS="${ADD_PKGS=} net/samba413"
 
 FEPP_PKGS=""
@@ -151,31 +149,6 @@ build_poudriere() {
         exit 1
     fi
     poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default ${PKGS}
-}
-
-install_from_ports() {
-    local CMD_STATUS=
-    local PKGS=$@
-    if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
-        echo "PKGS not set"
-        exit 1
-    fi
-
-    portsnap fetch auto
-    CMD_STATUS=$?
-
-    for PORT in ${PKGS}; do
-        if [ ! -z ${CMD_STATUS} ]; then
-            make -C /usr/ports/${PORT}/ -DBATCH install clean
-            CMD_STATUS=$?
-        fi
-    done
-
-    if [ ${CMD_STATUS} ]; then
-        exit 1
-    fi
-
-    rm -rf /usr/ports/distfiles/*
 }
 
 setup_poudriere_base() {
@@ -307,6 +280,16 @@ Loki: {
 EOF
 
     echo "Added Loki repo in ${LOKI_CONF}"
+}
+
+use_open() {
+    # disable FreeBSD defaults
+    sysrc sshd_enable=NO
+    sysrc ntpd_enable=NO
+    sysrc ntpdate_enable=NO
+
+    sysrc openssh_enable=YES
+    sysrc openntpd_enable=YES
 }
 
 disable_freebsd_repo() {
