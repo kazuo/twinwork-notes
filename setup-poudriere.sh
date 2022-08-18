@@ -1,13 +1,13 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 DIR=$(dirname "$0")
 . ${DIR}/shared.sh
 
 USE_LOKI=no
 
 # override 
-POUDRIERE_JAIL_NAME=131amd64
-POUDRIERE_JAIL_VERSION=13.1-RELEASE
-POUDRIERE_PKG_FILE="/usr/local/etc/poudriere.d/packages-default"
+POUDRIERE_JAIL_NAME=${POUDRIERE_JAIL_NAME:=131amd64}
+POUDRIERE_JAIL_VERSION=${POUDRIERE_JAIL_VERSION:=13.1-RELEASE}
+POUDRIERE_PKG_FILE=${POUDRIERE_PKG_FILE:="/usr/local/etc/poudriere.d/packages"}
 
 usage() {
     echo "usage: $0 [--use-loki]

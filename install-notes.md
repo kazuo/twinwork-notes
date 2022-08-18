@@ -364,3 +364,21 @@ To run zfSnap periodically you can add these options to your
         info.
 
         Feedback welcomed: graudeejs@gmail.com
+
+# endlessh
+
+Message from endlessh-1.1_1:
+
+--
+Configure endlessh either via endlessh.conf or using endlessh_args in rc.conf.
+The defaults are commented out in endlessh.conf.
+
+The default configuration only logs starts & stops to /var/log/endlessh.log.
+To see the connections set LogLevel 1 in endlessh.conf or add "-v" to
+endlessh_args. Sending SIGUSR1 to endlessh (pkill USR1 endlessh) will add
+statistics to the /var/log/endlessh.log file
+
+Link (or copy) endlessh.newsyslog.conf to /usr/local/newsyslog.conf.d/
+to take care of log rotation.
+
+ln -s /usr/local/etc/endlessh.newsyslog.conf /usr/local}/etc/newsyslog.conf.d/
