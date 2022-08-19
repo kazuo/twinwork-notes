@@ -381,4 +381,4 @@ statistics to the /var/log/endlessh.log file
 Link (or copy) endlessh.newsyslog.conf to /usr/local/newsyslog.conf.d/
 to take care of log rotation.
 
-ln -s /usr/local/etc/endlessh.newsyslog.conf /usr/local}/etc/newsyslog.conf.d/
+ln -s /usr/local/etc/endlessh.newsyslog.conf /usr/local/etc/newsyslog.conf.d/

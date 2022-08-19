@@ -127,8 +127,9 @@ main() {
     install_from_pkg ${BASE_PKGS}
     CMD_STATUS=$?
     if [ ! -z ${CMD_STATUS} ] && [ ${USE_OPEN} ]; then
-        use_open
+        install_from_pkg ${OPEN_PKGS}
         CMD_STATUS=$?
+        use_open
     fi
 
     if [ ! -z ${CMD_STATUS} ]; then
