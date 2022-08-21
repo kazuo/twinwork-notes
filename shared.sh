@@ -272,8 +272,8 @@ use_loki() {
 Loki: {
     url: "pkg+https://${LOKI_DOMAIN}/poudriere/packages/${MASTER_NAME}",
     mirror_type: "srv",
-    signature_type: "pubkey",
-    pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
+    # signature_type: "pubkey",
+    # pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
     enabled: yes,
     priority: 1000,
 }    
