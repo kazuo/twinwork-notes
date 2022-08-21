@@ -234,7 +234,8 @@ setup_poudriere_ports() {
 }
 
 use_loki() {
-    local MASTER_NAME="${POUDRIERE_JAIL_NAME}-default"    
+    local MASTER_NAME="${POUDRIERE_JAIL_NAME}-default"
+    local FBSD_VERSION=`uname -U`    
     LOKI_DOMAIN=loki.twinwork.net
     LOKI_IP=$(host ${LOKI_DOMAIN} | awk '{ print $4 }')
     LOKI_CONF="/usr/local/etc/pkg/repos/Loki.conf"
@@ -267,17 +268,30 @@ use_loki() {
     fi
 
     disable_freebsd_repo
-    
-    cat > "${LOKI_CONF}" <<EOF
+
+    if [ "${FBSD_VERSION}" -lt 1301000 ]; then
+        # remove sign check for versions older than 13.1-RELEASE
+        cat > "${LOKI_CONF}" <<EOF
 Loki: {
     url: "pkg+https://${LOKI_DOMAIN}/poudriere/packages/${MASTER_NAME}",
     mirror_type: "srv",
-    # signature_type: "pubkey",
-    # pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
     enabled: yes,
     priority: 1000,
 }    
-EOF
+EOF    
+    else
+        cat > "${LOKI_CONF}" <<EOF
+Loki: {
+    url: "pkg+https://${LOKI_DOMAIN}/poudriere/packages/${MASTER_NAME}",
+    mirror_type: "srv",
+    signature_type: "pubkey",
+    pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
+    enabled: yes,
+    priority: 1000,
+}    
+EOF    
+    fi
+    
 
     echo "Added Loki repo in ${LOKI_CONF}"
 }
