@@ -5,7 +5,7 @@ DIR=$(dirname "$0")
 USE_LOKI=no
 
 # override
-_DEFAULT_POUDRIERE_JAIL_NAME=`{ uname -r | sed "s/[^0-9]*//g" & uname -m; } | tr -d '\n'`
+_DEFAULT_POUDRIERE_JAIL_NAME=`{ uname -r | sed "s/[^0-9]*//g" & uname -m; } | tr -d '\n' | head -c3`
 POUDRIERE_JAIL_NAME=${POUDRIERE_JAIL_NAME:=$_DEFAULT_POUDRIERE_JAIL_NAME}
 POUDRIERE_JAIL_VERSION=${POUDRIERE_JAIL_VERSION:=`uname -r`}
 POUDRIERE_PKG_FILE=${POUDRIERE_PKG_FILE:="/usr/local/etc/poudriere.d/pkglist"}
