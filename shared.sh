@@ -75,7 +75,7 @@ FEPP_PKGS="${FEPP_PKGS} textproc/php81-xsl"
 OPEN_PKGS=""
 OPEN_PKGS="${OPEN_PKGS} net/openntpd"
 OPEN_PKGS="${OPEN_PKGS} security/openssh-portable"
-OPEN_PKGS="${OPEN_PKGS} security/libressl-devel"
+OPEN_PKGS="${OPEN_PKGS} security/libressl"
 
 continue_prompt() {
     local MESSAGE=$1

@@ -11,14 +11,14 @@ USE_OPEN=
 . ${DIR}/shared.sh
 
 # todo override 
-POUDRIERE_JAIL_BASE_NAME=${POUDRIERE_JAIL_BASE_NAME:=131}
+POUDRIERE_JAIL_BASE_NAME=${POUDRIERE_JAIL_BASE_NAME:=`uname -r | sed "s/[^0-9]*//g"`}
 POUDRIERE_JAIL_ARCH=`uname -m`
 POUDRIERE_JAIL_NAME="${POUDRIERE_JAIL_BASE_NAME}${POUDRIERE_JAIL_ARCH}"
-POUDRIERE_JAIL_VERSION=${POUDRIERE_JAIL_VERSION:=13.1-RELEASE}
+POUDRIERE_JAIL_VERSION=${POUDRIERE_JAIL_VERSION:=`uname -r`}
 POUDRIERE_PKG_FILE=${POUDRIERE_PKG_FILE:="/usr/local/etc/poudriere.d/pkglist"}
 
 usage() {
-    echo "usage: $0 [--use-zsh] [--use-loki]
+    echo "usage: $0 [--use-zsh] [--use-loki] []
     --help          : usage
     --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
     --use-loki      : uses Twinwork's LOKI poudriere repo

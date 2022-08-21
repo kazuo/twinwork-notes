@@ -12,4 +12,4 @@ poudriere options -z open net/samba413
 poudriere options -z open ftp/curl
 ```
 
-If you see any options related to GSAPI, simpley disable it (unless you really think you need it, then you probably know how to get around OpenSSL errors)
+If you see any options related to GSSAPI, simply disable it if possible. Though, there are some ports that you might use that forces you to choose one (for some reason). In that case, I ended up going with `security/heimdal` and proceeded without build issues

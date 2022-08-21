@@ -19,6 +19,8 @@ The `post-install.sh` script has a couple of options:
 ```
     --help          : usage
     --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
+    --use-loki      : uses Twinwork's LOKI poudriere repo
+    --use-open      : installs and uses OpenBSD ports of libressl, SSHd, and NTPd    
 ```
 The `post-install.sh` script will only install from packages. We'll be using `poudriere` to build ports
 
