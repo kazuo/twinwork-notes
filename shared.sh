@@ -277,8 +277,8 @@ Loki: {
     mirror_type: "srv",
     enabled: yes,
     priority: 1000,
-}    
-EOF    
+}
+EOF
     else
         cat > "${LOKI_CONF}" <<EOF
 Loki: {
@@ -288,8 +288,8 @@ Loki: {
     pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
     enabled: yes,
     priority: 1000,
-}    
-EOF    
+}
+EOF
     fi
     
 
