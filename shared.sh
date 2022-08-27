@@ -21,8 +21,6 @@ ADD_PKGS="${ADD_PKGS=} sysutils/renameutils"
 ADD_PKGS="${ADD_PKGS=} security/py-certbot"
 ADD_PKGS="${ADD_PKGS=} security/gnupg"
 ADD_PKGS="${ADD_PKGS=} net/avahi-app"
-ADD_PKGS="${ADD_PKGS=} news/sabnzbdplus"
-ADD_PKGS="${ADD_PKGS=} multimedia/plexmediaserver"
 ADD_PKGS="${ADD_PKGS=} net/samba413"
 
 FEPP_PKGS=""
@@ -73,6 +71,11 @@ FEPP_PKGS="${FEPP_PKGS} math/php81-gmp"
 FEPP_PKGS="${FEPP_PKGS} devel/php81-pcntl"
 FEPP_PKGS="${FEPP_PKGS} net/php81-ldap"
 FEPP_PKGS="${FEPP_PKGS} textproc/php81-xsl"
+
+OPEN_PKGS=""
+OPEN_PKGS="${OPEN_PKGS} net/openntpd"
+OPEN_PKGS="${OPEN_PKGS} security/openssh-portable"
+OPEN_PKGS="${OPEN_PKGS} security/libressl"
 
 continue_prompt() {
     local MESSAGE=$1
@@ -145,33 +148,7 @@ build_poudriere() {
         echo "PKGS not set"
         exit 1
     fi
-    # poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default -f ${POUDRIERE_PKG_FILE}
     poudriere bulk -j ${POUDRIERE_JAIL_NAME} -p default ${PKGS}
-}
-
-install_from_ports() {
-    local CMD_STATUS=
-    local PKGS=$@
-    if [ -z ${PKGS+x} ] || [ "${PKGS}" == "" ]; then
-        echo "PKGS not set"
-        exit 1
-    fi
-
-    portsnap fetch auto
-    CMD_STATUS=$?
-
-    for PORT in ${PKGS}; do
-        if [ ! -z ${CMD_STATUS} ]; then
-            make -C /usr/ports/${PORT}/ -DBATCH install clean
-            CMD_STATUS=$?
-        fi
-    done
-
-    if [ ${CMD_STATUS} ]; then
-        exit 1
-    fi
-
-    rm -rf /usr/ports/distfiles/*
 }
 
 setup_poudriere_base() {
@@ -257,12 +234,14 @@ setup_poudriere_ports() {
 }
 
 use_loki() {
+    local MASTER_NAME="${POUDRIERE_JAIL_NAME}-default"
+    local FBSD_VERSION=`uname -U`    
     LOKI_DOMAIN=loki.twinwork.net
     LOKI_IP=$(host ${LOKI_DOMAIN} | awk '{ print $4 }')
     LOKI_CONF="/usr/local/etc/pkg/repos/Loki.conf"
     CURRENT_IP=$(host myip.opendns.com resolver1.opendns.com | tail -1 | awk '{ print $4 }')
     echo "Your public IP: ${CURRENT_IP}"
-    echo "Loki's IP ${LOKI_IP}"
+    echo "Loki's IP ${LOKI_IP}"    
     
     if test -f ${LOKI_CONF}; then
         echo "${LOKI_CONF} already configured"
@@ -276,6 +255,10 @@ use_loki() {
         echo "192.168.1.201 loki.twinwork.net" | tee -a /etc/hosts
     fi
 
+    if [ ${POUDRIERE_SET} ]; then
+        MASTER_NAME="${MASTER_NAME}-${POUDRIERE_SET}"
+    fi
+
     mkdir -vp /usr/local/etc/pkg/repos
     mkdir -vp /usr/local/etc/ssl/certs
     cp -v ${DIR}/loki-poudriere.cert /usr/local/etc/ssl/certs/    
@@ -285,19 +268,41 @@ use_loki() {
     fi
 
     disable_freebsd_repo
-    
-    cat > /usr/local/etc/pkg/repos/Loki.conf <<EOF
+
+    if [ "${FBSD_VERSION}" -lt 1301000 ]; then
+        # remove sign check for versions older than 13.1-RELEASE
+        cat > "${LOKI_CONF}" <<EOF
 Loki: {
-    url: "pkg+https://${LOKI_DOMAIN}/poudriere/packages/${POUDRIERE_JAIL_NAME}-default",
+    url: "pkg+https://${LOKI_DOMAIN}/poudriere/packages/${MASTER_NAME}",
+    mirror_type: "srv",
+    enabled: yes,
+    priority: 1000,
+}
+EOF
+    else
+        cat > "${LOKI_CONF}" <<EOF
+Loki: {
+    url: "pkg+https://${LOKI_DOMAIN}/poudriere/packages/${MASTER_NAME}",
     mirror_type: "srv",
     signature_type: "pubkey",
     pubkey: "/usr/local/etc/ssl/certs/loki-poudriere.cert",
     enabled: yes,
     priority: 1000,
-}    
+}
 EOF
+    fi    
 
-    echo "Added Loki repo in /usr/local/etc/pkg/repos/Loki.conf"
+    echo "Added Loki repo in ${LOKI_CONF}"
+}
+
+use_open() {
+    # disable FreeBSD defaults
+    sysrc sshd_enable=NO
+    sysrc ntpd_enable=NO
+    sysrc ntpdate_enable=NO
+
+    sysrc openssh_enable=YES
+    sysrc openntpd_enable=YES
 }
 
 disable_freebsd_repo() {

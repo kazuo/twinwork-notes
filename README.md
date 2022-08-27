@@ -19,6 +19,8 @@ The `post-install.sh` script has a couple of options:
 ```
     --help          : usage
     --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
+    --use-loki      : uses Twinwork's LOKI poudriere repo
+    --use-open      : installs and uses OpenBSD ports of libressl, SSHd, and NTPd    
 ```
 The `post-install.sh` script will only install from packages. We'll be using `poudriere` to build ports
 
@@ -80,7 +82,7 @@ OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE 
 Whether or not you're choosing Poudriere.conf or Loki.conf, running `setup-poudriere.sh` will disable FreeBSD's package repo. If you need to install anything else from this point on, follow the rest of the instructions by creating the default ports tree and building all of the prepopulated packages related to these NOTES
 
 ```
-poudriere ports -c && poudriere bulk -j 131amd64 -p default -f /usr/local/etc/poudriere.d/packages-default
+poudriere ports -c && poudriere bulk -j 131amd64 -p default -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019 (blame `llvm` for taking so long). But once that's complete, you can also force upgrade all your existsing packages and remove any packages no longer needed
@@ -136,7 +138,7 @@ sudo pkg install emulators/qemu-user-static
 sudo sysrc qemu_user_static_enable="YES"
 sudo service qemu_user_static start
 sudo poudriere jail -c -j 131arm64 -v 13.1-STABLE -a arm64.aarch64 -x
-sudo poudriere bulk -j 131arm64 -f /usr/local/etc/poudriere.d/packages-default
+sudo poudriere bulk -j 131arm64 -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 Note: There's currently a bug in 13.1-RELEASE that prevents poudriere from working. However, 13.1-STABLE is working but you will get a warning if you try to install any packages from STABLE if you currently have RELEASE installed. 
