@@ -290,8 +290,7 @@ Loki: {
     priority: 1000,
 }
 EOF
-    fi
-    
+    fi    
 
     echo "Added Loki repo in ${LOKI_CONF}"
 }

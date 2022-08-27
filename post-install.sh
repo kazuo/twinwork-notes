@@ -17,7 +17,7 @@ POUDRIERE_JAIL_VERSION=${POUDRIERE_JAIL_VERSION:=`uname -r`}
 POUDRIERE_PKG_FILE=${POUDRIERE_PKG_FILE:="/usr/local/etc/poudriere.d/pkglist"}
 
 usage() {
-    echo "usage: $0 [--use-zsh] [--use-loki] []
+    echo "usage: $0 [--use-zsh] [--use-loki] [--use-open]
     --help          : usage
     --use-zsh       : sets zsh as default shell and installs oh-my-zsh for root
     --use-loki      : uses Twinwork's LOKI poudriere repo
