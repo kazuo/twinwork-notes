@@ -102,7 +102,7 @@ add_poudriere_pkg_file() {
 
     touch ${POUDRIERE_PKG_FILE}
     for PORT in ${PKGS}; do
-        if grep -qxf "${PORT}" ${POUDRIERE_PKG_FILE}; then
+        if grep -qx "${PORT}" ${POUDRIERE_PKG_FILE}; then
             continue
         fi
 
