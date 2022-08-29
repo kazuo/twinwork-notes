@@ -212,7 +212,7 @@ DEFAULT_VERSIONS+=samba=4.13
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 
-.if ${.CURDIR:C/.*\/devel\/git//} == ""
+.if \${.CURDIR:C/.*\/devel\/git//} == ""
 FLAVOR=lite
 .endif
 EOF
