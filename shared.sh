@@ -22,6 +22,7 @@ ADD_PKGS="${ADD_PKGS=} security/py-certbot"
 ADD_PKGS="${ADD_PKGS=} security/gnupg"
 ADD_PKGS="${ADD_PKGS=} net/avahi-app"
 ADD_PKGS="${ADD_PKGS=} net/samba413"
+ADD_PKGS="${ADD_PKGS=} security/py-yubikey-manager
 
 FEPP_PKGS=""
 # nginx, pgsql, php81
@@ -203,7 +204,7 @@ EOF
 
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
 # https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
-DEFAULT_VERSIONS+=python=3.8 python3=3.8
+DEFAULT_VERSIONS+=python=3.9 python3=3.9
 DEFAULT_VERSIONS+=pgsql=14
 DEFAULT_VERSIONS+=php=8.1
 DEFAULT_VERSIONS+=samba=4.13

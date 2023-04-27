@@ -382,3 +382,128 @@ Link (or copy) endlessh.newsyslog.conf to /usr/local/newsyslog.conf.d/
 to take care of log rotation.
 
 ln -s /usr/local/etc/endlessh.newsyslog.conf /usr/local/etc/newsyslog.conf.d/
+
+
+
+Message from py39-fail2ban-0.11.2_3:
+
+--
+Please do not edit the fail2ban.conf, jail.conf, or any other
+files in the distributen as they will be overwritten upon each
+upgrade of the port. Instead, create new files named *.local e.g.
+fail2ban.local or jail.local.
+
+For more information, see the official manual:
+http://www.fail2ban.org/wiki/index.php/MANUAL_0_8#Configuration
+
+If you have custom filters or actions and you are upgrading from
+0.9.x please check them.
+
+Users of pf: please read the notes in action.d/pf.conf and the
+discussion at https://github.com/fail2ban/fail2ban/pull/1925
+Please note that fail2ban will put curly braces '{}' around the
+ports in the action so you shouldn't do it yourself.
+
+
+
+=====
+Message from pcsc-lite-1.9.9,2:
+
+--
+PC/SC-Lite has been installed.
+
+You need to install a driver for your smartcard reader e.g.,
+- devel/libccid
+
+For cardreaders connected to the serial port: After installing the driver,
+please update the pcscd configuration file:
+/usr/local/etc/reader.conf
+
+For USB cardreaders add the following lines to /etc/devd.conf to enable
+hotplugging:
+
+attach 100 {
+        device-name "ugen[0-9]+";
+        action "/usr/local/sbin/pcscd -H";
+};
+
+detach 100 {
+        device-name "ugen[0-9]+";
+        action "/usr/local/sbin/pcscd -H";
+};
+=====
+Message from u2f-devd-1.1.10_7:
+
+--
+U2F authentication requires read/write access to USB devices. To
+facilitate such access it comes with a devd.conf(5) file, but you
+still need to restart devd(8), add the desired users to "u2f" group
+and log those out of the current session. For example:
+
+# service devd restart
+# pw group mod u2f -m <user>
+$ exit
+
+For details, see /usr/local/etc/devd/u2f.conf
+=====
+Message from libu2f-host-1.1.10_1:
+
+--
+===>   NOTICE:
+
+The libu2f-host port currently does not have a maintainer. As a result, it is
+more likely to have unresolved issues, not be up-to-date, or even be removed in
+the future. To volunteer to maintain this port, please create an issue at:
+
+https://bugs.freebsd.org/bugzilla
+
+More information about port maintainership is available at:
+
+https://docs.freebsd.org/en/articles/contributing/#ports-contributing
+=====
+Message from ccid-1.5.1:
+
+--
+===>   NOTICE:
+
+The ccid port currently does not have a maintainer. As a result, it is
+more likely to have unresolved issues, not be up-to-date, or even be removed in
+the future. To volunteer to maintain this port, please create an issue at:
+
+https://bugs.freebsd.org/bugzilla
+
+More information about port maintainership is available at:
+
+https://docs.freebsd.org/en/articles/contributing/#ports-contributing
+=====
+Message from py39-yubikey-manager-4.0.9_4:
+
+--
+In order to use `ykman otp` commands, you need to make sure the uhid(4)
+driver attaches to the USB device:
+
+  # usbconfig -d ugenX.Y add_quirk UQ_KBD_IGNORE
+  # usbconfig -d ugenX.Y reset
+
+The correct device to operate on (ugenX.Y) can be determined using
+`usbconfig list`.
+
+When using FreeBSD 13 or higher, you can switch to the more modern
+hidraw(4) driver. This allows YubiKey Manager to access OTP HID in a
+non-exclusive way, so that the key will still function as a USB keyboard:
+
+  # sysrc kld_list+="hidraw hkbd"
+  # cat >>/boot/loader.conf<<EOF
+  hw.usb.usbhid.enable="1"
+  hw.usb.quirk.0="0x1050 0x0010 0 0xffff UQ_KBD_IGNORE"  # YKS_OTP
+  hw.usb.quirk.1="0x1050 0x0110 0 0xffff UQ_KBD_IGNORE"  # NEO_OTP
+  hw.usb.quirk.2="0x1050 0x0111 0 0xffff UQ_KBD_IGNORE"  # NEO_OTP_CCID
+  hw.usb.quirk.3="0x1050 0x0114 0 0xffff UQ_KBD_IGNORE"  # NEO_OTP_FIDO
+  hw.usb.quirk.4="0x1050 0x0116 0 0xffff UQ_KBD_IGNORE"  # NEO_OTP_FIDO_CCID
+  hw.usb.quirk.5="0x1050 0x0401 0 0xffff UQ_KBD_IGNORE"  # YK4_OTP
+  hw.usb.quirk.6="0x1050 0x0403 0 0xffff UQ_KBD_IGNORE"  # YK4_OTP_FIDO
+  hw.usb.quirk.7="0x1050 0x0405 0 0xffff UQ_KBD_IGNORE"  # YK4_OTP_CCID
+  hw.usb.quirk.8="0x1050 0x0407 0 0xffff UQ_KBD_IGNORE"  # YK4_OTP_FIDO_CCID
+  hw.usb.quirk.9="0x1050 0x0410 0 0xffff UQ_KBD_IGNORE"  # YKP_OTP_FIDO
+  EOF
+  # reboot
