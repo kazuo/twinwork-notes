@@ -107,11 +107,11 @@ finish_setup() {
 main() {
     local CMD_STATUS=
     echo ""
-    echo "Twinwork NOTES post-install for FreeBSD 13"
+    echo "Twinwork NOTES post-install for FreeBSD 14"
     echo "See https://github.com/kazuo/twinwork-notes"
     echo ""
     echo ""
-    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 13..."
+    continue_prompt "This will run a post-install script for fresh installation of FreeBSD 14..."
 
     if [ ${USE_OPEN} ]; then
         POUDRIERE_SET=open

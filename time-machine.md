@@ -7,7 +7,7 @@ Quick guide in setting up FreeBSD as a Time Machine target.
 If not using Active Directory, be sure deselect anything AD related in the config
 
 ```
-sudo make -C /usr/ports/net/samba413/ -DOPTIONS_UNSET=X11 install clean
+sudo make -C /usr/ports/net/samba416/ -DOPTIONS_UNSET=X11 install clean
 sudo sysrc samba_server_enable=YES
 ```
 

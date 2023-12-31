@@ -14,31 +14,53 @@ Run
 # reboot
 ```
 
-## Point release upgrades
+## Point release and major upgrades
 
 First, run a backup!
 
 Update pkg repo to point back to FreeBSD's
 
 ```
-# freebsd-update -r 13.2-RELEASE upgrade
+# freebsd-update -r 14.0-RELEASE upgrade
 # freebsd-update install
 # reboot
 # freebsd-update install
 ```
 
-Force upgrade all packages using FreeBSD's repo. Upgrading your jails' packages is optional
+Force upgrade all packages using FreeBSD's repo. We don't ned to touch or jails' packages since they can live on the older version until we're ready to upgrade them
 
 ```
 # sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
 # sed -e '/enabled: / s/no/yes/' -i '' /usr/local/etc/pkg/repos/FreeBSD.conf
-# bastille cmd ALL sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
-# bastille cmd ALL sed -e '/enabled: / s/no/yes/' -i '' /usr/local/etc/pkg/repos/FreeBSD.conf
 
-# pkg-static upgrade -f
+# pkg-static install -f pkg
+# pkg update
+# pkg upgrade -f
+# freebsd-update install
 ```
 
-Upgrade jails to new release
+Create a new poudriere jail
+```
+# poudriere jail -c -j 140amd64 -v 14.0-RELEASE
+```
+
+Build your packages through poudriere. Update your repos config to point to the new URL.
+
+Create a new jail then rebuild poudriere repo (your target sets and package list will vary)
+```
+# poudriere ports -u
+# poudriere jail -c -j 140amd64 -v 14.0-RELEASE
+# poudriere bulk -j 140amd64 -f /usr/local/etc/poudriere.d/pkglist
+```
+
+Switch back to your repo
+
+```
+# sed -e '/enabled: / s/no/yes/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
+# sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/FreeBSD.conf
+```
+
+Upgrade jails to new release (see https://bastille.readthedocs.io/en/latest/chapters/upgrading.html#revert-upgrade-downgrade-process for major version)
 
 ```
 # bastille upgrade 13.1-RELEASE 13.2-RELEASE
@@ -56,22 +78,6 @@ Only run this if you want to upgrade your jails' packages to the latest release.
 
 ```
 # bastille cmd ALL pkg-static upgrade -f
-```
-
-Create a new jail then rebuild poudriere repo (your target sets and package list will vary)
-```
-# poudriere ports -u
-# poudriere jail -c -j 132amd64 -v 13.2-RELEASE
-# poudriere bulk -j 132amd64 -f /usr/local/etc/poudriere.d/pkglist
-```
-
-Switch back to your repo
-
-```
-# sed -e '/enabled: / s/no/yes/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
-# sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/FreeBSD.conf
-# bastille cmd ALL sed -e '/enabled: / s/no/yes/' -i '' /usr/local/etc/pkg/repos/Poudriere.conf
-# bastille cmd ALL sed -e '/enabled: / s/yes/no/' -i '' /usr/local/etc/pkg/repos/FreeBSD.conf
 ```
 
 Force reinstall all packages on your system and in all your jails

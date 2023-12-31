@@ -4,7 +4,7 @@ This guides you through an install of Nextcloud. It assumes you're using Bastill
 
 ## Create and configure your jail
 ```
-sudo bastille create nextcloud 13.0-RELEASE 192.168.2.21
+sudo bastille create nextcloud 14.0-RELEASE 192.168.2.21
 sudo bastille config nextcloud set sysvsem new
 sudo bastille config nextcloud set sysvmsg new
 sudo bastille config nextcloud set sysvshm new

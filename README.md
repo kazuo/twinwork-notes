@@ -129,19 +129,13 @@ Poudriere: {
 ### Poudriere for arm64 (aarch64)
 By default, the jails are for amd64, but you can also build it out for a different architecture. You can run the following below to build out an arm64 repository. I find this useful while testing FreeBSD as a VM guest on Apple Silicon
 
-References:
-* https://wiki.freebsd.org/Ports/BuildingPackagesThroughEmulation
-* https://forums.freebsd.org/threads/poudriere-arm-freebsd-13-1-broken.85284/
-
 ```
 sudo pkg install emulators/qemu-user-static
 sudo sysrc qemu_user_static_enable="YES"
 sudo service qemu_user_static start
-sudo poudriere jail -c -j 131arm64 -v 13.1-STABLE -a arm64.aarch64 -x
-sudo poudriere bulk -j 131arm64 -f /usr/local/etc/poudriere.d/pkglist
+sudo poudriere jail -c -j 140arm64 -v 14.0-RELEASE -a arm64.aarch64
+sudo poudriere bulk -j 140arm64 -f /usr/local/etc/poudriere.d/pkglist
 ```
-
-Note: There's currently a bug in 13.1-RELEASE that prevents poudriere from working. However, 13.1-STABLE is working but you will get a warning if you try to install any packages from STABLE if you currently have RELEASE installed. 
 
 ## The FEPP install script
 I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script.

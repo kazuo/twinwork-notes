@@ -8,7 +8,7 @@ Next up is a bunch of trial and error building out ports since some options migh
 (Assumes the name of my poudriere set is named `open`)
 ```
 poudriere options -z open databases/mariadb105-server
-poudriere options -z open net/samba413
+poudriere options -z open net/samba416
 poudriere options -z open ftp/curl
 ```
 

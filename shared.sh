@@ -21,57 +21,57 @@ ADD_PKGS="${ADD_PKGS=} sysutils/renameutils"
 ADD_PKGS="${ADD_PKGS=} security/py-certbot"
 ADD_PKGS="${ADD_PKGS=} security/gnupg"
 ADD_PKGS="${ADD_PKGS=} net/avahi-app"
-ADD_PKGS="${ADD_PKGS=} net/samba413"
+ADD_PKGS="${ADD_PKGS=} net/samba416"
 ADD_PKGS="${ADD_PKGS=} security/py-yubikey-manager
 
 FEPP_PKGS=""
-# nginx, pgsql, php81
+# nginx, pgsql, php83
 FEPP_PKGS="${FEPP_PKGS} www/nginx"
-FEPP_PKGS="${FEPP_PKGS} databases/postgresql14-client"
-FEPP_PKGS="${FEPP_PKGS} databases/postgresql14-server"
-FEPP_PKGS="${FEPP_PKGS} lang/php81"
+FEPP_PKGS="${FEPP_PKGS} databases/postgresql15-client"
+FEPP_PKGS="${FEPP_PKGS} databases/postgresql15-server"
+FEPP_PKGS="${FEPP_PKGS} lang/php83"
 
-# default php81-extensions (i.e. /usr/ports/lang/php81-extensions/)
-FEPP_PKGS="${FEPP_PKGS} textproc/php81-ctype"
-FEPP_PKGS="${FEPP_PKGS} textproc/php81-dom"
-FEPP_PKGS="${FEPP_PKGS} security/php81-filter"
-FEPP_PKGS="${FEPP_PKGS} converters/php81-iconv"
-FEPP_PKGS="${FEPP_PKGS} www/php81-opcache"
-FEPP_PKGS="${FEPP_PKGS} databases/php81-pdo"
-FEPP_PKGS="${FEPP_PKGS} archivers/php81-phar"
-FEPP_PKGS="${FEPP_PKGS} sysutils/php81-posix"
-FEPP_PKGS="${FEPP_PKGS} www/php81-session"
-FEPP_PKGS="${FEPP_PKGS} textproc/php81-simplexml"
-FEPP_PKGS="${FEPP_PKGS} databases/php81-sqlite3"
-FEPP_PKGS="${FEPP_PKGS} databases/php81-pdo_sqlite"
-FEPP_PKGS="${FEPP_PKGS} devel/php81-tokenizer"
-FEPP_PKGS="${FEPP_PKGS} textproc/php81-xml"
-FEPP_PKGS="${FEPP_PKGS} textproc/php81-xmlreader"
-FEPP_PKGS="${FEPP_PKGS} textproc/php81-xmlwriter"
+# default php83-extensions (i.e. /usr/ports/lang/php83-extensions/)
+FEPP_PKGS="${FEPP_PKGS} textproc/php83-ctype"
+FEPP_PKGS="${FEPP_PKGS} textproc/php83-dom"
+FEPP_PKGS="${FEPP_PKGS} security/php83-filter"
+FEPP_PKGS="${FEPP_PKGS} converters/php83-iconv"
+FEPP_PKGS="${FEPP_PKGS} www/php83-opcache"
+FEPP_PKGS="${FEPP_PKGS} databases/php83-pdo"
+FEPP_PKGS="${FEPP_PKGS} archivers/php83-phar"
+FEPP_PKGS="${FEPP_PKGS} sysutils/php83-posix"
+FEPP_PKGS="${FEPP_PKGS} www/php83-session"
+FEPP_PKGS="${FEPP_PKGS} textproc/php83-simplexml"
+FEPP_PKGS="${FEPP_PKGS} databases/php83-sqlite3"
+FEPP_PKGS="${FEPP_PKGS} databases/php83-pdo_sqlite"
+FEPP_PKGS="${FEPP_PKGS} devel/php83-tokenizer"
+FEPP_PKGS="${FEPP_PKGS} textproc/php83-xml"
+FEPP_PKGS="${FEPP_PKGS} textproc/php83-xmlreader"
+FEPP_PKGS="${FEPP_PKGS} textproc/php83-xmlwriter"
 
-# php81 pgsql extensions
-FEPP_PKGS="${FEPP_PKGS} databases/php81-pgsql"
-FEPP_PKGS="${FEPP_PKGS} databases/php81-pdo_pgsql"
+# php83 pgsql extensions
+FEPP_PKGS="${FEPP_PKGS} databases/php83-pgsql"
+FEPP_PKGS="${FEPP_PKGS} databases/php83-pdo_pgsql"
 
-# other php81 extensions
-FEPP_PKGS="${FEPP_PKGS} archivers/php81-bz2"
-FEPP_PKGS="${FEPP_PKGS} ftp/php81-curl"
-FEPP_PKGS="${FEPP_PKGS} graphics/php81-exif"
-FEPP_PKGS="${FEPP_PKGS} graphics/php81-gd"
-FEPP_PKGS="${FEPP_PKGS} devel/php81-intl"
-FEPP_PKGS="${FEPP_PKGS} converters/php81-mbstring"
-FEPP_PKGS="${FEPP_PKGS} archivers/php81-zip"
-FEPP_PKGS="${FEPP_PKGS} archivers/php81-zlib"
+# other php83 extensions
+FEPP_PKGS="${FEPP_PKGS} archivers/php83-bz2"
+FEPP_PKGS="${FEPP_PKGS} ftp/php83-curl"
+FEPP_PKGS="${FEPP_PKGS} graphics/php83-exif"
+FEPP_PKGS="${FEPP_PKGS} graphics/php83-gd"
+FEPP_PKGS="${FEPP_PKGS} devel/php83-intl"
+FEPP_PKGS="${FEPP_PKGS} converters/php83-mbstring"
+FEPP_PKGS="${FEPP_PKGS} archivers/php83-zip"
+FEPP_PKGS="${FEPP_PKGS} archivers/php83-zlib"
 
-# other php81 extensions recommended for nextcloud
-FEPP_PKGS="${FEPP_PKGS} sysutils/php81-fileinfo"
+# other php83 extensions recommended for nextcloud
+FEPP_PKGS="${FEPP_PKGS} sysutils/php83-fileinfo"
 FEPP_PKGS="${FEPP_PKGS} graphics/pecl-imagick"
-FEPP_PKGS="${FEPP_PKGS} ftp/php81-ftp"
-FEPP_PKGS="${FEPP_PKGS} math/php81-bcmath"
-FEPP_PKGS="${FEPP_PKGS} math/php81-gmp"
-FEPP_PKGS="${FEPP_PKGS} devel/php81-pcntl"
-FEPP_PKGS="${FEPP_PKGS} net/php81-ldap"
-FEPP_PKGS="${FEPP_PKGS} textproc/php81-xsl"
+FEPP_PKGS="${FEPP_PKGS} ftp/php83-ftp"
+FEPP_PKGS="${FEPP_PKGS} math/php83-bcmath"
+FEPP_PKGS="${FEPP_PKGS} math/php83-gmp"
+FEPP_PKGS="${FEPP_PKGS} devel/php83-pcntl"
+FEPP_PKGS="${FEPP_PKGS} net/php83-ldap"
+FEPP_PKGS="${FEPP_PKGS} textproc/php83-xsl"
 
 OPEN_PKGS=""
 OPEN_PKGS="${OPEN_PKGS} net/openntpd"
@@ -205,11 +205,11 @@ EOF
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
 # https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
 DEFAULT_VERSIONS+=python=3.9 python3=3.9
-DEFAULT_VERSIONS+=pgsql=14
-DEFAULT_VERSIONS+=php=8.1
-DEFAULT_VERSIONS+=samba=4.13
+DEFAULT_VERSIONS+=pgsql=15
+DEFAULT_VERSIONS+=php=8.2
+DEFAULT_VERSIONS+=samba=4.16
 # MariaDB 10.5
-#DEFAULT_VERSIONS+=mysql=10.5m
+#DEFAULT_VERSIONS+=mysql=10.6m
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 
