@@ -218,8 +218,7 @@ EOF
 
 sudo bastille cmd ALL tee /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
 Poudriere: {
-    url: "http://192.168.2.23/poudriere/packages/131amd64-default",
-    mirror_type: "http",
+    url: "http://192.168.2.23/poudriere/packages/140amd64-default",
     signature_type: "pubkey",
     pubkey: "/usr/local/etc/ssl/certs/poudriere.cert",
     enabled: yes,
