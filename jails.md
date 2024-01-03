@@ -55,7 +55,7 @@ sudo service pf start
 ## NGINX reverse proxy jail
 Create the NGINX reverse proxy jail... which we'll call www-proxy
 ```
-sudo bastille create www-proxy 13.1-RELEASE 192.168.2.21
+sudo bastille create www-proxy 14.0-RELEASE 192.168.2.21
 sudo bastille config www-proxy set sysvsem new
 sudo bastille config www-proxy set sysvmsg new
 sudo bastille config www-proxy set sysvshm new
@@ -218,8 +218,7 @@ EOF
 
 sudo bastille cmd ALL tee /usr/local/etc/pkg/repos/Poudriere.conf <<EOF
 Poudriere: {
-    url: "http://192.168.2.23/poudriere/packages/131amd64-default",
-    mirror_type: "http",
+    url: "http://192.168.2.23/poudriere/packages/140amd64-default",
     signature_type: "pubkey",
     pubkey: "/usr/local/etc/ssl/certs/poudriere.cert",
     enabled: yes,
@@ -241,7 +240,7 @@ sudo bastille pkg ALL autoremove
 Create the jail with the given release and IP
 
 ```
-sudo bastille create postgres 13.1-RELEASE 192.168.2.30
+sudo bastille create postgres 14.0-RELEASE 192.168.2.30
 sudo bastille config postgres set sysvsem new
 sudo bastille config postgres set sysvmsg new
 sudo bastille config postgres set sysvshm new
@@ -254,8 +253,8 @@ Install PostgreSQL with a few other packages
 ```
 sudo bastille pkg postgres install \
     security/sudo \
-    databases/postgresql14-client \
-    databases/postgresql14-server
+    databases/postgresql15-client \
+    databases/postgresql15-server
 ```
 
 Create your database and start PostgreSQL
@@ -265,7 +264,7 @@ sudo bastille cmd postgres mkdir /pgdb
 sudo bastille cmd postgres chown postgres:postgres /pgdb
 sudo bastille cmd postgres pw usermod -n postgres -d /pgdb
 sudo bastille sysrc postgres postgresql_enable=YES
-sudo bastille sysrc postgres postgresql_data=/pgdb/data14
+sudo bastille sysrc postgres postgresql_data=/pgdb/data15
 sudo bastille service postgres postgresql initdb
 sudo bastille service postgres postgresql start
 ```

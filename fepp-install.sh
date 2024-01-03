@@ -6,7 +6,7 @@ DIR=$(dirname "$0")
 
 main() {
     local CMD_STATUS=
-    echo "Twinwork NOTES feapp-install for FreeBSD 13"
+    echo "Twinwork NOTES feapp-install for FreeBSD 14"
     echo "See https://github.com/kazuo/twinwork-notes"    
     echo ""
     echo "This assumes that all packages/ports dependencies are"

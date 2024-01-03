@@ -82,7 +82,7 @@ OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE 
 Whether or not you're choosing Poudriere.conf or Loki.conf, running `setup-poudriere.sh` will disable FreeBSD's package repo. If you need to install anything else from this point on, follow the rest of the instructions by creating the default ports tree and building all of the prepopulated packages related to these NOTES
 
 ```
-poudriere ports -c && poudriere bulk -j 131amd64 -p default -f /usr/local/etc/poudriere.d/pkglist
+poudriere ports -c && poudriere bulk -j 140amd64 -p default -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019 (blame `llvm` for taking so long). But once that's complete, you can also force upgrade all your existsing packages and remove any packages no longer needed
@@ -117,7 +117,7 @@ Modify your poudriere conf to add the public key: `/usr/local/etc/pkg/repos/Poud
 
 ```
 Poudriere: {
-    url: "file:///usr/local/poudriere/data/packages/131amd64-default",
+    url: "file:///usr/local/poudriere/data/packages/140amd64-default",
     mirror_type: "srv",
     signature_type: "pubkey",
     pubkey: "/usr/local/etc/ssl/certs/poudriere.cert",
@@ -129,19 +129,13 @@ Poudriere: {
 ### Poudriere for arm64 (aarch64)
 By default, the jails are for amd64, but you can also build it out for a different architecture. You can run the following below to build out an arm64 repository. I find this useful while testing FreeBSD as a VM guest on Apple Silicon
 
-References:
-* https://wiki.freebsd.org/Ports/BuildingPackagesThroughEmulation
-* https://forums.freebsd.org/threads/poudriere-arm-freebsd-13-1-broken.85284/
-
 ```
 sudo pkg install emulators/qemu-user-static
 sudo sysrc qemu_user_static_enable="YES"
 sudo service qemu_user_static start
-sudo poudriere jail -c -j 131arm64 -v 13.1-STABLE -a arm64.aarch64 -x
-sudo poudriere bulk -j 131arm64 -f /usr/local/etc/poudriere.d/pkglist
+sudo poudriere jail -c -j 140arm64 -v 14.0-RELEASE -a arm64.aarch64
+sudo poudriere bulk -j 140arm64 -f /usr/local/etc/poudriere.d/pkglist
 ```
-
-Note: There's currently a bug in 13.1-RELEASE that prevents poudriere from working. However, 13.1-STABLE is working but you will get a warning if you try to install any packages from STABLE if you currently have RELEASE installed. 
 
 ## The FEPP install script
 I'm not sure what the cool acronym is for FreeBSD, Nginx, PostgreSQL, and PHP is, but we'll go with FEPP! Run the `fepp-install.sh` script.

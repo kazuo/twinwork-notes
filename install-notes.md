@@ -217,11 +217,16 @@ https://www.samba.org/
 
 
 
-[plex] Installing plexmediaserver-plexpass-1.25.9.5721...
+[1/1] Installing plexmediaserver-plexpass-1.32.6.7468...
 ===> Creating groups.
-Creating group 'plex' with gid '972'.
+Using existing group 'plex'.
 ===> Creating users
-Creating user 'plex' with uid '972'.
+Using existing user 'plex'.
+[1/1] Extracting plexmediaserver-plexpass-1.32.6.7468: 100%
+=====
+Message from plexmediaserver-plexpass-1.32.6.7468:
+
+--
 multimedia/plexmediaserver_plexpass includes an RC script:
 /usr/local/etc/rc.d/plexmediaserver_plexpass
 
@@ -273,43 +278,6 @@ utilities.
 * Make sure hardware transcoding is enabled in the server settings
 
 @@@ INTEL GPU OFFLOAD NOTES @@@
-===>   NOTICE:
-
-The plexmediaserver-plexpass port currently does not have a maintainer. As a result, it is
-more likely to have unresolved issues, not be up-to-date, or even be removed in
-the future. To volunteer to maintain this port, please create an issue at:
-
-https://bugs.freebsd.org/bugzilla
-
-More information about port maintainership is available at:
-
-https://docs.freebsd.org/en/articles/contributing/#ports-contributing
-
-===> SECURITY REPORT:
-      This port has installed the following files which may act as network
-      servers and may therefore pose a remote security risk to the system.
-/usr/local/share/plexmediaserver-plexpass/lib/libhdhomerun.so
-/usr/local/share/plexmediaserver-plexpass/Plex Relay
-/usr/local/share/plexmediaserver-plexpass/lib/libpion.so
-/usr/local/share/plexmediaserver-plexpass/Plex Tuner Service
-/usr/local/share/plexmediaserver-plexpass/lib/libavformat.so.58
-/usr/local/share/plexmediaserver-plexpass/Plex Media Server
-/usr/local/share/plexmediaserver-plexpass/lib/libcrypto.so.1.1
-/usr/local/share/plexmediaserver-plexpass/lib/libcurl.so
-/usr/local/share/plexmediaserver-plexpass/lib/libpython27.so (USES POSSIBLY INSECURE FUNCTIONS: tempnam tmpnam)
-/usr/local/share/plexmediaserver-plexpass/Plex DLNA Server
-
-      If there are vulnerabilities in these programs there may be a security
-      risk to the system. FreeBSD makes no guarantee about the security of
-      ports included in the Ports Collection. Please type 'make deinstall'
-      to deinstall the port if this is a concern.
-
-      For more information, and contact details about the security
-      status of this software, see the following webpage:
-https://plex.tv
-===>  Cleaning for pkg-1.17.5_1
-===>  Cleaning for plexmediaserver-plexpass-1.25.9.5721
-[plex]: 0
 
 
 Message from zfsnap-1.11.1_1:
