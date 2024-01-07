@@ -22,7 +22,7 @@ ADD_PKGS="${ADD_PKGS=} security/py-certbot"
 ADD_PKGS="${ADD_PKGS=} security/gnupg"
 ADD_PKGS="${ADD_PKGS=} net/avahi-app"
 ADD_PKGS="${ADD_PKGS=} net/samba416"
-ADD_PKGS="${ADD_PKGS=} security/py-yubikey-manager
+ADD_PKGS="${ADD_PKGS=} security/py-yubikey-manager"
 
 FEPP_PKGS=""
 # nginx, pgsql, php83
@@ -72,6 +72,8 @@ FEPP_PKGS="${FEPP_PKGS} math/php83-gmp"
 FEPP_PKGS="${FEPP_PKGS} devel/php83-pcntl"
 FEPP_PKGS="${FEPP_PKGS} net/php83-ldap"
 FEPP_PKGS="${FEPP_PKGS} textproc/php83-xsl"
+FEPP_PKGS="${FEPP_PKGS} databases/pecl-memcache"
+FEPP_PKGS="${FEPP_PKGS} net/pecl-smbclient"
 
 OPEN_PKGS=""
 OPEN_PKGS="${OPEN_PKGS} net/openntpd"
