@@ -12,7 +12,7 @@ Login locally as `root` and download the following
 ```sh
 fetch https://github.com/kazuo/twinwork-notes/archive/main.zip
 unzip main.zip
-sh ./twinwork-notes-main/post-install.sh
+sh ./twinwork-notes-main/scripts/post-install.sh
 ```
 
 The `post-install.sh` script has a couple of options:
@@ -59,7 +59,7 @@ We previously used ports to set custom options, but since it's generally bad pra
 We can automate the initial `poudriere` setup that `twinwork-notes` uses by running the following script
 
 ```
-sh ./twinwork-notes-main/setup-poudriere.sh
+sh ./twinwork-notes-main/scripts/setup-poudriere.sh
 ```
 
 The `setup-poudriere.sh` script has a couple of options:
@@ -71,10 +71,11 @@ The `setup-poudriere.sh` script has a couple of options:
 If you specify the `--use-loki` option, you'll still copy over the main Poudriere.conf file but that repo will be disabled by default and the Loki.conf poudriere file will be enabled. This repo has all of packages built from `twinwork-notes` plus a few additional ones found in `shared.sh`. You can always check https://loki.twinwork.net/poudriere. Packages aren't updated on schedule, but closer to once every two weeks or so. They're definitely going to be more up to date than using FreeBSD's quarterly repo. Also, be aware of what Loki is actually building... here's a copy of Loki's `/usr/local/etc/poudriere.d/make.conf`:
 
 ```
-DEFAULT_VERSIONS+=python=3.8 python3=3.8 pgsql=14 php=8.1 samba=4.13
+# see defaults at https://github.com/freebsd/freebsd-ports/blob/main/Mk/bsd.default-versions.mk
+DEFAULT_VERSIONS+=python=3.9 python3=3.9 pgsql=15 php=8.1 samba=4.16
 
-# MariaDB 10.5
-DEFAULT_VERSIONS+=mysql=10.5m
+# MariaDB 10.6
+DEFAULT_VERSIONS+=mysql=10.6m
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 ```
@@ -148,7 +149,7 @@ The script does not automatically start the services for Nginx, PostgreSQL, or P
 
 
 ### PostgreSQL
-By default, PostgreSQL's data folder will be in `/var/db/postgres/data{version}` where `version` is PostgreSQL's major version (i.e. `/var/db/postgres/data14`). Also, by default the `postgres` user's home folder is `/var/db/postgres`. If you want to change where to store PostgreSQL data, you will need to change `postgres`' home folder as well.
+By default, PostgreSQL's data folder will be in `/var/db/postgres/data{version}` where `version` is PostgreSQL's major version (i.e. `/var/db/postgres/data15`). Also, by default the `postgres` user's home folder is `/var/db/postgres`. If you want to change where to store PostgreSQL data, you will need to change `postgres`' home folder as well.
 
 In this example, I have folder called `/nyx` and want to place my `postgres` home folder there. We want to create the `postgres` home folder, set the the `postgres` user and group to own the home folder, change the `postgres` user to the new home folder, enable the `postgresql` service,and finally set the `postgresql_data` config in `/etc/rc.conf`
 
@@ -157,7 +158,7 @@ sudo mkdir -p /nyx/postgres
 sudo chown postgres:postgres /nyx/postgres
 sudo pw usermod -n postgres -d /nyx/postgres
 sudo sysrc postgresql_enable=YES
-sudo sysrc postgresql_data=/nyx/postgres/data14
+sudo sysrc postgresql_data=/nyx/postgres/data15
 ```
 
 Now you can initialize your DB and start the server.
