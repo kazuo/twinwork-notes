@@ -195,9 +195,9 @@ Copy over `www-poudriere`'s nginx configs found in NOTES nginx folder. To make t
 # assumes this is where twinwork-notes resides
 NOTES=/root/twinwork-notes-master
 
-sudo bastille cp www-poudriere $NOTES/nginx/www-poudriere.conf /usr/local/etc/nginx/nginx.conf
-sudo bastille cp www-poudriere $NOTES/nginx/ssl_common.conf /usr/local/etc/nginx/
-sudo bastille cp www-poudriere $NOTES/nginx/poudriere.conf /usr/local/etc/nginx/
+sudo bastille cp www-poudriere $NOTES/conf/nginx/www-poudriere.conf /usr/local/etc/nginx/nginx.conf
+sudo bastille cp www-poudriere $NOTES/conf/nginx/ssl_common.conf /usr/local/etc/nginx/
+sudo bastille cp www-poudriere $NOTES/conf/nginx/poudriere.conf /usr/local/etc/nginx/
 ```
 
 You might need to tweak your config. Once you confirm your configuration, add nginx to `www-poudriere`'s `/etc/rc.conf` and start the service
