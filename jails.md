@@ -253,8 +253,9 @@ Install PostgreSQL with a few other packages
 ```
 sudo bastille pkg postgres install \
     security/sudo \
-    databases/postgresql15-client \
-    databases/postgresql15-server
+    shells/bash \
+    databases/postgresql6-client \
+    databases/postgresql6-server
 ```
 
 Create your database and start PostgreSQL
@@ -263,8 +264,9 @@ Create your database and start PostgreSQL
 sudo bastille cmd postgres mkdir /pgdb
 sudo bastille cmd postgres chown postgres:postgres /pgdb
 sudo bastille cmd postgres pw usermod -n postgres -d /pgdb
+sudo bastille cmd chsh -s /usr/local/bin/bash postgres
 sudo bastille sysrc postgres postgresql_enable=YES
-sudo bastille sysrc postgres postgresql_data=/pgdb/data15
+sudo bastille sysrc postgres postgresql_data=/pgdb/data16
 sudo bastille service postgres postgresql initdb
 sudo bastille service postgres postgresql start
 ```

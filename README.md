@@ -157,6 +157,7 @@ In this example, I have folder called `/nyx` and want to place my `postgres` hom
 sudo mkdir -p /nyx/postgres
 sudo chown postgres:postgres /nyx/postgres
 sudo pw usermod -n postgres -d /nyx/postgres
+sudo chsh -s /usr/local/bin/bash postgres
 sudo sysrc postgresql_enable=YES
 sudo sysrc postgresql_data=/nyx/postgres/data15
 ```

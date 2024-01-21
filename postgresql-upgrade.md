@@ -1,51 +1,52 @@
 # PostgreSQL upgrade
 When upgrading major versions of PostgreSQL, you'll need to upgrade your DB by doing a `db_dump` (or `db_dumpall`) and then load via `psql` or `db_restore`. There is also a `pg_upgrade` utility, but it requires that you target the older verision's binary folder first. There's no easy way to do this in FreeBSD since there's only one place to install PostgreSQL.
 
-Possible Solution? Use a jail for the older version. How? An example of upgrading from PostgreSQL 14 to 15.
+Possible Solution? Use a jail for the older version. How? An example of upgrading from PostgreSQL 15 to 16.
 
-1. Create a new jail for the older PostgreSQL and install said older PostgreSQL on new jail
+Below is an example of what we can do if we have a jail named "cloud" with PostgreSQL we want to upgrade
+
+1. Create a brand new jail for the older PostgreSQL and install said older PostgreSQL on new jail
 2. Make a backup! do a `pg_dumpall` of your main Postgres server first!
 3. Upgrade PostgreSQL in your currently existing jail that runs Postgres
-4. Stop PostgreSQL service in Postgres jail
-5. Update the data for the new PostgreSQL (i.e. /postgres/data15)
-6. Init the new data for PostgreSQL
-7. Mount older PostgreSQL jail bin folder to newer jail so the newer jail has access to it for `pg_upgrade`
+4. Stop PostgreSQL service 
+5. Init the new data for PostgreSQL (i.e. /postgres/data16)
+Update the data for the new PostgreSQL (i.e. /postgres/data16)
+6. Mount older PostgreSQL jail bin folder to newer jail so the newer jail has access to it for `pg_upgrade`
 8. Run `pg_upgrade` from the newer jail pointing to the old and new binary folders in their respective jails
-9. Update Postgres data folder in your main Postgres jail
-10. Restart your Postgres service in that main Postgres jail
+9. Restore access by updating pg_hba.conf 
+10. Start/restart your Postgres service
+11. Remove the temporary old PostgreSQL jail
 
 ## Create a new jail and install the older version of postgresql14 you want to upgrade from
 ```
-sudo bastille create pg14 14.0-RELEASE 192.168.2.24
-sudo bastille start pg14
-sudo bastille pkg pg14 install databases/postgresql14-server
+sudo bastille create pg15 14.0-RELEASE 192.168.2.24
+sudo bastille start pg15
+sudo bastille pkg pg15 install databases/postgresql15-server
 ```
 
 ## Stop services and install new version of PostgreSQL
 First stop services that could be using PostgreSQL and do a `pg_dumpall` as a backup
 
 ```
-sudo bastille service cloud php-fpm stop
-sudo bastille cmd cloud sudo -u postgres pg_dumpall -c -f /postgres/pgdata14-$(date '+%Y-%m-%d_%H-%M-%S').out
-sudo bastille cmd cloud ls -l /postgres
+sudo bastille cmd cloud sudo -u postgres pg_dumpall -c -f /postgres/pgdata15-$(date '+%Y-%m-%d_%H-%M-%S').out
 ```
 
 Finally stop PostgreSQL and install the newer version
 
 ```
 sudo bastille service cloud postgresql stop
-sudo bastille pkg cloud install postgresql15-server
-sudo bastille sysrc cloud postgresql_data=/postgres/data15
+sudo bastille pkg cloud install postgresql16-server
+sudo bastille sysrc cloud postgresql_data=/postgres/data16
 sudo bastille service cloud postgresql initdb
-sudo bastille mount cloud /usr/local/bastille/jails/pg14/root/usr/local/bin usr/pg14bin
+sudo bastille mount cloud /usr/local/bastille/jails/pg15/root/usr/local/bin usr/pg15bin
 ```
 
 You'll also want to (temporarily) install the newest version on the host just for `pg_upgrade`
 ```
-sudo pkg install postgresql15-server
+sudo pkg install postgresql16-server
 ```
 
-## Upgrade your data: `pg_upgrade`
+## Upgrade your data via `pg_upgrade`
 
 You'll need to console into your jail for this
 ```

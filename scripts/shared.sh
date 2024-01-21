@@ -24,6 +24,10 @@ ADD_PKGS="${ADD_PKGS=} security/gnupg"
 ADD_PKGS="${ADD_PKGS=} net/avahi-app"
 ADD_PKGS="${ADD_PKGS=} net/samba416"
 ADD_PKGS="${ADD_PKGS=} security/py-yubikey-manager"
+ADD_PKGS="${ADD_PKGS=} security/py-fail2ban"
+ADD_PKGS="${ADD_PKGS=} security/opie"
+ADD_PKGS="${ADD_PKGS=} net/endlessh"
+
 
 FEPP_PKGS=""
 # nginx, pgsql, php83
@@ -208,17 +212,18 @@ EOF
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
 # https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
 DEFAULT_VERSIONS+=python=3.9 python3=3.9
-DEFAULT_VERSIONS+=pgsql=15
-DEFAULT_VERSIONS+=php=8.2
+DEFAULT_VERSIONS+=pgsql=16
+DEFAULT_VERSIONS+=php=8.3
 DEFAULT_VERSIONS+=samba=4.16
-# MariaDB 10.5
+# MariaDB 10.6
 #DEFAULT_VERSIONS+=mysql=10.6m
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 
-.if \${.CURDIR:C/.*\/devel\/git//} == ""
+.if \${.CURDIR:M*/devel/git}
 FLAVOR=lite
 .endif
+
 EOF
 
     echo "Check poudriere make options in /usr/local/etc/poudriere.d/make.conf"
