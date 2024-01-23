@@ -20,15 +20,18 @@ Update the data for the new PostgreSQL (i.e. /postgres/data16)
 ## Create a new jail and install the older version of postgresql14 you want to upgrade from
 ```
 sudo bastille create pg15 14.0-RELEASE 192.168.2.24
-sudo bastille start pg15
 sudo bastille pkg pg15 install databases/postgresql15-server
 ```
 
 ## Stop services and install new version of PostgreSQL
-First stop services that could be using PostgreSQL and do a `pg_dumpall` as a backup
+Stop PostgreSQL service and do a `pg_dumpall` as a backup
 
 ```
-sudo bastille cmd cloud sudo -u postgres pg_dumpall -c -f /postgres/pgdata15-$(date '+%Y-%m-%d_%H-%M-%S').out
+
+sudo bastille console cloud
+cd /postgres
+sudo -u postgres pg_dumpall -c -f /postgres/pgdata15-$(date '+%Y-%m-%d_%H-%M-%S').out
+exit
 ```
 
 Finally stop PostgreSQL and install the newer version
@@ -41,19 +44,17 @@ sudo bastille service cloud postgresql initdb
 sudo bastille mount cloud /usr/local/bastille/jails/pg15/root/usr/local/bin usr/pg15bin
 ```
 
-You'll also want to (temporarily) install the newest version on the host just for `pg_upgrade`
-```
-sudo pkg install postgresql16-server
-```
-
 ## Upgrade your data via `pg_upgrade`
 
 You'll need to console into your jail for this
 ```
 sudo bastille console cloud
-sudo -u postgres pg_upgrade -b /usr/pg14bin -d /postgres/data14 -B /usr/local/bin -D /postgres/data15
+cd /postgres
+sudo -u postgres pg_upgrade -b /usr/pg15bin -d /postgres/data15 -B /usr/local/bin -D /postgres/data16 -k
 exit
 ```
+
+Your old `pg_hba.conf` should be untouched. Make sure you compare the old and the new and port over any access you need
 
 Then start and vaccum your new DB
 ```
@@ -61,26 +62,19 @@ sudo bastille service cloud postgresql start
 sudo bastille cmd cloud sudo -u postgres vacuumdb --all --analyze-in-stages
 ```
 
-If you don't need your old data files, you can also delete it by running
+Once everything is verified to be up and running, you can delete the old cluster using the generated script (or just delete the old folder manually)
 ```
-sudo bastille cmd cloud /tmp/delete_old_cluster.sh
-```
-When using `-k` with `pg_upgrade` you'll need to keep the old data directory to also be used with the new data directory. You can omit `-k` but expect the time to upgrade take a little longer.
-
-## Update
-```
-sudo bastille sysrc cloud -f /etc/rc.conf postgresql_data=/postgres/data15
-sudo bastille service cloud postgresql initdb
-sudo bastille service cloud postgresql start
+sudo bastille cmd cloud /postgres/delete_old_cluster.sh
+sudo bastille cmd cloud rm /postgres/delete_old_cluster.sh
 ```
 
 ## Clean up older jail
 Probably easiest to bring down the jails first.
 
 ```
-sudo bastille umount cloud usr/pg14bin
-sudo bastille stop pg14
-sudo bastille destroy pg14
+sudo bastille umount cloud usr/pg15bin
+sudo bastille stop pg15
+sudo bastille destroy pg15
 ```
 
 ## Restoring from `pg_dumpall`
