@@ -87,12 +87,12 @@ finish_setup() {
     cp -v /usr/share/skel/* /etc/skel/
     cp -v /etc/skel/dot.profile /root/post-install/dot.profile.bak
     rm -v /etc/skel/dot.profile
-    cp -v ${DIR}/conf/skel.dot.profile /etc/skel/dot.profile
-    cp -v ${DIR}/conf/skel.dot.vimrc /etc/skel/dot.vimrc
-    cp -v ${DIR}/conf/skel.dot.screenrc /etc/skel/dot.screenrc
-    cp -v ${DIR}/conf/skel.dot.vimrc /root/.vimrc
-    cp -v ${DIR}/conf/skel.dot.screenrc /root/.screenrc
-    cp -v ${DIR}/conf/etc.adduser.conf /etc/adduser.conf
+    cp -v ${DIR}/../conf/skel.dot.profile /etc/skel/dot.profile
+    cp -v ${DIR}/../conf/skel.dot.vimrc /etc/skel/dot.vimrc
+    cp -v ${DIR}/../conf/skel.dot.screenrc /etc/skel/dot.screenrc
+    cp -v ${DIR}/../conf/skel.dot.vimrc /root/.vimrc
+    cp -v ${DIR}/../conf/skel.dot.screenrc /root/.screenrc
+    cp -v ${DIR}/../conf/etc.adduser.conf /etc/adduser.conf
 
     echo ""
     echo "All done!  Exit and come back in to see your changes."
