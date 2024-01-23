@@ -69,7 +69,7 @@ finish_setup() {
     echo "Finished installing ports and/or packages... changing shell to bash for root"
 
     mkdir -v /root/post-install
-    cp -v ${DIR}/conf/root.profile /root/post-install/root.profile
+    cp -v ${DIR}/../conf/root.profile /root/post-install/root.profile
     cp -v /root/.profile /root/post-install/.profile.bak && rm -v /root/.profile
     cp -v /root/post-install/root.profile /root/.profile
 
