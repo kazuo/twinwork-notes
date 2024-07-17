@@ -63,8 +63,10 @@ zpool export zmigrate
 
 See https://forums.freebsd.org/threads/zfs-backup-and-restore-of-zroot-my-way.80036/
 
+```
 gpart bootcode -b /boot/pmbr -p /boot/gptzfsboot -i 1 da0
 zpool import -o altroot=/mnt -f zroot
 zpool set bootfs=zroot/ROOT/default zroot
+```
 
 We probably need to update freebsd-boot? Since it's geli, maybe it doesn't know to attach it on boot?

@@ -67,6 +67,7 @@ FEPP_PKGS="${FEPP_PKGS} devel/php83-intl"
 FEPP_PKGS="${FEPP_PKGS} converters/php83-mbstring"
 FEPP_PKGS="${FEPP_PKGS} archivers/php83-zip"
 FEPP_PKGS="${FEPP_PKGS} archivers/php83-zlib"
+FEPP_PKGS="${FEPP_PKGS} converters/pecl-igbinary"
 
 # other php83 extensions recommended for nextcloud
 FEPP_PKGS="${FEPP_PKGS} sysutils/php83-fileinfo"
@@ -79,6 +80,9 @@ FEPP_PKGS="${FEPP_PKGS} net/php83-ldap"
 FEPP_PKGS="${FEPP_PKGS} textproc/php83-xsl"
 FEPP_PKGS="${FEPP_PKGS} databases/pecl-memcache"
 FEPP_PKGS="${FEPP_PKGS} net/pecl-smbclient"
+FEPP_PKGS="${FEPP_PKGS} security/php83-sodium"
+FEPP_PKGS="${FEPP_PKGS} mail/php83-imap"
+FEPP_PKGS="${FEPP_PKGS} devel/php83-sysvsem"
 
 OPEN_PKGS=""
 OPEN_PKGS="${OPEN_PKGS} net/openntpd"

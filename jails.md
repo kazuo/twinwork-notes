@@ -294,3 +294,35 @@ Then you can login as `plex` to your `sandbox` database
 ```
 sudo bastille cmd postgres psql -U plex sandbox
 ```
+
+## SABnzbd
+We don't want to expose SABnzbd to the outside network, so add the following rule (or something similar) to `/etc/pf.conf`. This allows connections from the server itself (useful through SSH tunneling) or from your local network
+
+```
+pass in inet proto tcp from { 127.0.0.1, 192.168.1.0/24 } to any port 8080 flags S/SA keep state
+```
+
+Create the jail with the given release and IP
+```
+sudo bastille create nzb 14.1-RELEASE 192.168.2.32
+sudo bastille config nzb set sysvsem new
+sudo bastille config nzb set sysvmsg new
+sudo bastille config nzb set sysvshm new
+sudo bastille config nzb set allow.raw_sockets
+sudo bastille rdr nzb tcp 8080 8080
+sudo bastille restart nzb
+sudo bastille pkg nzb install news/sabnzbd
+sudo bastille sysrc nzb sabnzbd_enable=YES
+sudo bastille service nzb sabnzbd start
+sudo bastille service nzb sabnzbd stop
+
+```
+
+With `sabnzbd` now stopped, mount a folder from your host to the Downloads folder in your `nzb` jail. 
+
+```
+sudo bastille mount nzb /nyx/sabnzbd usr/local/sabnzbd/Downloads nullfs rw 0 0 
+sudo bastille cmd nzb chmod -R 775 /usr/local/sabnzbd/Downloads
+```
+
+In SABnzbd's Folders setting, ensure your "Permissions for completed downloads" is set to `775` (or at least `755`). This will easily allow you (as a normal user) to view the downloads folder on the host
