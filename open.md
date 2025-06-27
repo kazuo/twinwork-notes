@@ -7,9 +7,10 @@ Next up is a bunch of trial and error building out ports since some options migh
 
 (Assumes the name of my poudriere set is named `open`)
 ```
-poudriere options -z open databases/mariadb105-server
-poudriere options -z open net/samba416
+poudriere options -z open databases/mariadb114-server
+poudriere options -z open net/samba419
 poudriere options -z open ftp/curl
+poudriere options -z open security/p5-GSSAPI
 ```
 
 If you see any options related to GSSAPI, simply disable it if possible. Though, there are some ports that you might use that forces you to choose one (for some reason). In that case, I ended up going with `security/heimdal` and proceeded without build issues

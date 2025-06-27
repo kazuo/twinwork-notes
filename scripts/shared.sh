@@ -6,7 +6,6 @@ BASE_PKGS="${BASE_PKGS} devel/nasm"
 BASE_PKGS="${BASE_PKGS} sysutils/screen"
 BASE_PKGS="${BASE_PKGS} shells/bash"
 BASE_PKGS="${BASE_PKGS} shells/zsh"
-BASE_PKGS="${BASE_PKGS} misc/gnuls"
 BASE_PKGS="${BASE_PKGS} security/sudo"
 BASE_PKGS="${BASE_PKGS} security/doas"
 BASE_PKGS="${BASE_PKGS} editors/vim"
@@ -22,7 +21,7 @@ ADD_PKGS="${ADD_PKGS=} sysutils/renameutils"
 ADD_PKGS="${ADD_PKGS=} security/py-certbot"
 ADD_PKGS="${ADD_PKGS=} security/gnupg"
 ADD_PKGS="${ADD_PKGS=} net/avahi-app"
-ADD_PKGS="${ADD_PKGS=} net/samba416"
+ADD_PKGS="${ADD_PKGS=} net/samba419"
 ADD_PKGS="${ADD_PKGS=} security/py-yubikey-manager"
 ADD_PKGS="${ADD_PKGS=} security/py-fail2ban"
 ADD_PKGS="${ADD_PKGS=} security/opie"
@@ -32,8 +31,8 @@ ADD_PKGS="${ADD_PKGS=} net/endlessh"
 FEPP_PKGS=""
 # nginx, pgsql, php83
 FEPP_PKGS="${FEPP_PKGS} www/nginx"
-FEPP_PKGS="${FEPP_PKGS} databases/postgresql15-client"
-FEPP_PKGS="${FEPP_PKGS} databases/postgresql15-server"
+FEPP_PKGS="${FEPP_PKGS} databases/postgresql17-client"
+FEPP_PKGS="${FEPP_PKGS} databases/postgresql17-server"
 FEPP_PKGS="${FEPP_PKGS} lang/php83"
 
 # default php83-extensions (i.e. /usr/ports/lang/php83-extensions/)
@@ -215,12 +214,12 @@ EOF
 
     cat > /usr/local/etc/poudriere.d/make.conf <<EOF
 # https://cgit.freebsd.org/ports/tree/Mk/bsd.default-versions.mk
-DEFAULT_VERSIONS+=python=3.9 python3=3.9
-DEFAULT_VERSIONS+=pgsql=16
+DEFAULT_VERSIONS+=python=3.11 python3=3.11
+DEFAULT_VERSIONS+=pgsql=17
 DEFAULT_VERSIONS+=php=8.3
-DEFAULT_VERSIONS+=samba=4.16
-# MariaDB 10.6
-#DEFAULT_VERSIONS+=mysql=10.6m
+DEFAULT_VERSIONS+=samba=4.20
+# MariaDB 11.4
+#DEFAULT_VERSIONS+=mysql=11.4m
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 

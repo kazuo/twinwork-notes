@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Use for FreeBSD 13.x only
-# Tested with FreeBSD 13.1-RELEASE
+# Use for FreeBSD 14.x only
 #
 
 DIR=$(dirname "$0")

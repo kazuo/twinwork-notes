@@ -1,8 +1,8 @@
 # Twinwork NOTES FreeBSD Post Installation script
 
-This script will automate most of the post-installation install and configuration to set up your FreeBSD environment found at ~~http://notes.twinwork.net/freebsd/~~.
+This script will automate most of the post-installation install and configuration to set up your FreeBSD environment.
 
-The original NOTES website is no longer available as it was completely out of date. This script was designed to setup a few customizations from a fresh FreeBSD install. It assumes the following:
+This script was designed to setup a few customizations from a fresh FreeBSD install. It assumes the following:
 1. Completed the initial install for FreeBSD
 2. ZFS is enabled and uses `zroot` where FreeBSD is installed
 3. Network is configured
@@ -72,10 +72,10 @@ If you specify the `--use-loki` option, you'll still copy over the main Poudrier
 
 ```
 # see defaults at https://github.com/freebsd/freebsd-ports/blob/main/Mk/bsd.default-versions.mk
-DEFAULT_VERSIONS+=python=3.9 python3=3.9 pgsql=15 php=8.1 samba=4.16
+DEFAULT_VERSIONS+=python=3.11 python3=3.11 pgsql=17 php=8.3 samba=4.16
 
-# MariaDB 10.6
-DEFAULT_VERSIONS+=mysql=10.6m
+# MariaDB 11.4
+DEFAULT_VERSIONS+=mysql=11.4m
 
 OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE TESTS X11
 ```
@@ -83,7 +83,7 @@ OPTIONS_UNSET=ALSA CUPS DEBUG DOCBOOK DOCS EXAMPLES FONTCONFIG HTMLDOCS PROFILE 
 Whether or not you're choosing Poudriere.conf or Loki.conf, running `setup-poudriere.sh` will disable FreeBSD's package repo. If you need to install anything else from this point on, follow the rest of the instructions by creating the default ports tree and building all of the prepopulated packages related to these NOTES
 
 ```
-poudriere ports -c && poudriere bulk -j 140amd64 -p default -f /usr/local/etc/poudriere.d/pkglist
+poudriere ports -c && poudriere bulk -j 143amd64 -p default -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 If you're building all of the packages related to NOTES, this will take awhile... nearly 8 hours on a Intel Core i3 from 2019 (blame `llvm` for taking so long). But once that's complete, you can also force upgrade all your existsing packages and remove any packages no longer needed
@@ -118,7 +118,7 @@ Modify your poudriere conf to add the public key: `/usr/local/etc/pkg/repos/Poud
 
 ```
 Poudriere: {
-    url: "file:///usr/local/poudriere/data/packages/140amd64-default",
+    url: "file:///usr/local/poudriere/data/packages/143amd64-default",
     mirror_type: "srv",
     signature_type: "pubkey",
     pubkey: "/usr/local/etc/ssl/certs/poudriere.cert",
@@ -134,8 +134,8 @@ By default, the jails are for amd64, but you can also build it out for a differe
 sudo pkg install emulators/qemu-user-static
 sudo sysrc qemu_user_static_enable="YES"
 sudo service qemu_user_static start
-sudo poudriere jail -c -j 140arm64 -v 14.0-RELEASE -a arm64.aarch64
-sudo poudriere bulk -j 140arm64 -f /usr/local/etc/poudriere.d/pkglist
+sudo poudriere jail -c -j 143arm64 -v 14.3-RELEASE -a arm64.aarch64
+sudo poudriere bulk -j 143arm64 -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 ## The FEPP install script

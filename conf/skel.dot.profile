@@ -26,8 +26,7 @@ if [ ! -z "${BASH}" ]; then
     esac
     cd
     export PS1
-
-    alias 'ls'='gnuls -F --color=auto --show-control-chars -h'
+    alias 'ls'='ls -G'    
 fi
 
 # set ENV to a file invoked each time sh is started for interactive use.

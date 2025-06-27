@@ -16,7 +16,7 @@ if [ ! -z "${BASH}" ]; then
     cd
     export PS1
 
-    alias 'ls'='gnuls -F --color=auto --show-control-chars -h'
+    alias 'ls'='ls -G'
 fi
 
 ENV=$HOME/.shrc; export ENV

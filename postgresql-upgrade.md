@@ -19,7 +19,7 @@ Update the data for the new PostgreSQL (i.e. /postgres/data16)
 
 ## Create a new jail and install the older version of postgresql14 you want to upgrade from
 ```
-sudo bastille create pg15 14.0-RELEASE 192.168.2.24
+sudo bastille create pg15 14.3-RELEASE 192.168.2.24
 sudo bastille pkg pg15 install databases/postgresql15-server
 ```
 
